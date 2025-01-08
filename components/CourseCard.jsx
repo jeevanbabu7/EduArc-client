@@ -7,14 +7,14 @@ const CourseCard = ({ title }) => {
     <TouchableOpacity style={styles.card}>
       <View style={styles.content}>
         <View style={styles.iconContainer}>
-          <FontAwesome name="book" size={20} color="#800080" />
+          <FontAwesome name="book" size={20} color="#0504aa" />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.date}>Last opened: Jan 1, 2025</Text> {/* Dummy date */}
         </View>
         <View style={styles.iconContainer}>
-          <Ionicons name="ellipsis-vertical" size={20} color="#800080" />
+          <Ionicons name="ellipsis-vertical" size={20} color="#0504aa" />
         </View>
       </View>
     </TouchableOpacity>
@@ -25,16 +25,15 @@ export default CourseCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    borderColor: '#ddd',
-    borderWidth: 1,
+    backgroundColor: '#ffff',
     borderRadius: 8,
-    shadowColor: '#000',
+    shadowColor: '#00126b',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 3,
     margin: 8,
+
     paddingVertical: 15,
     paddingHorizontal: 10,
   },
@@ -62,3 +61,4 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+ 

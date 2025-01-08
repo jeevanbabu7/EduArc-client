@@ -1,4 +1,4 @@
-import { View, Text,Image ,StyleSheet,ScrollView,FlatList} from 'react-native'
+import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView} from 'react-native'
 import React from 'react'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import Tool from '../../components/Tool'
@@ -14,11 +14,11 @@ import { Drawer } from 'expo-router/drawer';
 const Home = () => {
   return (
     <>
-      <ScrollView style={{backgroundColor:'#e6e6fa'}}>
+        <SafeAreaView style={{flex:1,backgroundColor:'#f0f2ff'}}>
       <View style={styles.topbar}>
-        <Ionicons name="menu" size={22} color="#800080" />
-        <Text style={{ fontWeight: 'bold',fontSize:20,color:'#800080'}}>EduArc</Text>
-        <Ionicons name="notifications" size={20} color="#800080" />
+        <Ionicons name="menu" size={25} color="#00000" />
+        <Text style={{ fontWeight: 'bold',fontSize:20,color:'#00126b'}}>EduArc</Text>
+        <Ionicons name="notifications" size={25} color="#00000" />
       </View> 
       <View style={styles.welcome}>
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>Welcome Back,</Text>
@@ -26,7 +26,7 @@ const Home = () => {
       </View>
       <View><Card/></View>
       <View style={styles.toolContainer}>
-        <View><Text style={{fontSize: 18,fontWeight:'bold',color:'#800080',marginBottom:10}}>Explore Our Tools</Text></View>
+        <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
         <View style={styles.tools}>
             <Tool title={'Chatbot'} iconSource={bot}/>
             <Tool title={'Upload'} iconSource={upload}/>
@@ -36,7 +36,7 @@ const Home = () => {
         </View>
       </View>
       <View style={styles.courselist}>
-        <View><Text style={{fontSize: 18,fontWeight:'bold',color:'#800080',margin:10}}>Recent Courses</Text></View>
+        <View><Text style={{fontSize: 18,fontWeight:'bold',margin:10}}>Recent Courses</Text></View>
         <FlatList
           style={styles.cardContainer}
           data={[
@@ -57,7 +57,7 @@ const Home = () => {
         />
       </View>
       
-      </ScrollView>
+      </SafeAreaView>
     </>
   )
 }
@@ -70,8 +70,10 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     maxHeight:'70',
     alignItems:'center',
-    padding:'20',
-    backgroundColor:'#e6e6fa'
+    padding:'10',
+    backgroundColor:'#f0f2ff',
+    // backgroundColor:'#0504aa'
+
 
     // backgroundColor:'grey',
   },
@@ -84,17 +86,19 @@ const styles = StyleSheet.create({
   welcome:{
     flexDirection:'column',
     padding:10,
-    backgroundColor:'#e6e6fa'
+    backgroundColor:'#f0f2ff',
+    // backgroundColor:'#0504aa'
+
 
   },
   toolContainer:{
-    flex:1,
+    
     margin:10,  
     padding:10,  
-    backgroundColor:'#e6e6fa',
+    backgroundColor:'#f0f2ff',
     borderWidth:1,
     borderColor:'white',
-    shadowColor: '#000', // Shadow for iOS
+    shadowColor: '#00126b', // Shadow for iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     // justifyContent:'space-evenly',
     gap:15,
-    paddingTop:10,
+    paddingVertical:10,
     // backgroundColor:'grey'
   },
   item: {
@@ -127,11 +131,12 @@ const styles = StyleSheet.create({
 
   },
   cardContainer:{
-    flex:1,
-    backgroundColor:'#e6e6fa'
+    paddingBottom: 20,
+    backgroundColor:'#f0f2ff'
   },
   courselist:{
-    backgroundColor:'#e6e6fa',
+    flex:1,
+    backgroundColor:'#f0f2ff',
     borderWidth:1,
     borderColor:'white',
     shadowColor: '#000', // Shadow for iOS

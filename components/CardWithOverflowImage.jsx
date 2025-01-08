@@ -29,7 +29,10 @@ export default CardWithOverflowImage;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#800080",
+    // backgroundColor: "#00126b",
+    backgroundColor: "#0504aa",
+
+
     borderRadius: 5,
     padding: 16,
     margin:10,
@@ -53,11 +56,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 4,
-    color:'white'
+    // color:'#baff29'
+    color:'#ffff'
   },
   description: {
     fontSize: 14,
-    color: "#ffff",
+    color:'#ffff'
   },
   image: {
     width: 120,

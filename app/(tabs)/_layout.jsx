@@ -12,7 +12,7 @@ const TabIcon = ({ icon, focused }) => {
       style={{
         width: 24,
         height: 24,
-        tintColor: focused ? '#800080' : 'black',
+        tintColor: focused ? '#00126b' : 'black',
       }}
     />
   )
@@ -23,7 +23,7 @@ const TabsLayout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: true,
-        tabBarActiveTintColor: '#800080',
+        tabBarActiveTintColor: '#00126b',
         tabBarInactiveTintColor: 'black',
         tabBarStyle: {
           backgroundColor: 'white',
