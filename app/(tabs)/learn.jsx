@@ -22,9 +22,7 @@ const Learn = () => {
           
         ]}
         renderItem={({item}) =>
-            <View style={styles.card} >
-                <Text style={styles.item} onPress={()=> router.push('(courses)/Materials')}>{item.key}</Text>
-            </View>
+                <CourseCard title={item.key} onPress={()=> router.push('(courses)/Materials')}/>
         }
       />
     </>
