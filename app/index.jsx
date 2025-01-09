@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import bot from '../assets/images/bot.jpg'
 import CustomButton from '../components/CustomButton'
+import "./global.css"
 
 export default function Index() {
   const router = useRouter();
