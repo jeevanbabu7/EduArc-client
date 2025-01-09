@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-const Tool = ({ title, iconSource }) => {
+const Tool = ({ title, iconSource, onPress }) => {
   return (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       {iconSource && (
         <Image source={iconSource} style={styles.icon} resizeMode="contain" />
       )}

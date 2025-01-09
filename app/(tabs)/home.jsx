@@ -8,10 +8,11 @@ import bot from '../../assets/icons/bot.png'
 import upload from '../../assets/icons/upload.png'
 import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
-
+import { useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 const Home = () => {
+  const router = useRouter();
   return (
     <>
         <SafeAreaView style={{flex:1,backgroundColor:'#f0f2ff'}}>
@@ -28,7 +29,7 @@ const Home = () => {
       <View style={styles.toolContainer}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
         <View style={styles.tools}>
-            <Tool title={'Chatbot'} iconSource={bot}/>
+            <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
             <Tool title={'Upload'} iconSource={upload}/>
             <Tool title={'Summary'} iconSource={summarise}/>
             <Tool title={'More'} iconSource={more}/>
