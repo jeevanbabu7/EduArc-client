@@ -1,4 +1,4 @@
-import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView} from 'react-native'
+import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView, TouchableOpacity} from 'react-native'
 import React from 'react'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import Tool from '../../components/Tool'
@@ -8,11 +8,22 @@ import bot from '../../assets/icons/bot.png'
 import upload from '../../assets/icons/upload.png'
 import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
+import { removeItem } from '../../scripts/asyncStorage';
+
 const Home = () => {
   const router = useRouter();
+
+  const navigation = useNavigation();
+
+
+  //Function to go back to onboarding 
+  const handleReset = async()=>{
+    await removeItem('onboarded');
+    navigation.push('OnboardingScreen');
+  }
   return (
     <>
         <SafeAreaView style={{flex:1,backgroundColor:'#f0f2ff'}}>
@@ -24,6 +35,7 @@ const Home = () => {
       <View style={styles.welcome}>
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>Welcome Back,</Text>
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>User</Text>
+        <TouchableOpacity onPress={handleReset}><Text>Reset to onboarding</Text></TouchableOpacity>
       </View>
       <View><Card/></View>
       <View style={styles.toolContainer}>
@@ -73,8 +85,6 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:'10',
     backgroundColor:'#f0f2ff',
-    // backgroundColor:'#0504aa'
-
 
     // backgroundColor:'grey',
   },
