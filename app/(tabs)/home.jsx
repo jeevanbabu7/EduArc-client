@@ -8,24 +8,15 @@ import bot from '../../assets/icons/bot.png'
 import upload from '../../assets/icons/upload.png'
 import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
-import { useNavigation, useRouter } from 'expo-router';
+import { useNavigation, useRouter,router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { removeItem } from '../../scripts/asyncStorage';
 
 const Home = () => {
   const router = useRouter();
-
-  const navigation = useNavigation();
-
-
-  //Function to go back to onboarding 
-  const handleReset = async()=>{
-    await removeItem('onboarded');
-    navigation.push('OnboardingScreen');
-  }
   return (
-    <>
+    <ScrollView>
         <SafeAreaView style={{flex:1,backgroundColor:'#f0f2ff'}}>
       <View style={styles.topbar}>
         <Ionicons name="menu" size={25} color="#00000" />
@@ -35,15 +26,14 @@ const Home = () => {
       <View style={styles.welcome}>
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>Welcome Back,</Text>
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>User</Text>
-        <TouchableOpacity onPress={handleReset}><Text>Reset to onboarding</Text></TouchableOpacity>
       </View>
       <View><Card/></View>
       <View style={styles.toolContainer}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
         <View style={styles.tools}>
             <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
-            <Tool title={'Upload'} iconSource={upload}/>
-            <Tool title={'Summary'} iconSource={summarise}/>
+            <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
+            <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
             <Tool title={'More'} iconSource={more}/>
 
         </View>
@@ -51,27 +41,27 @@ const Home = () => {
       <View style={styles.courselist}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',margin:10}}>Recent Courses</Text></View>
         <FlatList
-          style={styles.cardContainer}
-          data={[
-            {key: 'Data Structures'},
-            {key: 'Operating Systems'},
-            {key: 'Alin Jose Perera'},
-            {key: 'Arattu Annan'},
-            {key: 'kimboy'},
-
-
-          ]}
-          renderItem={({item}) =>
-              // <View style={styles.card}>
-              //     <Text style={styles.item}>{item.key}</Text>
-              // </View>
-              <CourseCard title={item.key}/>
-          }
+        style={styles.cardContainer}
+        data={[
+          { key: 'Data Structures' },
+          { key: 'Operating Systems' },
+          { key: 'Alin Jose Perera' },
+          { key: 'Arattu Annan' },
+          { key: 'kimboy' },
+        ]}
+        renderItem={({ item }) => (
+          <CourseCard
+            title={String(item.key)}
+            onPress={() => router.push('(courses)/Materials')} // Pass onPress handler
+          />
+        )}
+        keyExtractor={(item) => item.key} // Add a keyExtractor for unique keys
         />
+
       </View>
       
       </SafeAreaView>
-    </>
+    </ScrollView>
   )
 }
 
@@ -81,9 +71,9 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection:'row',
     justifyContent:'space-between',
-    maxHeight:'70',
+    maxHeight:70,
     alignItems:'center',
-    padding:'10',
+    padding:10,
     backgroundColor:'#f0f2ff',
 
     // backgroundColor:'grey',
