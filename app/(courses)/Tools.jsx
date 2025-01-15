@@ -8,6 +8,10 @@ import summarise from '../../assets/icons/summarise.png'
 import flash from '../../assets/icons/flash.png'
 import analysis from '../../assets/icons/analysis.png'
 import prediction from '../../assets/icons/prediction.png'
+import quiz from '../../assets/icons/quiz.png'
+import video from '../../assets/icons/video.png'
+
+
 
 
 const Tools = () => {
@@ -19,7 +23,9 @@ const Tools = () => {
             <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
             <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
             <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
-            <Tool title={'Flash Card'} iconSource={flash}/>
+            <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(quiz)/quizhomescreen')}/>
+            <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
+            <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('(quiz)/quizhomescreen')}/>
             <Tool title={'QP Analysis'} iconSource={analysis}/>
             <Tool title={'QP Prediction'} iconSource={prediction}/>
         </View>
