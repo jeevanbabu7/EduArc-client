@@ -11,9 +11,6 @@ import prediction from '../../assets/icons/prediction.png'
 import quiz from '../../assets/icons/quiz.png'
 import video from '../../assets/icons/video.png'
 
-
-
-
 const Tools = () => {
   return (
     <ScrollView style={{backgroundColor:'white'}}>
