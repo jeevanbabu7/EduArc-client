@@ -20,7 +20,7 @@ const Tools = () => {
             <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
             <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
             <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
-            <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(quiz)/quizhomescreen')}/>
+            <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(flashcard)/flashcardhome')}/>
             <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
             <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('(quiz)/quizhomescreen')}/>
             <Tool title={'QP Analysis'} iconSource={analysis}/>
