@@ -39,7 +39,9 @@ export default function Index() {
   // }
 
   // return null; // Just render nothing until redirect happens
-  return <OnboardingScreen />
+  return <>
+    <OnboardingScreen />
+  </>
 }
 
 const styles = StyleSheet.create({

@@ -25,6 +25,7 @@ const FlashcardScreen = () => {
     setFlipped(false);
     setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
     flipAnim.setValue(0);
+    
   };
 
   const handlePrevious = () => {
