@@ -22,9 +22,9 @@ const Tools = () => {
             <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
             <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(flashcard)/flashcardhome')}/>
             <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
-            <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('(quiz)/quizhomescreen')}/>
-            <Tool title={'QP Analysis'} iconSource={analysis}/>
-            <Tool title={'QP Prediction'} iconSource={prediction}/>
+            <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('/VideoSummary')}/>
+            <Tool title={'QP Analysis'} iconSource={analysis} onPress={() => router.push('(qp)/QpAnalysis')}/>
+            <Tool title={'QP Prediction'} iconSource={prediction} onPress={() => router.push('(qp)/QpPrediction')}/>
         </View>
       </View>
     </ScrollView>
