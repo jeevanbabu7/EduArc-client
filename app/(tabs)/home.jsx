@@ -1,4 +1,4 @@
-import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView} from 'react-native'
+import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView, TouchableOpacity} from 'react-native'
 import React from 'react'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import Tool from '../../components/Tool'
@@ -8,13 +8,15 @@ import bot from '../../assets/icons/bot.png'
 import upload from '../../assets/icons/upload.png'
 import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter,router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
+import { removeItem } from '../../scripts/asyncStorage';
+
 const Home = () => {
   const router = useRouter();
   return (
-    <>
+    <ScrollView>
         <SafeAreaView style={{flex:1,backgroundColor:'#f0f2ff'}}>
       <View style={styles.topbar}>
         <Ionicons name="menu" size={25} color="#00000" />
@@ -30,8 +32,8 @@ const Home = () => {
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
         <View style={styles.tools}>
             <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
-            <Tool title={'Upload'} iconSource={upload}/>
-            <Tool title={'Summary'} iconSource={summarise}/>
+            <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
+            <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
             <Tool title={'More'} iconSource={more}/>
 
         </View>
@@ -39,27 +41,27 @@ const Home = () => {
       <View style={styles.courselist}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',margin:10}}>Recent Courses</Text></View>
         <FlatList
-          style={styles.cardContainer}
-          data={[
-            {key: 'Data Structures'},
-            {key: 'Operating Systems'},
-            {key: 'Alin Jose Perera'},
-            {key: 'Arattu Annan'},
-            {key: 'kimboy'},
-
-
-          ]}
-          renderItem={({item}) =>
-              // <View style={styles.card}>
-              //     <Text style={styles.item}>{item.key}</Text>
-              // </View>
-              <CourseCard title={item.key}/>
-          }
+        style={styles.cardContainer}
+        data={[
+          { key: 'Data Structures' },
+          { key: 'Operating Systems' },
+          { key: 'Alin Jose Perera' },
+          { key: 'Arattu Annan' },
+          { key: 'kimboy' },
+        ]}
+        renderItem={({ item }) => (
+          <CourseCard
+            title={String(item.key)}
+            onPress={() => router.push('(courses)/Materials')} // Pass onPress handler
+          />
+        )}
+        keyExtractor={(item) => item.key} // Add a keyExtractor for unique keys
         />
+
       </View>
       
       </SafeAreaView>
-    </>
+    </ScrollView>
   )
 }
 
@@ -69,12 +71,10 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection:'row',
     justifyContent:'space-between',
-    maxHeight:'70',
+    maxHeight:70,
     alignItems:'center',
-    padding:'10',
+    padding:10,
     backgroundColor:'#f0f2ff',
-    // backgroundColor:'#0504aa'
-
 
     // backgroundColor:'grey',
   },

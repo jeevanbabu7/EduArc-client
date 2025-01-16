@@ -1,45 +1,60 @@
-import { Text, View, StyleSheet,Image } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { Redirect,useRouter,Link } from 'expo-router';
-import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import bot from '../assets/images/bot.jpg'
-import CustomButton from '../components/CustomButton'
-import "./global.css"
+import { Text, View, StyleSheet, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import OnboardingScreen from '../components/OnboardingScreen';
+import { getItem } from '../scripts/asyncStorage';
 
 export default function Index() {
-  const router = useRouter();
-  return (
-    <SafeAreaView style={styles.container1}>
-        <CustomButton title='Get Started' handlePress={()=> router.push('(tabs)/home')}/>
-          <Text style={{marginTop:10}} onPress={()=> router.push('(auth)/signin')}>SginIn</Text>
-    </SafeAreaView>
-  );
+  // const [showOnboarding, setShowOnboarding] = useState(null);
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   checkIfAlreadyOnboarded();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (showOnboarding === false) {
+  //     router.replace('(tabs)/home'); // Redirect to home after onboarding
+  //   }
+  // }, [showOnboarding]);
+
+  // const checkIfAlreadyOnboarded = async () => {
+  //   try {
+  //     const onboarded = await getItem('onboarded');
+  //     // Default to true if the onboarded value is not set or incorrect
+  //     setShowOnboarding(onboarded === '1' ? false : true);
+  //   } catch (error) {
+  //     console.error("Error checking onboarding status", error);
+  //     setShowOnboarding(true); // Show onboarding if there's an error
+  //   }
+  // };
+
+  // // Show nothing while determining the onboarding status
+  // if (showOnboarding === null) {
+  //   return null;
+  // }
+
+  // if (showOnboarding) {
+  //   return <OnboardingScreen />; // Show OnboardingScreen if it's the first time
+  // }
+
+  // return null; // Just render nothing until redirect happens
+  return <>
+    <OnboardingScreen />
+  </>
 }
 
 const styles = StyleSheet.create({
   container1: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor:'grey'
+    backgroundColor: 'grey',
+    marginTop: 0,
   },
   text: {
     color: 'black',
-    fontSize:50,
-    //fontStyle:'bold'
+    fontSize: 50,
   },
-  container2:{
-    flex:1,
-    justifyContent:'center',
-    alignItems:'center',
-    paddingHorizontal:'4',
-    backgroundColor:'#fff1' 
+  image1: {
+    width: 300,
+    height: 300,
   },
-  image1:{
-    width:300,
-    height:300
-
-  }
 });

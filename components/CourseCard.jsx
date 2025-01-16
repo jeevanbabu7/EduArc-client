@@ -2,16 +2,16 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
-const CourseCard = ({ title }) => {
+const CourseCard = ({ title, onPress }) => {
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onPress}> {/* Attach onPress */}
       <View style={styles.content}>
         <View style={styles.iconContainer}>
           <FontAwesome name="book" size={20} color="#0504aa" />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.date}>Last opened: Jan 1, 2025</Text> {/* Dummy date */}
+          <Text style={styles.date}>Last opened: Jan 1, 2025</Text>
         </View>
         <View style={styles.iconContainer}>
           <Ionicons name="ellipsis-vertical" size={20} color="#0504aa" />
@@ -20,6 +20,8 @@ const CourseCard = ({ title }) => {
     </TouchableOpacity>
   );
 };
+
+
 
 export default CourseCard;
 
