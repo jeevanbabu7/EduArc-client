@@ -1,12 +1,44 @@
-import React, { useState, useCallback } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, TextInput, StyleSheet, TouchableOpacity, Alert, Text } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { Ionicons } from '@expo/vector-icons'; 
 import Fontisto from '@expo/vector-icons/Fontisto';
+import io from "socket.io-client";
+
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
+  const [keyPressed, setKeyPressed] = useState(false);
+  const [socket, setSocket] = useState(null);
+  console.log(keyPressed);
+  
+  useEffect(() => {
+    if (!socket) return;
+    socket.on('model_response', (message) => {
+      
+        const botMessage = {
+          _id: Math.random().toString(36).substring(7),
+          text: message,
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'ChatBot',
+            avatar: 'https://placekitten.com/100/100',
+          },
+        };
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, [botMessage]));
+        
+    });
+  }, [socket]);
+    
+    useEffect(() => {
+
+        const newSocket = io("http://localhost:3000");
+        setSocket(newSocket);
+
+        return () => newSocket.close();
+    }, []);
 
   React.useEffect(() => {
     setMessages([
@@ -23,25 +55,9 @@ const ChatBot = () => {
     ]);
   }, []);
 
-  const onSend = useCallback((newMessages = []) => {
-    setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
-
-    setTimeout(() => {
-      const botMessage = {
-        _id: Math.random().toString(36).substring(7),
-        text: `You said: "${newMessages[0].text}"`,
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'ChatBot',
-          avatar: 'https://placekitten.com/100/100',
-        },
-      };
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, [botMessage]));
-    }, 1000);
-  }, []);
-
+  
   const handleSend = () => {
+    
     if (inputText.trim()) {
       const userMessage = {
         _id: Math.random().toString(36).substring(7),
@@ -51,10 +67,26 @@ const ChatBot = () => {
           _id: 1,
         },
       };
-      onSend([userMessage]);
+      socket.emit('send-message', {
+          chatSessionId: "6784f44000f0f6bfc930954f",
+          sender: "user",
+          content: inputText
+      });
+
+
+      
+      setMessages((previousMessages) => GiftedChat.append(previousMessages, [userMessage]));
+      // onSend([userMessage]);
       setInputText('');
     }
   };
+
+  const handleKeyPress = (event) => {
+    if(event.nativeEvent.key !== 'Enter' || event.nativeEvent.key !== 'NumpadEnter'){
+      return;
+    }
+    handleSend();
+  }
 
   return (
     <View style={styles.container}>
@@ -87,6 +119,9 @@ const ChatBot = () => {
               style={styles.input}
               placeholder="Type your message..."
               placeholderTextColor="#9ca3af"
+              onKeyPress={handleKeyPress}
+              returnKeyType="done" // Optional: changes the keyboard's enter button text
+              blurOnSubmit={false} // Prevent keyboard from dismissing when pressing enter
             />
             <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
               <Ionicons name="send" size={24} color="#000000" />
