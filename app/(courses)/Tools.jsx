@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     // margin:10,
     minHeight:'100%',
     padding:10,  
-    backgroundColor:'#f0f2ff',
+    backgroundColor:'#ffff',
     borderWidth:1,
     borderColor:'white',
     shadowColor: '#00126b', // Shadow for iOS
