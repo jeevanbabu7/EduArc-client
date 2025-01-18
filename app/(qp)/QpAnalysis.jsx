@@ -55,9 +55,9 @@ const QpAnalysis = () => {
               </View>
             ))}
           </ScrollView>
-          <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+          {/* <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
             <Text style={styles.uploadButtonText}>+</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         {file && <Text style={styles.fileName}>Uploaded File: {file.name}</Text>}
       </View>
@@ -86,8 +86,10 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flex: 2,
-    backgroundColor: '#f0f2ff',
-    padding: 20,
+    // backgroundColor: '#f0f2ff',
+    backgroundColor: '#ffff',
+
+    paddingHorizontal: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     elevation: 5,
@@ -109,11 +111,11 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#f0f2ff',
+    backgroundColor: '#ffff',
     padding: 15,
     alignItems: 'center',
-    borderColor: '#b5cde0',
-    borderBottomWidth: 1,
+    borderColor: 'grey',
+    borderBottomWidth: 0.5,
   },
   cardText: {
     fontSize: 16,

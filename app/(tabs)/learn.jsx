@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import CourseCard from '../../components/CourseCard';
+import CourseCard from '../../components/MaterialCard';
 import { useRouter } from 'expo-router';
 
 const Learn = () => {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
     borderBottomWidth: 1,
     borderColor: '#ddd',
     shadowColor: '#000',
@@ -55,8 +55,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   cardContainer: {
-    marginTop: 10,
-    marginBottom: 10, // Add spacing around the FlatList
+    backgroundColor:'#ffff',
   },
   card: {
     backgroundColor: '#fff',
