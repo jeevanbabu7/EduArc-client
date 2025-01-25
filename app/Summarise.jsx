@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-
+import { getDownloadURL, getStorage, uploadBytesResumable, ref } from 'firebase/storage';
+import app from '../firebase.js';
+import { FIREBASE_API_KEY } from '@env';
 const Summarise = () => {
   const [file, setFile] = useState(null);
+  const [fileURL, setFileURL] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(false);
 
-  // Function to pick a document or PDF file
+  console.log(fileURL);
+  
+  
+  
   const uploadFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -13,31 +21,97 @@ const Summarise = () => {
         copyToCacheDirectory: true,
       });
 
-      if (result.type === 'success') {
-        setFile(result);
+      if (result.assets && result.assets.length > 0) {
+        setFile(result.assets[0]);
       }
+      
     } catch (error) {
       Alert.alert('Error', 'An error occurred while picking the file.');
     }
   };
 
+  const generateSummary = async () => {
+    try {
+      await storeFileInFirebase();
+      const result = await fetch("http://127.0.0.1:5000/api/summary/pdf", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pdf_url: fileURL }),
+      })
+
+      const data = await result.json();
+      console.log(data);
+    }
+    catch(err) {
+      Alert.alert('Error', 'An error occurred while generating the summary.');
+    }
+  }
+
+  const storeFileInFirebase = async () => {
+    if (!file) {
+      setError(true);
+      Alert.alert("Error", "Please select a file first.");
+      return;
+    }
+
+    setUploading(true);
+    const response = await fetch(file.uri);
+    const blob = await response.blob();
+
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + "-" + file.name;
+    const storageRef = ref(storage, `uploads/${fileName}`);
+
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% done`);
+      },
+      (error) => {
+        setUploading(false);
+        Alert.alert('Upload failed', error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFileURL(downloadURL);
+          setUploading(false);
+          Alert.alert('Success', 'File uploaded successfully!');
+        });
+      }
+    );
+
+    return
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="gap-4">
       <Text style={styles.title}>Upload a Document to Summarise</Text>
       <Text style={styles.subtitle}>
         Upload a PDF or document file, and we’ll summarise it for you.
       </Text>
 
       <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
-        <Text style={styles.buttonText}>Upload Document</Text>
+        <Text style={styles.buttonText}>Select Document</Text>
       </TouchableOpacity>
 
       {file && (
         <View style={styles.fileContainer}>
-          <Text style={styles.fileTitle}>Uploaded File:</Text>
+          <Text style={styles.fileTitle}>Selected File:</Text>
           <Text style={styles.fileName}>{file.name}</Text>
         </View>
       )}
+      
+      {file && (
+        <TouchableOpacity style={[styles.button, styles.shadow]} onPress={generateSummary}>
+          <Text style={styles.buttonText}className="text-red-100">Generate Summary</Text>
+        </TouchableOpacity>
+      )}
+
     </View>
   );
 };
@@ -48,6 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f5f7',
     padding: 20,
     alignItems: 'center',
+    // gap: 4,
   },
   title: {
     fontSize: 24,

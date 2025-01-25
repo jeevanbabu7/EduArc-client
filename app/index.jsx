@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import OnboardingScreen from '../components/OnboardingScreen';
 import { getItem } from '../scripts/asyncStorage';
+import './global.css';
 
 export default function Index() {
   // const [showOnboarding, setShowOnboarding] = useState(null);
