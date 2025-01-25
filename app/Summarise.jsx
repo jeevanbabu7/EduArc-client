@@ -7,7 +7,7 @@ import app from '../firebase.js';
 import { IP_ADDRESS, PORT } from '@env';
 import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
-
+import '../global.css'
 const Summarise = () => {
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
@@ -37,7 +37,7 @@ const Summarise = () => {
   const generateSummary = async () => {
     try {
       setLoading(true);
-      const result = await fetch(`${IP_ADDRESS}:${PORT}/api/summary/pdf`, {
+      const result = await fetch(`http://${IP_ADDRESS}:${PORT}/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,10 +131,10 @@ const Summarise = () => {
           )}
 
           {loading && (
-            <VStack space="xs">
+            <View className="w-full p-15">
               <Spinner size="large" color="$indigo600" />
-              <Text>Loading</Text>
-            </VStack>
+              <Text className="text-lg text-slate-700">Loading</Text>
+            </View>
           )}
         </ScrollView>
       </SafeAreaView>

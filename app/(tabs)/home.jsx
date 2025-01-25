@@ -30,10 +30,12 @@ const Home = () => {
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>Welcome Back,</Text>
         <Text style={{fontSize: 18,fontWeight: 'bold'}}>User</Text>
       </View>
+
       <View><Card/></View>
+      
       <View style={styles.toolContainer}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
-        <View style={styles.tools}>
+        <View style={styles.tools} className="flex flex-row justify-center items-center gap-10">
             <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
             <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
             <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
