@@ -5,6 +5,8 @@ import OnboardingScreen from '../components/OnboardingScreen';
 import { getItem } from '../scripts/asyncStorage';
 import './global.css';
 
+import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { config } from '@gluestack-ui/config';
 export default function Index() {
   // const [showOnboarding, setShowOnboarding] = useState(null);
   // const router = useRouter();
@@ -41,7 +43,9 @@ export default function Index() {
 
   // return null; // Just render nothing until redirect happens
   return <>
-    <OnboardingScreen />
+    <GluestackUIProvider config={config}>
+      <OnboardingScreen />
+    </GluestackUIProvider >
   </>
 }
 
