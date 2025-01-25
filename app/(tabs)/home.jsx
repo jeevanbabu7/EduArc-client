@@ -15,6 +15,8 @@ import { removeItem } from '../../scripts/asyncStorage';
 const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
+
+  
   
   return (
     <ScrollView>
@@ -36,8 +38,9 @@ const Home = () => {
             <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
             <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
             <Tool title={'More'} iconSource={more}/>
-
         </View>
+        {/* <Text className="text-red-400">Hii</Text> */}
+        
       </View>
       <View style={styles.courselist}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',margin:10}}>Recent Courses</Text></View>

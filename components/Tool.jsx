@@ -7,12 +7,12 @@ const Tool = ({ title, iconSource, onPress }) => {
       {iconSource && (
         <Image source={iconSource} style={styles.icon} resizeMode="contain" />
       )}
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} >{title}</Text>
     </TouchableOpacity>
   );
 };
 
-export default Tool
+export default Tool;
 
 const styles = StyleSheet.create({
   

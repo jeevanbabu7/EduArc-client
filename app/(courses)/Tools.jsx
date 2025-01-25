@@ -16,15 +16,20 @@ const Tools = () => {
     <ScrollView style={{backgroundColor:'white'}}>
       <View style={styles.toolContainer}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
-        <View style={styles.tools}>
-            <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
-            <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
-            <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
-            <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(flashcard)/flashcardhome')}/>
-            <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
-            <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('/VideoSummary')}/>
-            <Tool title={'QP Analysis'} iconSource={analysis} onPress={() => router.push('(qp)/QpAnalysis')}/>
-            <Tool title={'QP Prediction'} iconSource={prediction} onPress={() => router.push('(qp)/QpPrediction')}/>
+        <View className="flex flex-col gap-10 pt-10">
+            <View className="flex flex-row gap-6 justify-center">
+              <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
+              <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
+              <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
+              <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('/VideoSummary')}/>
+              
+            </View>
+            <View className="flex flex-row gap-4 justify-center flex-wrap">
+              <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
+              <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(flashcard)/flashcardhome')}/>
+              <Tool title={'QP Analysis'} iconSource={analysis} onPress={() => router.push('(qp)/QpAnalysis')}/>
+              <Tool title={'QP Prediction'} iconSource={prediction} onPress={() => router.push('(qp)/QpPrediction')}/>
+            </View>
         </View>
       </View>
     </ScrollView>
@@ -38,7 +43,7 @@ const styles = StyleSheet.create({
   toolContainer:{
     // margin:10,
     minHeight:'100%',
-    padding:10,  
+    padding: 15,  
     backgroundColor:'#ffff',
     borderWidth:1,
     borderColor:'white',
@@ -46,7 +51,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5, // Shadow for Android
+    elevation: 5,
+
   },
   tools:{
     flexWrap:'wrap',

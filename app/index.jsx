@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import OnboardingScreen from '../components/OnboardingScreen';
 import { getItem } from '../scripts/asyncStorage';
-import './global.css';
+
 
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config';

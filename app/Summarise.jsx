@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'; // import SafeAreaView from safe-area-context
 import * as DocumentPicker from 'expo-document-picker';
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from 'firebase/storage';
 import app from '../firebase.js';
-import { FIREBASE_API_KEY } from '@env';
+import { IP_ADDRESS, PORT } from '@env';
+import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
+import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
+
 const Summarise = () => {
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [summary, setSummary] = useState(null);
 
-  console.log(fileURL);
-  
-  
-  
+  const toast = useToast();
+
   const uploadFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -24,7 +28,7 @@ const Summarise = () => {
       if (result.assets && result.assets.length > 0) {
         setFile(result.assets[0]);
       }
-      
+      await storeFileInFirebase();
     } catch (error) {
       Alert.alert('Error', 'An error occurred while picking the file.');
     }
@@ -32,22 +36,22 @@ const Summarise = () => {
 
   const generateSummary = async () => {
     try {
-      await storeFileInFirebase();
-      const result = await fetch("http://127.0.0.1:5000/api/summary/pdf", {
+      setLoading(true);
+      const result = await fetch(`${IP_ADDRESS}:${PORT}/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ pdf_url: fileURL }),
-      })
+      });
 
       const data = await result.json();
-      console.log(data);
-    }
-    catch(err) {
+      setSummary(data.response);
+      setLoading(false);
+    } catch (err) {
       Alert.alert('Error', 'An error occurred while generating the summary.');
     }
-  }
+  };
 
   const storeFileInFirebase = async () => {
     if (!file) {
@@ -70,7 +74,6 @@ const Summarise = () => {
       'state_changed',
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
       },
       (error) => {
         setUploading(false);
@@ -85,34 +88,57 @@ const Summarise = () => {
       }
     );
 
-    return
+    return;
   };
 
   return (
-    <View style={styles.container} className="gap-4">
-      <Text style={styles.title}>Upload a Document to Summarise</Text>
-      <Text style={styles.subtitle}>
-        Upload a PDF or document file, and we’ll summarise it for you.
-      </Text>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1 }]} // Ensure content grows
+        >
+          <Text style={styles.title}>Upload a Document to Summarise</Text>
+          <Text style={styles.subtitle}>
+            Upload a PDF or document file, and we’ll summarise it for you.
+          </Text>
 
-      <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
-        <Text style={styles.buttonText}>Select Document</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
+            <Text style={styles.buttonText}>Select Document</Text>
+          </TouchableOpacity>
 
-      {file && (
-        <View style={styles.fileContainer}>
-          <Text style={styles.fileTitle}>Selected File:</Text>
-          <Text style={styles.fileName}>{file.name}</Text>
-        </View>
-      )}
-      
-      {file && (
-        <TouchableOpacity style={[styles.button, styles.shadow]} onPress={generateSummary}>
-          <Text style={styles.buttonText}className="text-red-100">Generate Summary</Text>
-        </TouchableOpacity>
-      )}
+          {(file && !summary) && (
+            <View style={styles.fileContainer}>
+              <Text style={styles.fileTitle}>Selected File:</Text>
+              <Text style={styles.fileName}>{file.name}</Text>
+            </View>
+          )}
 
-    </View>
+          {(file && !summary) && (
+            <TouchableOpacity style={[styles.button, styles.shadow]} onPress={generateSummary}>
+              <Text style={styles.buttonText}>Generate Summary</Text>
+            </TouchableOpacity>
+          )}
+
+          {summary && summary.length > 0 && (
+            <View style={styles.summaryContainer}>
+              {summary.map((item, index) => (
+                <View key={index} style={styles.summaryItem}>
+                  <Text style={styles.summaryHeading}>{item.heading}</Text>
+                  <Text style={styles.summaryText}>{item.summary}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {loading && (
+            <VStack space="xs">
+              <Spinner size="large" color="$indigo600" />
+              <Text>Loading</Text>
+            </VStack>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
@@ -122,7 +148,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f5f7',
     padding: 20,
     alignItems: 'center',
-    // gap: 4,
   },
   title: {
     fontSize: 24,
@@ -175,6 +200,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#7f8c8d',
     textAlign: 'center',
+  },
+  summaryContainer: {
+    marginTop: 20,
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#ecf0f1',
+    borderRadius: 15,
+  },
+  summaryItem: {
+    marginBottom: 20,
+  },
+  summaryHeading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  summaryText: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    marginTop: 5,
   },
 });
 
