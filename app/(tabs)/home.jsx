@@ -12,12 +12,13 @@ import { useNavigation, useRouter,router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { removeItem } from '../../scripts/asyncStorage';
-
+const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
+  
   return (
     <ScrollView>
-        <SafeAreaView style={{flex:1,backgroundColor:'#f0f2ff'}}>
+      <SafeAreaView style={{flex:1,backgroundColor:primary}}>
       <View style={styles.topbar}>
         <Ionicons name="menu" size={25} color="#00000" />
         <Text style={{ fontWeight: 'bold',fontSize:20,color:'#00126b'}}>EduArc</Text>
@@ -74,36 +75,30 @@ const styles = StyleSheet.create({
     maxHeight:70,
     alignItems:'center',
     padding:10,
-    backgroundColor:'#f0f2ff',
+    backgroundColor:primary,
 
     // backgroundColor:'grey',
   },
-  // scroll:{
-  //   backgroundColor:'#e6e6fa',
-  //   padding:10,
-  //   flex:1,
-  //   gap:10,
-  // },
   welcome:{
     flexDirection:'column',
     padding:10,
-    backgroundColor:'#f0f2ff',
+    backgroundColor:primary,
     // backgroundColor:'#0504aa'
 
 
   },
   toolContainer:{
     
-    margin:10,  
+    marginHorizontal:10,  
     padding:10,  
-    backgroundColor:'#f0f2ff',
-    borderWidth:1,
-    borderColor:'white',
-    shadowColor: '#00126b', // Shadow for iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5, // Shadow for Android
+    backgroundColor:primary,
+    // borderWidth:1,
+    // borderColor:'white',
+    // shadowColor: '#00126b', // Shadow for iOS
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 5, // Shadow for Android
   },
   tools:{
     flexDirection:'row',
@@ -117,34 +112,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 44,
   },
-  card:{
-    backgroundColor: '#ffff',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    paddingVertical:15,
-    margin: 8,
-
-  },
   cardContainer:{
-    paddingBottom: 20,
-    backgroundColor:'#f0f2ff'
+    paddingBottom: 10,
+    backgroundColor:primary
   },
   courselist:{
     flex:1,
-    backgroundColor:'#f0f2ff',
-    borderWidth:1,
-    borderColor:'white',
-    shadowColor: '#000', // Shadow for iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5, // Shadow for Android
-    margin:10
+    backgroundColor:primary,
+    // borderWidth:1,
+    // borderColor:'white',
+    // shadowColor: '#000', // Shadow for iOS
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 5, // Shadow for Android
+    marginHorizontal:10
   }
 })

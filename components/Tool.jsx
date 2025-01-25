@@ -17,12 +17,12 @@ export default Tool
 const styles = StyleSheet.create({
   
   button: {
-    backgroundColor: '#f0f2ff', // White background
+    backgroundColor: '#ffff', // White background
     paddingVertical: 5,
     paddingHorizontal: 12,
     borderRadius:10,
     alignItems: 'center',
-    borderWidth:2,
+    // borderWidth:2,
     borderColor:'white',
     shadowColor: '#00126b', // Shadow for iOS
     shadowOffset: { width: 0, height: 2 },

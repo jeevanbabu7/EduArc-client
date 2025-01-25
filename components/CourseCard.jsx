@@ -28,15 +28,16 @@ export default CourseCard;
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffff',
+    // borderWidth:0.2,
+    // borderColor:'#00126b',
     borderRadius: 8,
-    shadowColor: '#00126b',
+    shadowColor: '#00126b', // Shadow for iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 3,
-    margin: 8,
-
-    paddingVertical: 15,
+    elevation: 5, // Shadow for Android
+    margin: 5,
+    paddingVertical: 10,
     paddingHorizontal: 10,
   },
   content: {
