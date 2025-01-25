@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
+import { ButtonText, Input } from '@gluestack-ui/themed';
+import { InputField } from '@gluestack-ui/themed';
+import { Button } from '@gluestack-ui/themed';
+import { IP_ADDRESS, PORT } from '@env';
 
 const VideoSummary = () => {
   const [file, setFile] = useState(null);
+  const [videoURL, setVideoURL] = useState(null);
+  const [videoSummary, setVideoSummary] = useState([]);
 
-  // Function to pick a video file
   const uploadFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: 'video/*', // Accept video files
+        type: 'video/*',
         copyToCacheDirectory: true,
       });
 
@@ -18,6 +23,32 @@ const VideoSummary = () => {
       }
     } catch (error) {
       Alert.alert('Error', 'An error occurred while picking the video file.');
+    }
+  };
+
+  const handleChange = (e) => {
+    setVideoURL(e.target.value);
+  };
+
+  const handleSend = async () => {
+    try {
+      if (!videoURL) {
+        Alert.alert('Error', 'Please enter a valid URL.');
+        return;
+      }
+
+      const response = await fetch(`${IP_ADDRESS}:${PORT}/api/summary/video`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ video_url: videoURL }),
+      });
+
+      const data = await response.json();
+      setVideoSummary(data.response);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -32,10 +63,33 @@ const VideoSummary = () => {
         <Text style={styles.buttonText}>Upload Video</Text>
       </TouchableOpacity>
 
-      {file && (
-        <View style={styles.fileContainer}>
-          <Text style={styles.fileTitle}>Uploaded Video:</Text>
-          <Text style={styles.fileName}>{file.name}</Text>
+      <Text style={{ marginTop: 20, ...styles.subtitle }}>or</Text>
+
+      <View style={styles.inputContainer}>
+        <Input
+          variant="outline"
+          size="lg"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+          style={styles.inputField}
+        >
+          <InputField placeholder="Video url here.." onChange={handleChange} />
+        </Input>
+        <Button style={styles.submitButton} onPress={handleSend}>
+          <ButtonText>Send</ButtonText>
+        </Button>
+      </View>
+
+      {videoSummary.length > 0 && (
+        <View style={styles.summaryContainer}>
+          <Text style={styles.summaryTitle}>Video Summary</Text>
+          {videoSummary.map((item, index) => (
+            <View key={index} style={styles.summaryItem}>
+              <Text style={styles.summaryHeading}>{item.heading}</Text>
+              <Text style={styles.summaryText}>{item.summary}</Text>
+            </View>
+          ))}
         </View>
       )}
     </View>
@@ -82,24 +136,50 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  fileContainer: {
-    marginTop: 30,
+  inputContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
     width: '100%',
+  },
+  inputField: {
+    width: '70%',
+    marginRight: 10,
+  },
+  submitButton: {
+    width: '30%',
+    paddingVertical: 10,
+    borderRadius: 15,
+    backgroundColor: '#282a2d',
+  },
+  summaryContainer: {
+    marginTop: 30,
     padding: 15,
     backgroundColor: '#ecf0f1',
     borderRadius: 15,
+    width: '100%',
     alignItems: 'center',
   },
-  fileTitle: {
+  summaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2c3e50',
     marginBottom: 10,
   },
-  fileName: {
+  summaryItem: {
+    marginBottom: 15,
+  },
+  summaryHeading: {
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#34495e',
+  },
+  summaryText: {
+    fontSize: 14,
     color: '#7f8c8d',
-    textAlign: 'center',
+    marginTop: 5,
   },
 });
 
