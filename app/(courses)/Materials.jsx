@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
 import MaterialCard from '../../components/MaterialCard';
+import { useRouter } from 'expo-router';
 
 function Materials() {
   const handleUpload = () => {
@@ -9,11 +10,13 @@ function Materials() {
     //save materials locally for each course in different folders and render it here 
   };
 
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       {/* Material List */}
       <FlatList
-        style={styles.cardContainer}
+        style={styles.container}
         data={[
           { key: 'Module 1' },
           { key: 'Module 2' },

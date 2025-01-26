@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#00126b",
     backgroundColor: "#0504aa",
     // backgroundColor: "#3D8FEF",
+    // backgroundColor: "#0961F5",
 
 
     borderRadius: 15,

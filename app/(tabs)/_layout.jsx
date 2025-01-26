@@ -10,8 +10,8 @@ const TabIcon = ({ icon, focused }) => {
     <Image
       source={icon}
       style={{
-        width: 20,
-        height: 20,
+        width: 25,
+        height: 25,
         tintColor: focused ? '#00126b' : 'black',
       }}
     />
@@ -26,11 +26,18 @@ const TabsLayout = () => {
         tabBarActiveTintColor: '#00126b',
         tabBarInactiveTintColor: 'black',
         tabBarStyle: {
-          backgroundColor: 'white',
+          backgroundColor: '#F5F9FF',
           // borderTopLeftRadius: 20,
           // borderTopRightRadius: 20,
           // position: 'absolute',
-          height: 50,
+          height: 60,
+          display: 'flex',
+          paddingTop: 10,
+          fontSize: 10,
+          paddingBottom: 10,
+          // flexDirection: 'row',
+          // justifyContent: 'space-between',
+          // alignItems: 'center',
           // paddingTop: 8, // Add some padding for vertical alignment
         },
         tabBarIconStyle: {
@@ -38,8 +45,8 @@ const TabsLayout = () => {
           alignItems: 'center', // Center the icons vertically
         },
         tabBarLabelStyle: {
-          fontSize: 11,
-          marginBottom: 5,
+          fontSize: 12,
+          marginBottom: 15,
         },
       }}
     >

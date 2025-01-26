@@ -20,7 +20,7 @@ const Home = () => {
   
   return (
     <ScrollView>
-      <SafeAreaView style={{flex:1,backgroundColor:primary}}>
+      <SafeAreaView style={{flex:1,backgroundColor: "#F5F9FF"}}>
       <View style={styles.topbar}>
         <Ionicons name="menu" size={25} color="#00000" />
         <Text style={{ fontWeight: 'bold',fontSize:20,color:'#00126b'}}>EduArc</Text>
@@ -33,7 +33,7 @@ const Home = () => {
 
       <View><Card/></View>
       
-      <View style={styles.toolContainer}>
+      <View style={styles.toolContainer} >
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
         <View style={styles.tools} className="flex flex-row justify-center items-center gap-10">
             <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
@@ -80,14 +80,14 @@ const styles = StyleSheet.create({
     maxHeight:70,
     alignItems:'center',
     padding:10,
-    backgroundColor:primary,
+    backgroundColor: "transparent",
 
     // backgroundColor:'grey',
   },
   welcome:{
     flexDirection:'column',
     padding:10,
-    backgroundColor:primary,
+    backgroundColor: "transparent",
     // backgroundColor:'#0504aa'
 
 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     
     marginHorizontal:10,  
     padding:10,  
-    backgroundColor:primary,
+    backgroundColor: "transparent",
     // borderWidth:1,
     // borderColor:'white',
     // shadowColor: '#00126b', // Shadow for iOS
@@ -119,11 +119,11 @@ const styles = StyleSheet.create({
   },
   cardContainer:{
     paddingBottom: 10,
-    backgroundColor:primary
+    backgroundColor: "transparent",
   },
   courselist:{
     flex:1,
-    backgroundColor:primary,
+    backgroundColor:"transparent",
     // borderWidth:1,
     // borderColor:'white',
     // shadowColor: '#000', // Shadow for iOS
