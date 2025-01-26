@@ -9,7 +9,7 @@ import { IP_ADDRESS, PORT } from '@env';
 
 
 const ChatBot = () => {
-  // console.log(IP_ADDRESS);
+  console.log(IP_ADDRESS);
   
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');

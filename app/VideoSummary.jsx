@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { ButtonText, Input } from '@gluestack-ui/themed';
 import { InputField } from '@gluestack-ui/themed';
@@ -26,13 +26,13 @@ const VideoSummary = () => {
     }
   };
 
-  const handleChange = (e) => {
-    setVideoURL(e.target.value);
+  const handleChange = (text) => {
+    setVideoURL(text);
   };
 
   const handleSend = async () => {
     try {
-      if (!videoURL) {
+      if (videoURL == "") {
         Alert.alert('Error', 'Please enter a valid URL.');
         return;
       }
@@ -42,57 +42,61 @@ const VideoSummary = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ video_url: videoURL }),
+        body: JSON.stringify({ video_url : videoURL, 'output_file_name': 'output' }),
       });
 
       const data = await response.json();
-      setVideoSummary(data.response);
+      setVideoSummary(() => {
+        if(data.ok == true) {
+          return data.response;
+        }
+        return [];
+      });
     } catch (err) {
       console.log(err);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Upload a Video to Summarise</Text>
-      <Text style={styles.subtitle}>
-        Upload a video file, and we’ll summarise it for you.
-      </Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+  <View style={styles.container}>
+    <Text style={styles.title}>Upload a Video to Summarise</Text>
+    <Text style={styles.subtitle}>
+      Upload a video file, and we’ll summarise it for you.
+    </Text>
 
-      <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
-        <Text style={styles.buttonText}>Upload Video</Text>
-      </TouchableOpacity>
+    <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
+      <Text style={styles.buttonText}>Upload Video</Text>
+    </TouchableOpacity>
 
-      <Text style={{ marginTop: 20, ...styles.subtitle }}>or</Text>
+    <Text style={{ marginTop: 20, ...styles.subtitle }}>or</Text>
 
-      <View style={styles.inputContainer}>
-        <Input
-          variant="outline"
-          size="lg"
-          isDisabled={false}
-          isInvalid={false}
-          isReadOnly={false}
-          style={styles.inputField}
-        >
-          <InputField placeholder="Video url here.." onChange={handleChange} />
-        </Input>
-        <Button style={styles.submitButton} onPress={handleSend}>
-          <ButtonText>Send</ButtonText>
-        </Button>
-      </View>
-
-      {videoSummary.length > 0 && (
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryTitle}>Video Summary</Text>
-          {videoSummary.map((item, index) => (
-            <View key={index} style={styles.summaryItem}>
-              <Text style={styles.summaryHeading}>{item.heading}</Text>
-              <Text style={styles.summaryText}>{item.summary}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+    <View style={styles.inputContainer}>
+      <Input variant="outline" size="lg" isDisabled={false} isInvalid={false} isReadOnly={false} style={styles.inputField}>
+        <InputField 
+          placeholder="Video url here.." 
+          value={videoURL} 
+          onChangeText={handleChange} 
+        />
+      </Input>
+      <Button style={styles.submitButton} onPress={handleSend}>
+        <ButtonText>Send</ButtonText>
+      </Button>
     </View>
+
+    {videoSummary.length > 0 && (
+      <View style={styles.summaryContainer}>
+        <Text style={styles.summaryTitle}>Video Summary</Text>
+        {videoSummary.map((item, index) => (
+          <View key={index} style={styles.summaryItem}>
+            <Text style={styles.summaryHeading}>{item.heading}</Text>
+            <Text style={styles.summaryText}>{item.summary}</Text>
+          </View>
+        ))}
+      </View>
+    )}
+  </View>
+</ScrollView>
   );
 };
 
@@ -161,6 +165,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: '100%',
     alignItems: 'center',
+    overflow: 'scroll',
   },
   summaryTitle: {
     fontSize: 18,
@@ -181,6 +186,11 @@ const styles = StyleSheet.create({
     color: '#7f8c8d',
     marginTop: 5,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 50,  // Adjust as needed
+  },
+  
 });
 
 export default VideoSummary;

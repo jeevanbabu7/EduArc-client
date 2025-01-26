@@ -37,7 +37,7 @@ const Summarise = () => {
   const generateSummary = async () => {
     try {
       setLoading(true);
-      const result = await fetch(`http://${IP_ADDRESS}:${PORT}/api/summary/pdf`, {
+      const result = await fetch(`${IP_ADDRESS}:${PORT}/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,9 +93,9 @@ const Summarise = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, overflow: 'scroll' }}>
         <ScrollView
-          contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1 }]} // Ensure content grows
+          contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1, overflow: 'scroll',paddingBottom: 50 }]} // Ensure content grows
         >
           <Text style={styles.title}>Upload a Document to Summarise</Text>
           <Text style={styles.subtitle}>
@@ -113,7 +113,7 @@ const Summarise = () => {
             </View>
           )}
 
-          {(file && !summary) && (
+          {(file && !summary && !loading) && (
             <TouchableOpacity style={[styles.button, styles.shadow]} onPress={generateSummary}>
               <Text style={styles.buttonText}>Generate Summary</Text>
             </TouchableOpacity>
@@ -121,6 +121,7 @@ const Summarise = () => {
 
           {summary && summary.length > 0 && (
             <View style={styles.summaryContainer}>
+              <Text style={styles.title}>Summary</Text>
               {summary.map((item, index) => (
                 <View key={index} style={styles.summaryItem}>
                   <Text style={styles.summaryHeading}>{item.heading}</Text>
@@ -131,7 +132,7 @@ const Summarise = () => {
           )}
 
           {loading && (
-            <View className="w-full p-15">
+            <View className="w-full p-15 flex flex-col justify-center items-center" sty>
               <Spinner size="large" color="$indigo600" />
               <Text className="text-lg text-slate-700">Loading</Text>
             </View>
