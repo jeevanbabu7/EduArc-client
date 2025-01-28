@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import io from "socket.io-client";
 import '../global.css'
-import { IP_ADDRESS, PORT } from '@env';
+import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from '@env';
 
 
 const ChatBot = () => {
@@ -37,7 +37,7 @@ const ChatBot = () => {
   }, [socket]);
     
     useEffect(() => {
-        const newSocket = io.connect(`${IP_ADDRESS}:${3000}`);
+        const newSocket = io.connect(`http://192.168.90.18:${3000}`);
         setSocket(newSocket);
 
         return () => newSocket.close();

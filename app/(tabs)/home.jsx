@@ -12,6 +12,8 @@ import { useNavigation, useRouter,router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { removeItem } from '../../scripts/asyncStorage';
+import { InputGroup, InputField, InputLeftAddon, Input } from "@gluestack-ui/themed";
+
 const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
@@ -21,26 +23,71 @@ const Home = () => {
   return (
     <ScrollView>
       <SafeAreaView style={{flex:1,backgroundColor: "#F5F9FF"}}>
-      <View style={styles.topbar}>
-        <Ionicons name="menu" size={25} color="#00000" />
-        <Text style={{ fontWeight: 'bold',fontSize:20,color:'#00126b'}}>EduArc</Text>
-        <Ionicons name="notifications" size={25} color="#00000" />
-      </View> 
-      <View style={styles.welcome}>
-        <Text style={{fontSize: 18,fontWeight: 'bold'}}>Welcome Back,</Text>
-        <Text style={{fontSize: 18,fontWeight: 'bold'}}>User</Text>
-      </View>
+      <View className="bg-[#4D75F9]" style={styles.topContainer}>
+        <View style={styles.topbar}>
+          <Ionicons name="menu" size={25} color="#FFFFFF" />
+          <Text style={{ fontWeight: 'bold',fontSize:20, color: "#FFFFFF"}}>EduArc</Text>
+          <Ionicons name="notifications" size={25} color="#00000" />
+        </View> 
+        <View style={styles.welcome}>
+          <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>Welcome Back,</Text>
+          <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>User</Text>
+        </View>
+        <View className="flex flex-row justify-center items-center h-32">
+          <Input
+            variant="outline"
+            size="md"
+            isDisabled={false}
+            isInvalid={false}
+            isReadOnly={false}
+            isFocused={true}
+            className="bg-white w-96  flex flex-row justify-center items-center rounded-xl"
+            style={{ borderRadius: 20, height: 40 }}
+          >
+            <InputField 
+              placeholder="Search.." 
+              style={{ color: "#FFFFFF" }}   
+            />
+            <Ionicons 
+              name="search" 
+              size={20} 
+              className="mr-4" 
+            />
+          </Input>
 
-      <View><Card/></View>
+        </View>
+      </View>
+      {/* <View><Card/></View> */}
+
       
       <View style={styles.toolContainer} >
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
-        <View style={styles.tools} className="flex flex-row justify-center items-center gap-10">
-            <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
-            <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
-            <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
-            <Tool title={'More'} iconSource={more}/>
-        </View>
+        <View className="flex flex-col gap-2">
+          <View className="flex flex-row gap-2">
+                <View className="flex-1">
+                  <Tool
+                    title={'Chatbot'}
+                    iconSource={bot}
+                    onPress={() => router.push('/Chatbot')}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Tool
+                    title={'Upload'}
+                    iconSource={upload}
+                    onPress={() => router.push('/Upload')}
+                  />
+                </View>
+              </View>
+              <View className="flex flex-row gap-2">
+                <View className="flex-1">
+                <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
+                </View>
+                <View className="flex-1">
+                <Tool title={'More'} iconSource={more}/>
+                </View>
+              </View>
+          </View>
         {/* <Text className="text-red-400">Hii</Text> */}
         
       </View>
@@ -58,7 +105,7 @@ const Home = () => {
         renderItem={({ item }) => (
           <CourseCard
             title={String(item.key)}
-            onPress={() => router.push('(courses)/Materials')} // Pass onPress handler
+            onPress={() => router.push(`(courses)/Materials?courseName=${item.key}`)} // Pass onPress handler
           />
         )}
         keyExtractor={(item) => item.key} // Add a keyExtractor for unique keys
@@ -88,6 +135,7 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     padding:10,
     backgroundColor: "transparent",
+    fontColor: "#FFFFFF",
     // backgroundColor:'#0504aa'
 
 
@@ -132,5 +180,9 @@ const styles = StyleSheet.create({
     // shadowRadius: 4,
     // elevation: 5, // Shadow for Android
     marginHorizontal:10
+  },
+  topContainer: {
+    borderBottomLeftRadius: 40, 
+    borderBottomRightRadius: 40,
   }
 })

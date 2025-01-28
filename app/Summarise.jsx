@@ -4,7 +4,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from 'firebase/storage';
 import app from '../firebase.js';
-import { IP_ADDRESS, PORT } from '@env';
+import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from '@env';
 import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
 import '../global.css'
@@ -37,7 +37,7 @@ const Summarise = () => {
   const generateSummary = async () => {
     try {
       setLoading(true);
-      const result = await fetch(`${IP_ADDRESS}:${PORT}/api/summary/pdf`, {
+      const result = await fetch(`http://192.168.90.18:${PORT}/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const Summarise = () => {
   };
 
   return (
-    <SafeAreaProvider>
+    
       <SafeAreaView style={{ flex: 1, overflow: 'scroll' }}>
         <ScrollView
           contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1, overflow: 'scroll',paddingBottom: 50 }]} // Ensure content grows
@@ -139,7 +139,7 @@ const Summarise = () => {
           )}
         </ScrollView>
       </SafeAreaView>
-    </SafeAreaProvider>
+
   );
 };
 
@@ -149,6 +149,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f5f7',
     padding: 20,
     alignItems: 'center',
+    overflow: "scroll",
+    height: "100%"
   },
   title: {
     fontSize: 24,
@@ -208,6 +210,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#ecf0f1',
     borderRadius: 15,
+    overflow: "scroll"
   },
   summaryItem: {
     marginBottom: 20,
