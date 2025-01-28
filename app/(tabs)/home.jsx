@@ -105,7 +105,7 @@ const Home = () => {
         renderItem={({ item }) => (
           <CourseCard
             title={String(item.key)}
-            onPress={() => router.push(`(courses)/Materials?courseName=${item.key}`)} // Pass onPress handler
+            onPress={() => router.push(`(courses)/Materials`)} // Pass onPress handler
           />
         )}
         keyExtractor={(item) => item.key} // Add a keyExtractor for unique keys

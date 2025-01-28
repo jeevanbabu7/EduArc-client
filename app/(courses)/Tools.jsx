@@ -16,19 +16,42 @@ const Tools = () => {
     <ScrollView style={{backgroundColor:'white'}}>
       <View style={styles.toolContainer}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',marginBottom:10}}>Explore Our Tools</Text></View>
-        <View className="flex flex-col gap-10 pt-10">
-            <View className="flex flex-row gap-6 justify-center">
-              <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
-              <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
-              <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
-              <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('/VideoSummary')}/>
+        <View className="flex flex-colpt-10">
+            <View className="flex flex-col gap-4 justify-center">
+              <View className="flex flex-row gap-2">
+                  <View className="flex-1">
+                    <Tool title={'Chatbot'} iconSource={bot} onPress={() => router.push('/Chatbot')} />
+                  </View>
+                  <View className="flex-1">
+                    <Tool title={'Upload'} iconSource={upload} onPress={() => router.push('/Upload')}/>
+                  </View>
+                </View>
+              <View className="flex flex-row gap-2">
+                  <View className="flex-1">
+                    <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
+                  </View>
+                  <View className="flex-1">
+                    <Tool title={'Video Summary'} iconSource={video} onPress={() => router.push('/VideoSummary')}/>
+                  </View>
+              </View>
+
+              <View className="flex flex-row gap-2">
+                  <View className="flex-1">
+                    <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
+                  </View>
+                  <View className="flex-1">
+                    <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(flashcard)/flashcardhome')}/>
+                  </View>
+              </View>
+              <View className="flex flex-row gap-2">
+                  <View className="flex-1">
+                    <Tool title={'QP Analysis'} iconSource={analysis} onPress={() => router.push('(qp)/QpAnalysis')}/>
+                  </View>
+                  <View className="flex-1">
+                  <Tool title={'QP Prediction'} iconSource={prediction} onPress={() => router.push('(qp)/QpPrediction')}/>
+                  </View>
+              </View>
               
-            </View>
-            <View className="flex flex-row gap-4 justify-center flex-wrap">
-              <Tool title={'Quizes'} iconSource={quiz} onPress={() => router.push('(quiz)/quizhomescreen')}/>
-              <Tool title={'Flash Card'} iconSource={flash} onPress={() => router.push('(flashcard)/flashcardhome')}/>
-              <Tool title={'QP Analysis'} iconSource={analysis} onPress={() => router.push('(qp)/QpAnalysis')}/>
-              <Tool title={'QP Prediction'} iconSource={prediction} onPress={() => router.push('(qp)/QpPrediction')}/>
             </View>
         </View>
       </View>

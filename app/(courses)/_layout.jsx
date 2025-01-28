@@ -32,7 +32,7 @@ export default function CourseLayout() {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#0504aa', // Blue theme
+    backgroundColor: '#4D75F9', // Blue theme
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   tabBar: {
-    backgroundColor: '#0504aa', // Blue theme for the tab bar
+    backgroundColor: '#4D75F9', // Blue theme for the tab bar
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
