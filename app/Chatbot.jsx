@@ -17,6 +17,65 @@ const ChatBot = () => {
   const [socket, setSocket] = useState(null);
   console.log(keyPressed);
   
+
+  useEffect(() => {
+    const fetchPreviousMessages = async () => {
+      try {
+        const response = await fetch(`http://192.168.1.6:3000/api/chat//get-messages/6784f44000f0f6bfc930954f`);
+        const data = await response.json();
+        
+        if(data.messages.length > 0) {
+          setMessages((prev) => {
+            const messages = data.messages.map((message) => {
+              if(message.sender === 'user') {
+                return {
+                  _id: Math.random().toString(36).substring(7),
+                  text: message.content,
+                  createdAt: message.createdAt,
+                  user: {
+                    _id: 1,
+                    name: 'User',
+                    avatar: 'https://placekitten.com/100/100',
+                  },
+                }
+              } else {
+                return {
+                  _id: Math.random().toString(36).substring(7),
+                  text: message.content,
+                  createdAt: message.createdAt,
+                  user: {
+                    _id: 2,
+                    name: 'ChatBot',
+                    avatar: 'https://placekitten.com/100/100',
+                  },
+                }
+              }
+          })
+          messages.reverse();
+          return messages.slice(0, 20);
+        });
+        }else {
+          setMessages([
+            {
+              _id: Math.random().toString(36).substring(7),
+              text: 'Hello! How can I assist you today?',
+              createdAt: new Date(),
+              user: {
+                _id: 2,
+                name: 'ChatBot',
+                avatar: 'https://placekitten.com/100/100',
+              },
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchPreviousMessages();
+  }, []);
+  
   useEffect(() => {
     if (!socket) return;
     socket.on('model_response', (message) => {
@@ -37,26 +96,12 @@ const ChatBot = () => {
   }, [socket]);
     
     useEffect(() => {
-        const newSocket = io.connect(`http://192.168.90.18:${3000}`);
+        const newSocket = io.connect(`http://192.168.1.6:${3000}`);
         setSocket(newSocket);
 
         return () => newSocket.close();
     }, []);
 
-  React.useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello! How can I assist you today?',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'ChatBot',
-          avatar: 'https://placekitten.com/100/100',
-        },
-      },
-    ]);
-  }, []);
 
   
   const handleSend = () => {
