@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import OnboardingScreen from '../components/OnboardingScreen';
 import { getItem } from '../scripts/asyncStorage';
-
+import { useUser } from '../context/userContext';
 
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config';
@@ -42,6 +42,13 @@ export default function Index() {
   // }
 
   // return null; // Just render nothing until redirect happens
+  
+  const {user} = useUser();
+  if(user) {
+    router.push('/(tabs)/home');
+    return null;
+  }
+ 
   return <>
     <GluestackUIProvider config={config}>
       <OnboardingScreen />

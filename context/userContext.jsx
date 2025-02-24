@@ -2,6 +2,7 @@ import { ID } from "react-native-appwrite";
 import { createContext, useContext, useEffect, useState } from "react";
 import { account } from "../lib/appwrite/appwrite";
 import { toast } from "../lib/appwrite/toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const UserContext = createContext();
@@ -14,9 +15,18 @@ export default function UserProvider(props) {
   const [user, setUser] = useState(null);
 
   async function login(email, password) {
-    const loggedIn = await account.createEmailPasswordSession(email, password);
-    setUser(loggedIn);
-    toast('Welcome back. You are logged in');
+    try {
+      const session = await account.createEmailPasswordSession(email, password);
+      const userDetails = await account.get(); 
+
+      setUser(userDetails);
+      await AsyncStorage.setItem("user", JSON.stringify(userDetails)); // Store user data
+      toast("Welcome back. You are logged in");
+
+      return { success: true, user: userDetails };
+    } catch (error) {
+      toast("Login failed: " + error.message);
+    }
   }
 
   async function logout() {
@@ -29,7 +39,6 @@ export default function UserProvider(props) {
     try {
     
       const newUser = await account.create(ID.unique(), email, password);
-      await login(email, password);
       toast('Account created successfully');
       
       return { success: true, user: newUser };

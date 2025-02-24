@@ -14,6 +14,7 @@ const LoginForm = () => {
 
   const handleSubmit = async () => {
     // Alert.alert('Form submitted with:'+ email + password);
+    
     if (!email || !password) {
       setErrorMessage('All fields are required.');
     }else {
