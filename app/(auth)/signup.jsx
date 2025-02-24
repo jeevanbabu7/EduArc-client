@@ -70,7 +70,7 @@ const SignUpForm = () => {
               <Text style={styles.header}>Register</Text>
               <Pressable onPress={() => router.push('/(auth)/signin')}>
                 <Text style={styles.footer}>
-                  Don't have an account? <Text style={styles.link}>Sign Up</Text>
+                  Already registered ? <Text style={styles.link}>Sign in</Text>
                 </Text>
                 </Pressable>
             </View>
