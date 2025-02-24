@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, Alert, Pressable } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import {auth} from '../../firebase.js';
 import { useRouter } from 'expo-router';
+import { useUser } from '../../context/userContext.jsx';
+
 const SignUpForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
+  const user = useUser();
 
   const handleSubmit = async () => {
     // Alert.alert('Form submitted with:'+ email + password);
@@ -18,23 +21,36 @@ const SignUpForm = () => {
       setErrorMessage('Passwords do not match.');
     } else {
       setErrorMessage('');
-      try {
+      // firebase auth
+      // try {
 
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      //   const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
-        const user = userCredential.user;
+      //   const user = userCredential.user;
   
-        if (user) {
-          console.log('Form submitted with:', { email, password });
-          Alert.alert('Success', 'Signed in successfully.');
-          router.push('(tabs)/home');
+      //   if (user) {
+      //     console.log('Form submitted with:', { email, password });
+      //     Alert.alert('Success', 'Signed in successfully.');
+      //     router.push('(tabs)/home');
+      //   } else {
+      //     setErrorMessage('An error occurred while signing in.');
+      //     Alert.alert('Error', 'An error occurred while signing in.');
+      // //   }
+      // } catch (error) {
+      //   setErrorMessage(error.message);
+      //   Alert.alert('Error', error.message);
+      // }
+
+      // appwrite auth
+      try {
+        const res = await user.register(email, password);
+        if(res.success) {
+          router.push('/(auth)/signin');
         } else {
-          setErrorMessage('An error occurred while signing in.');
-          Alert.alert('Error', 'An error occurred while signing in.');
+          setErrorMessage(res.error);
         }
-      } catch (error) {
-        setErrorMessage(error.message);
-        Alert.alert('Error', error.message);
+      }catch(err) {
+        console.error(err);
       }
     }
   };
@@ -46,7 +62,7 @@ const SignUpForm = () => {
         style={{ flex: 1 }}
       >
         <View style={styles.innerContainer}>
-          <Text style={styles.header}>Login</Text>
+          <Text style={styles.header}>Register</Text>
 
           {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
 

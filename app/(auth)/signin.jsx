@@ -3,12 +3,14 @@ import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, KeyboardAvoidi
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import {auth} from '../../firebase.js';
 import { useRouter } from 'expo-router';
+import { useUser } from '../../context/userContext.jsx';
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
+  const user = useUser(); 
 
   const handleSubmit = async () => {
     // Alert.alert('Form submitted with:'+ email + password);
@@ -16,24 +18,37 @@ const LoginForm = () => {
       setErrorMessage('All fields are required.');
     }else {
       setErrorMessage('');
-      try {
+      // try {
 
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      //   const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
-        const user = userCredential.user;
+      //   const user = userCredential.user;
   
-        if (user) {
-          console.log('Form submitted with:', { email, password });
-          Alert.alert('Success', 'Signed in successfully.');
-          router.push('(tabs)/home');
+      //   if (user) {
+      //     console.log('Form submitted with:', { email, password });
+      //     Alert.alert('Success', 'Signed in successfully.');
+      //     router.push('(tabs)/home');
+      //   } else {
+      //     setErrorMessage('An error occurred while signing in.');
+      //     Alert.alert('Error', 'An error occurred while signing in.');
+      //   }
+      // } catch (error) {
+      //   setErrorMessage(error.message);
+      //   Alert.alert('Error', error.message);
+      // }
+
+      // appwrite auth
+      try {
+        const res = await user.login(email, password);
+        if(res.success) {
+          router.push('/(tabs)/home');
         } else {
-          setErrorMessage('An error occurred while signing in.');
-          Alert.alert('Error', 'An error occurred while signing in.');
+          setErrorMessage(res.error);
         }
-      } catch (error) {
-        setErrorMessage(error.message);
-        Alert.alert('Error', error.message);
+      }catch(err) {
+        console.error(err);
       }
+      
     }
   };
   
