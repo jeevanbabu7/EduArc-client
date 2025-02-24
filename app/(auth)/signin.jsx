@@ -65,7 +65,7 @@ const LoginForm = () => {
 
           <Button title="Submit" onPress={handleSubmit} />
 
-          <Pressable onPress={() => router.push('/auth/signup')}>
+          <Pressable onPress={() => router.push('/(auth)/signup')}>
             <Text style={styles.footer}>
               Don't have an account? <Text style={styles.link}>Sign Up</Text>
             </Text>

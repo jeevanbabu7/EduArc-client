@@ -4,7 +4,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { ButtonText, Input } from '@gluestack-ui/themed';
 import { InputField } from '@gluestack-ui/themed';
 import { Button } from '@gluestack-ui/themed';
-import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from '@env';
+import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants';
 
 const VideoSummary = () => {
   const [file, setFile] = useState(null);

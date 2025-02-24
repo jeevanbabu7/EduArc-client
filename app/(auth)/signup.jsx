@@ -73,10 +73,11 @@ const SignUpForm = () => {
           />
 
           <Button title="Submit" onPress={handleSubmit} />
-
-          <Text style={styles.footer}>
-            Don't have an account? <Text style={styles.link}>Sign Up</Text>
-          </Text>
+          <Pressable onPress={() => router.push('/(auth)/signin')}>
+            <Text style={styles.footer}>
+              Don't have an account? <Text style={styles.link}>Sign Up</Text>
+            </Text>
+            </Pressable>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

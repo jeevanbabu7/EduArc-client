@@ -45,6 +45,7 @@ export default function Index() {
   return <>
     <GluestackUIProvider config={config}>
       <OnboardingScreen />
+      
     </GluestackUIProvider >
   </>
 }

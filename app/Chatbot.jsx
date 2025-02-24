@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import io from "socket.io-client";
 import '../global.css'
-import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from '@env';
+import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants'
 
 
 const ChatBot = () => {

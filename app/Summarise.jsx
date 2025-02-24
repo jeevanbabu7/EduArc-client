@@ -4,7 +4,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from 'firebase/storage';
 import app from '../firebase.js';
-import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from '@env';
+import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants';
 import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
 import '../global.css'
