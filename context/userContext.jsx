@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { account } from "../lib/appwrite/appwrite";
 import { toast } from "../lib/appwrite/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { set } from "@gluestack-style/react";
 
 
 const UserContext = createContext();
@@ -13,6 +14,7 @@ export function useUser() {
 
 export default function UserProvider(props) {
   const [user, setUser] = useState(null);
+  const [msg, setMsg] = useState(null);
 
   async function login(email, password) {
     try {
@@ -47,13 +49,16 @@ export default function UserProvider(props) {
 
       if (error.code === 400) {
         toast("Invalid email or password format");
+        setMsg("Invalid email or password format");
       } else if (error.code === 409) {
         toast("This email is already in use");
+        setMsg("This email is already in use");
       } else {
         toast("Something went wrong. Please try again.");
+        setMsg("Something went wrong. Please try again.");
       }
   
-      return { success: false, error: error.message };
+      return { success: false, error: msg };
     }
   }
 

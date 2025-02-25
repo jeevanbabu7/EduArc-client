@@ -8,7 +8,13 @@ import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants';
 import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
 import '../global.css'
+import { ID, storage } from '../lib/appwrite/appwrite.js'
+import getEnvVars from '../config.js';
+
 const Summarise = () => {
+  const { PDF_BUCKET_ID } = getEnvVars();
+  console.log(PDF_BUCKET_ID);
+  
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -17,6 +23,30 @@ const Summarise = () => {
   const [summary, setSummary] = useState(null);
 
   const toast = useToast();
+  console.log(PDF_BUCKET_ID);
+  console.log(fileURL);
+  
+
+  const fetchFileBlob = async (fileUri) => {
+    const response = await fetch(fileUri);
+    return await response.blob();
+  };
+
+  const storeFileInAppwrite = async () => {
+    try {
+      console.log(file);
+      
+      const fileBlob = await fetchFileBlob(file.uri);
+      const response = await storage.createFile('67bccd990005a5d175c4', ID.unique(), fileBlob, [`write("any")`]);
+
+      return response.$id;
+    } catch (error) {
+      console.error("Upload Error:", error);
+      Alert.alert('Error', 'An error occurred while uploading the file to Appwrite.');
+    }
+  };
+
+  
 
   const uploadFile = async () => {
     try {
@@ -24,11 +54,17 @@ const Summarise = () => {
         type: 'application/pdf',
         copyToCacheDirectory: true,
       });
-
-      if (result.assets && result.assets.length > 0) {
+      console.log("File:", result);
+      
+      if (!result.canceled) {
         setFile(result.assets[0]);
+        const fileID = await storeFileInAppwrite();
+        console.log("File ID:", fileID);
+        
+        setFileURL(() => {
+          return `https://cloud.appwrite.io/v1/storage/buckets/67bccd990005a5d175c4/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`
+        });
       }
-      await storeFileInFirebase();
     } catch (error) {
       Alert.alert('Error', 'An error occurred while picking the file.');
     }

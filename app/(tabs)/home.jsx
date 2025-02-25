@@ -46,7 +46,7 @@ const Home = () => {
           >
             <InputField 
               placeholder="Search.." 
-              style={{ color: "#FFFFFF" }}   
+              style={{ color: "#000000" }}   
             />
             <Ionicons 
               name="search" 
