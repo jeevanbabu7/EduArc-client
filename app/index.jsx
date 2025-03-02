@@ -44,10 +44,13 @@ export default function Index() {
   // return null; // Just render nothing until redirect happens
   
   const {user} = useUser();
-  if(user) {
-    router.push('/(tabs)/home');
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      router.push('(tabs)/home');
+    }
+  }, [user]);
+
+  
  
   return <>
     <GluestackUIProvider config={config}>

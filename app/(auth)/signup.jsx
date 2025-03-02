@@ -68,7 +68,7 @@ const SignUpForm = () => {
             
             <View>
               <Text style={styles.header}>Register</Text>
-              <Pressable onPress={() => router.push('/(auth)/signin')}>
+              <Pressable onPress={() => router.replace('/(auth)/signin')}>
                 <Text style={styles.footer}>
                   Already registered ? <Text style={styles.link}>Sign in</Text>
                 </Text>

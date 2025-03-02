@@ -13,11 +13,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { removeItem } from '../../scripts/asyncStorage';
 import { InputGroup, InputField, InputLeftAddon, Input } from "@gluestack-ui/themed";
+import { useUser } from '../../context/userContext';
 
 const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
-
+  const {user} = useUser()  
+  console.log(user);
+  
   
   
   return (
@@ -31,7 +34,7 @@ const Home = () => {
         </View> 
         <View style={styles.welcome}>
           <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>Welcome Back,</Text>
-          <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>User</Text>
+          <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>{user}</Text>
         </View>
         <View className="flex flex-row justify-center items-center h-32">
           <Input
@@ -46,7 +49,7 @@ const Home = () => {
           >
             <InputField 
               placeholder="Search.." 
-              style={{ color: "#000000" }}   
+              style={{ color: "black" }}   
             />
             <Ionicons 
               name="search" 
