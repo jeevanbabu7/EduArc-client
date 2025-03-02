@@ -1,15 +1,42 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { Slot, Stack } from 'expo-router'
-import { StatusBar } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, StatusBar, View } from 'react-native';
+import { Slot, Stack } from 'expo-router';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config';
-import '../global.css'
-import UserProvider from '../context/userContext'; 
+import UserProvider from '../context/userContext';
+import * as SplashScreen from 'expo-splash-screen';
+
+import '../global.css';
+
+// Prevent splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
+
 const RootLayout = () => {
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    const prepareApp = async () => {
+      try {
+        // Simulate loading resources (e.g., fonts, API calls)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } catch (error) {
+        console.error("Error loading app resources:", error);
+      } finally {
+        setAppReady(true);
+        await SplashScreen.hideAsync(); // Hide the splash screen when ready
+      }
+    };
+
+    prepareApp();
+  }, []);
+
+  if (!appReady) {
+    return null; // Show nothing until the app is ready
+  }
+
   return (
-    <>
     <UserProvider>
-      <StatusBar barStyle="dark-content" hidden={false} />
+      <StatusBar barStyle="dark-content" backgroundColor="#4D75F9" hidden={false} />
       <GluestackUIProvider config={config}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -19,10 +46,7 @@ const RootLayout = () => {
         </Stack>
       </GluestackUIProvider>
     </UserProvider>
-    </>
+  );
+};
 
-  )
-}
-
-export default RootLayout
-
+export default RootLayout;
