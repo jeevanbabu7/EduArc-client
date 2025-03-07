@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView,Image } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'; // import SafeAreaView from safe-area-context
 import * as DocumentPicker from 'expo-document-picker';
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from 'firebase/storage';
@@ -9,7 +9,10 @@ import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
 import '../global.css'
 import { ID, storage } from '../lib/appwrite/appwrite.js'
-import getEnvVars from '../config.js';
+import getEnvVars from '../config.js'
+import scan from '../assets/icons/scan.png'
+import upload from '../assets/icons/upload_new.png'
+
 
 const Summarise = () => {
   const { PDF_BUCKET_ID } = getEnvVars();
@@ -69,7 +72,37 @@ const Summarise = () => {
       Alert.alert('Error', 'An error occurred while picking the file.');
     }
   };
-
+  const uploadVideo = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'video/*',
+        copyToCacheDirectory: true,
+      });
+  
+      if (result.canceled) {
+        Alert.alert('Upload Cancelled', 'No video was selected.');
+        return;
+      }
+  
+      setUploading(true);
+      setFile(result.assets[0]);
+  
+      const fileBlob = await fetchFileBlob(result.assets[0].uri);
+      const fileID = await storeFileInAppwrite(fileBlob, '67bccd990005a5d175c4', "video");
+  
+      if (fileID) {
+        const videoURL = `https://cloud.appwrite.io/v1/storage/buckets/67bccd990005a5d175c4/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`;
+        setFileURL(videoURL);
+        Alert.alert('Upload Successful', 'Your video has been uploaded.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while uploading the video.');
+      console.error('Video Upload Error:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+  
   const generateSummary = async () => {
     try {
       setLoading(true);
@@ -133,15 +166,28 @@ const Summarise = () => {
         <ScrollView
           contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1, overflow: 'scroll',paddingBottom: 50 }]} // Ensure content grows
         >
-          <Text style={styles.title}>Upload a Document to Summarise</Text>
-          <Text style={styles.subtitle}>
-            Upload a PDF or document file, and we’ll summarise it for you.
-          </Text>
+          <Text style={styles.title}>Upload a Document</Text>
 
-          <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
+          {/* <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
             <Text style={styles.buttonText}>Select Document</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
+          {!file && (<View style={styles.container2}>
+            <TouchableOpacity onPress={uploadFile}>
+              <View style={styles.box}>
+                <Image source={scan} style={{ width: 44, height: 44, marginRight:5 }} />
+                <Text >Upload pdf</Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={uploadVideo}>
+              <View style={styles.box}>
+                <Image source={upload} style={{ width: 40, height: 40, marginRight: 5 }} />
+                <Text>Upload video</Text>
+              </View>
+            </TouchableOpacity>
+            
+          </View>)}
           {(file && !summary) && (
             <View style={styles.fileContainer}>
               <Text style={styles.fileTitle}>Selected File:</Text>
@@ -167,6 +213,10 @@ const Summarise = () => {
             </View>
           )}
 
+          {!file &&(<Text style={styles.subtitle}>
+            Upload a PDF or document file, and we’ll summarise it for you.
+          </Text>)}
+
           {loading && (
             <View className="w-full p-15 flex flex-col justify-center items-center" sty>
               <Spinner size="large" color="$indigo600" />
@@ -188,6 +238,19 @@ const styles = StyleSheet.create({
     overflow: "scroll",
     height: "100%"
   },
+  container2:{
+    gap:20
+  },
+  box: {
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: '#D3D3D3',  // Use borderColor instead of bordercolor
+    padding: 20,
+    minWidth:'100%',
+    gap:10
+  },
+  
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -198,9 +261,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#7f8c8d',
     textAlign: 'center',
-    marginBottom: 30,
+    marginTop: 30,
   },
   button: {
+    marginTop:10,
     backgroundColor: '#0504aa',
     paddingVertical: 15,
     paddingHorizontal: 25,
