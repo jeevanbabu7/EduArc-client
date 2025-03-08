@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
+import camera from '../assets/icons/camera.png'
+import gallery from '../assets/icons/gallery.png'
 
 const Upload = () => {
   const [image, setImage] = useState(null);
@@ -45,18 +47,25 @@ const Upload = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Upload or Scan Image</Text>
-      <Text style={styles.subtitle}>
-        Choose an option to upload an image from your gallery or capture one using the camera.
-      </Text>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button, styles.shadow]} onPress={pickImage}>
-          <Text style={styles.buttonText}>Upload from Gallery</Text>
+      {!image && (<View style={styles.container2}>
+        <TouchableOpacity onPress={pickImage}>
+          <View style={styles.box}>
+            <Image source={gallery} style={{ width: 44, height: 44, marginRight:5 }} />
+            <Text >Upload from Gallery</Text>
+          </View>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.shadow]} onPress={captureImage}>
-          <Text style={styles.buttonText}>Capture from Camera</Text>
+        <TouchableOpacity onPress={captureImage}>
+          <View style={styles.box}>
+            <Image source={camera} style={{ width: 44, height: 44, marginRight: 5 }} />
+            <Text>Capture from Camera</Text>
+          </View>
         </TouchableOpacity>
-      </View>
+      </View>)}
+
+      {!image && (<Text style={styles.subtitle}>
+        Choose an option to upload an image from your gallery or capture one using the camera.
+      </Text>)}
 
       {image && (
         <View style={styles.previewContainer}>
@@ -64,6 +73,9 @@ const Upload = () => {
           <Image source={{ uri: image }} style={styles.imagePreview} />
         </View>
       )}
+      {image && (<TouchableOpacity style={[styles.button, styles.shadow]} onPress={null}>
+          <Text style={styles.buttonText}>Analyse</Text>
+        </TouchableOpacity>)}
     </View>
   );
 };
@@ -75,6 +87,18 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  container2:{
+    gap:20
+  },
+  box: {
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: '#D3D3D3',  // Use borderColor instead of bordercolor
+    padding: 20,
+    minWidth:'100%',
+    gap:10
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -82,6 +106,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
+    marginTop:10,
     fontSize: 16,
     color: '#7f8c8d',
     textAlign: 'center',
