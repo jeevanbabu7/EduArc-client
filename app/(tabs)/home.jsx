@@ -222,13 +222,6 @@ const styles = StyleSheet.create({
   courselist:{
     flex:1,
     backgroundColor:"transparent",
-    // borderWidth:1,
-    // borderColor:'white',
-    // shadowColor: '#000', // Shadow for iOS
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 4,
-    // elevation: 5, // Shadow for Android
     marginHorizontal:10
   },
   topContainer: {
