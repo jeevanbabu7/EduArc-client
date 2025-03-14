@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:10,
     backgroundColor: "transparent",
-    marginTop:30
+    // marginTop:30
     // backgroundColor:'grey',
   },
   welcome:{

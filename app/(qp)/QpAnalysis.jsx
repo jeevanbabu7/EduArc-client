@@ -7,13 +7,13 @@ const QpAnalysis = () => {
   const [file, setFile] = useState(null);
 
   const pyqs = [
-    'PYQ 2021 - Mathematics',
-    'PYQ 2021 - Physics',
-    'PYQ 2021 - Chemistry',
-    'PYQ 2020 - Mathematics',
-    'PYQ 2020 - Physics',
-    'PYQ 2020 - Physics',
-    'PYQ 2020 - Physics',
+    // 'PYQ 2021 - Mathematics',
+    // 'PYQ 2021 - Physics',
+    // 'PYQ 2021 - Chemistry',
+    // 'PYQ 2020 - Mathematics',
+    // 'PYQ 2020 - Physics',
+    // 'PYQ 2020 - Physics',
+    // 'PYQ 2020 - Physics',
   ];
 
   const handleUpload = async () => {
@@ -55,10 +55,14 @@ const QpAnalysis = () => {
               </View>
             ))}
           </ScrollView>
+          
           {/* <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
             <Text style={styles.uploadButtonText}>+</Text>
           </TouchableOpacity> */}
         </View>
+        <View style={styles.nocontent}>
+            <Text>Upload Pyqs for Analysis</Text>
+          </View>
         {file && <Text style={styles.fileName}>Uploaded File: {file.name}</Text>}
       </View>
 
@@ -82,17 +86,16 @@ const QpAnalysis = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f5f7',
+    backgroundColor: '#ffff',
   },
   topSection: {
     flex: 2,
     // backgroundColor: '#f0f2ff',
     backgroundColor: '#ffff',
-
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    elevation: 5,
+    // borderBottomLeftRadius: 20,
+    // borderBottomRightRadius: 20,
+    // elevation: 5,
   },
   title: {
     fontSize: 24,
@@ -151,10 +154,14 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#f0f2ff',
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation:20
+
   },
   analysisTitle: {
     fontSize: 22,
@@ -180,6 +187,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  nocontent:{
+    
+  }
 });
 
 export default QpAnalysis;

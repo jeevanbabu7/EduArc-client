@@ -148,10 +148,13 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#f0f2ff',
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation:20
   },
   analysisTitle: {
     fontSize: 22,

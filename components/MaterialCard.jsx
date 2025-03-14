@@ -1,7 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Alert,Image } from 'react-native';
 import React, { useRef } from 'react';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import edit from '../assets/icons/edit.png';
+import deleteicon from '../assets/icons/delete.png';
+import info from '../assets/icons/info.png';
 
 const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
   const refRBSheet = useRef(null);
@@ -38,7 +41,7 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
           refRBSheet.current.close();
           onEdit && onEdit();
         }}>
-          <Ionicons name="create-outline" size={20} color="#0504aa" style={styles.sheetIcon} />
+          <Image source={edit} style={styles.sheetIcon} />
           <Text style={styles.sheetText}>Edit Course</Text>
         </TouchableOpacity>
 
@@ -50,8 +53,8 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
             { text: "Delete", onPress: () => onDelete && onDelete() }
           ]);
         }}>
-          <Ionicons name="trash-outline" size={20} color="red" style={styles.sheetIcon} />
-          <Text style={[styles.sheetText, { color: "red" }]}>Delete Course</Text>
+          <Image source={deleteicon} style={styles.sheetIcon} />
+          <Text style={styles.sheetText}>Delete Course</Text>
         </TouchableOpacity>
 
         {/* View Details Option */}
@@ -59,13 +62,8 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
           refRBSheet.current.close();
           Alert.alert("Course Details", `Details about ${title}`);
         }}>
-          <Ionicons name="information-circle-outline" size={20} color="#0504aa" style={styles.sheetIcon} />
+          <Image source={info} style={styles.sheetIcon} />
           <Text style={styles.sheetText}>View Details</Text>
-        </TouchableOpacity>
-
-        {/* Cancel Option */}
-        <TouchableOpacity style={styles.cancelButton} onPress={() => refRBSheet.current.close()}>
-          <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </RBSheet>
     </View>
@@ -111,38 +109,34 @@ const styles = StyleSheet.create({
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       padding: 20,
-      backgroundColor: '#fff',
+      backgroundColor: '#f0f2ff',
       height: '40%',
     },
     draggableIcon: { backgroundColor: '#000' },
-  },
-  sheetTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 15,
   },
   sheetItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 15,
-    paddingHorizontal: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    gap:10
   },
   sheetIcon: {
+    width: 24, // Adjust based on your icon size
+    height: 24,
     marginRight: 10,
+    resizeMode: 'contain', // Ensures the icon fits properly
   },
   sheetText: {
-    fontSize: 16,
+    fontSize: 18, // Make text slightly larger
     color: '#333',
+    fontWeight:'500'
   },
   cancelButton: {
     padding: 15,
     alignItems: 'center',
   },
   cancelText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#0504aa',
     fontWeight: 'bold',
   },

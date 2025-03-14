@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f0f2ff',
   },
   progressText: {
     fontSize: 18,
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     paddingHorizontal: 20,
+    color: '#0504aa'
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
   button: {
     padding: 12,
     borderRadius: 8,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f0f2ff',
   },
   icon: {
     width: 20,
