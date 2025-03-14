@@ -6,7 +6,6 @@ import { config } from '@gluestack-ui/config';
 import UserProvider from '../context/userContext';
 import * as SplashScreen from 'expo-splash-screen';
 
-import '../global.css';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -29,23 +28,28 @@ const RootLayout = () => {
 
     prepareApp();
   }, []);
+  
 
   if (!appReady) {
     return null; // Show nothing until the app is ready
   }
 
   return (
-    <UserProvider>
+    <>    
       <StatusBar barStyle="dark-content" backgroundColor="#4D75F9" hidden={false} />
       <GluestackUIProvider config={config}>
+      <UserProvider>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(courses)" options={{ headerShown: false }} />
+          <Stack.Screen name="(chat)" options={{ headerShown: false }} />
         </Stack>
+        </UserProvider>
       </GluestackUIProvider>
-    </UserProvider>
+    
+    </>
   );
 };
 

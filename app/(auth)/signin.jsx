@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, Alert, Pressable } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, Alert, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import {auth} from '../../firebase.js';
 import { useRouter } from 'expo-router';
 import { useUser } from '../../context/userContext.jsx';
+import { Divider, InputField } from '@gluestack-ui/themed';
+import { Input } from '@gluestack-ui/themed';
+import { FontAwesome } from '@expo/vector-icons';
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -112,21 +115,7 @@ const LoginForm = () => {
                   secureTextEntry
                 />
               </Input>
-              <Input
-                variant="underlined"
-                size="md"
-                isDisabled={false}
-                isInvalid={false}
-                isReadOnly={false}
-              >
-                <InputField
           
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry
-                />
-              </Input>
   
               </View>
   
@@ -150,10 +139,10 @@ const LoginForm = () => {
               {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
   
               <View style={styles.imageContainer}>
-                <Image
+                {/* <Image
                   source={require('../../assets/images/signup.png')}
                   style={styles.image}
-                />
+                /> */}
               </View>
             </View>
           </ScrollView>

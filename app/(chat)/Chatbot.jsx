@@ -1,28 +1,43 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Alert, Text } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { Ionicons } from '@expo/vector-icons'; 
 import Fontisto from '@expo/vector-icons/Fontisto';
 import io from "socket.io-client";
-import '../global.css'
+import { useUser } from '../../context/userContext';
+
 import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants'
+import { useNavigation } from 'expo-router';
 
 
 const ChatBot = () => {
   console.log(IP_ADDRESS);
-  
+
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [keyPressed, setKeyPressed] = useState(false);
   const [socket, setSocket] = useState(null);
-  console.log(keyPressed);
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Chat',
+    });
+  }, [navigation]);
+  const { user } = useUser();
+  console.log(user);
+  
   
 
   useEffect(() => {
     const fetchPreviousMessages = async () => {
       try {
-        const response = await fetch(`http://192.168.1.6:3000/api/chat//get-messages/6784f44000f0f6bfc930954f`);
+        const response = await fetch(`http://172.16.32.162:3000/api/chat/get-messages/67d3ef1f6d1812088b501946`);
         const data = await response.json();
+        console.log("hiiiiiiiiiiii");
+        console.log(response);
+        
+        
         
         if(data.messages.length > 0) {
           setMessages((prev) => {
@@ -96,8 +111,9 @@ const ChatBot = () => {
   }, [socket]);
     
     useEffect(() => {
-        const newSocket = io.connect(`http://192.168.1.6:${3000}`);
+        const newSocket = io.connect(`http://172.16.32.162:${3000}`);
         setSocket(newSocket);
+        newSocket.emit('create-chat', "67d3ee4435aa92b97a1a70dc");
 
         return () => newSocket.close();
     }, []);
@@ -115,8 +131,9 @@ const ChatBot = () => {
           _id: 1,
         },
       };
+      
       socket.emit('send-message', {
-          chatSessionId: "6784f44000f0f6bfc930954f",
+          chatSessionId: "67d3ef1f6d1812088b501946",
           sender: "user",
           content: inputText
       });
@@ -168,8 +185,8 @@ const ChatBot = () => {
               placeholder="Type your message..."
               placeholderTextColor="#9ca3af"
               onKeyPress={handleKeyPress}
-              returnKeyType="done" // Optional: changes the keyboard's enter button text
-              blurOnSubmit={false} // Prevent keyboard from dismissing when pressing enter
+              returnKeyType="done" 
+              blurOnSubmit={false}
             />
             <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
               <Ionicons name="send" size={24} color="#000000" />
@@ -185,6 +202,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9fafb',
+    paddingTop: 32
   },
   inputContainer: {
     flexDirection: 'row',

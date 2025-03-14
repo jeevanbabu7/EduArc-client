@@ -7,7 +7,6 @@ import { set } from "@gluestack-style/react";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { makeRedirectUri } from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser';
-import { Alert } from "react-native";
 import { useRouter } from "expo-router";
 
 const UserContext = createContext();
@@ -16,7 +15,6 @@ export function useUser() {
   return useContext(UserContext);
 }
 
-
 export default function UserProvider(props) {
   const [user, setUser] = useState(null);
   const [msg, setMsg] = useState(null);
@@ -24,9 +22,9 @@ export default function UserProvider(props) {
 
   async function login(email, password) {
     try {
+
       const session = await account.createEmailPasswordSession(email, password);
       const userDetails = await account.get(); 
-
       setUser(userDetails);
       await AsyncStorage.setItem("user", JSON.stringify(userDetails)); // Store user data
       toast("Welcome back. You are logged in");
@@ -107,8 +105,10 @@ export default function UserProvider(props) {
   async function init() {
     try {
       const loggedIn = await account.get();
-
+      // console.log("Logged in user", loggedIn);
+      
       setUser(loggedIn);
+
       router.replace('(tabs)/home');
       toast('Welcome back.');
     } catch (err) {
