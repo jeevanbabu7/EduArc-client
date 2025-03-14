@@ -45,6 +45,7 @@ const RootLayout = () => {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(courses)" options={{ headerShown: false }} />
           <Stack.Screen name="(chat)" options={{ headerShown: false }} />
+          <Stack.Screen name="(qp)" options={{ headerShown: false }} />
         </Stack>
         </UserProvider>
       </GluestackUIProvider>
