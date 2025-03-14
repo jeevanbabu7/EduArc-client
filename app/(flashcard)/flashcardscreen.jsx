@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Image } from 'react-native';
+import left from '../../assets/icons/left.png';
+import right from '../../assets/icons/right.png';
 
 const FlashcardScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -25,7 +27,6 @@ const FlashcardScreen = () => {
     setFlipped(false);
     setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
     flipAnim.setValue(0);
-    
   };
 
   const handlePrevious = () => {
@@ -45,20 +46,20 @@ const FlashcardScreen = () => {
   });
 
   const frontAnimatedStyle = {
-    transform: [
-      { rotateY: frontInterpolate }
-    ]
+    transform: [{ rotateY: frontInterpolate }]
   };
 
   const backAnimatedStyle = {
-    transform: [
-      { rotateY: backInterpolate }
-    ]
+    transform: [{ rotateY: backInterpolate }]
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Flashcards</Text>
+      
+      {/* Progress Indicator */}
+      <Text style={styles.progressText}>{currentIndex + 1} / {flashcards.length}</Text>
+
+      {/* Flashcard */}
       <TouchableOpacity style={styles.flashcard} onPress={handleFlip}>
         <Animated.View style={[styles.card, styles.frontCard, frontAnimatedStyle]}>
           <Text style={styles.text}>{flashcards[currentIndex].question}</Text>
@@ -67,12 +68,14 @@ const FlashcardScreen = () => {
           <Text style={styles.text}>{flashcards[currentIndex].answer}</Text>
         </Animated.View>
       </TouchableOpacity>
+
+      {/* Navigation Buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handlePrevious}>
-          <Text style={[styles.buttonText, styles.blueText]}>Previous</Text>
+          <Image source={left} style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleNext}>
-          <Text style={[styles.buttonText, styles.blueText]}>Next</Text>
+          <Image source={right} style={styles.icon} />
         </TouchableOpacity>
       </View>
     </View>
@@ -84,55 +87,57 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5', // Light background color
+    backgroundColor: '#f5f5f5',
   },
-  title: {
-    fontSize: 30,
+  progressText: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#333',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   flashcard: {
     marginBottom: 20,
-    width: 300,
-    height: 200,
+    width: 320,
+    height: 250,
     position: 'relative',
   },
   card: {
-    width: 300,
-    height: 200,
+    backgroundColor: 'white',
+    width: 320,
+    height: 250,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#090088', // Dark blue front
-    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#D3D3D3",
+    borderRadius: 12,
     position: 'absolute',
     backfaceVisibility: 'hidden',
   },
   frontCard: {
-    backgroundColor: '#090088',
+    backgroundColor: '#fff',
   },
   backCard: {
-    backgroundColor: '#6600ff',
     transform: [{ rotateY: '180deg' }]
   },
   text: {
-    fontSize: 20,
-    color: '#fff',
+    fontSize: 22,
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '80%',
+    marginTop: 10,
   },
   button: {
-    padding: 10,
-    borderRadius: 5,
+    padding: 12,
+    borderRadius: 8,
     backgroundColor: '#f5f5f5',
   },
-  blueText: {
-    color: '#6600ff', // Blue text color for buttons
-  },
-  buttonText: {
-    fontSize: 18,
+  icon: {
+    width: 20,
+    height: 20,
   },
 });
 

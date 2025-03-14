@@ -1,5 +1,5 @@
-import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView, TouchableOpacity} from 'react-native'
-import React from 'react'
+import { View, Text,Image ,StyleSheet,ScrollView,FlatList,SafeAreaView, TouchableOpacity,Dimensions } from 'react-native'
+import React, { useRef, useCallback,useState } from 'react';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import Tool from '../../components/Tool'
 import Card from '../../components/CardWithOverflowImage'
@@ -8,21 +8,30 @@ import bot from '../../assets/icons/bot.png'
 import upload from '../../assets/icons/upload.png'
 import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
+import reading from '../../assets/icons/reading-book.png'
 import { useNavigation, useRouter,router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { removeItem } from '../../scripts/asyncStorage';
 import { InputGroup, InputField, InputLeftAddon, Input } from "@gluestack-ui/themed";
 import { useUser } from '../../context/userContext';
-
+import NotificationSheet from '../../components/BottomSheet';
+import RBSheet from 'react-native-raw-bottom-sheet';
 const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
   const {user} = useUser()  
   console.log(user);
-  
-  
-  
+  const refRBSheet = useRef(null);
+  const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+  const notifications = [
+    { id: '1', title: 'New Course Added', message: 'You have a new course available: React Native Basics' },
+    { id: '2', title: 'Assignment Due', message: 'Your "Data Structures" assignment is due tomorrow.' },
+    { id: '3', title: 'Live Class Reminder', message: 'Join the live class for "Machine Learning" at 5 PM today.' },
+    { id: '4', title: 'Profile Update', message: 'Your profile details were successfully updated.' },
+  ];
+
   return (
     <ScrollView>
       <SafeAreaView style={{flex:1,backgroundColor: "#F5F9FF"}}>
@@ -30,8 +39,41 @@ const Home = () => {
         <View style={styles.topbar}>
           <Ionicons name="menu" size={25} color="#FFFFFF" />
           <Text style={{ fontWeight: 'bold',fontSize:20, color: "#FFFFFF"}}>EduArc</Text>
-          <Ionicons name="notifications" size={25} color="#00000" />
+          <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+              <Ionicons name="notifications" size={25} color="#ffff"  />
+          </TouchableOpacity>
         </View> 
+        <RBSheet
+          ref={refRBSheet}
+          draggable={true}
+          closeOnPressMask={true}
+          customStyles={{
+            wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' }, // Dim background
+            container: {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              padding: 20,
+              backgroundColor: '#fff',
+              height: '100%'
+            },
+            draggableIcon: { backgroundColor: '#000' },
+          }}
+        >
+          <Text style={styles.notificationHeader}>Notifications</Text>
+          <FlatList
+            data={notifications}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.notificationItem}>
+                <Text style={styles.notificationTitle}>{item.title}</Text>
+                <Text style={styles.notificationMessage}>{item.message}</Text>
+              </View>
+            )}
+          />
+          <TouchableOpacity onPress={() => refRBSheet.current.close()} style={{ marginTop: 20, alignSelf: 'center' }}>
+            <Text style={{ color: 'blue' }}>Close</Text>
+          </TouchableOpacity>
+        </RBSheet>
         <View style={styles.welcome}>
           <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>Welcome Back,</Text>
           <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>{user}</Text>
@@ -94,7 +136,7 @@ const Home = () => {
         {/* <Text className="text-red-400">Hii</Text> */}
         
       </View>
-      <View style={styles.courselist}>
+      {/* <View style={styles.courselist}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',margin:10}}>Recent Courses</Text></View>
         <FlatList
         style={styles.cardContainer}
@@ -114,8 +156,16 @@ const Home = () => {
         keyExtractor={(item) => item.key} // Add a keyExtractor for unique keys
         />
 
+      </View> */}
+      <View style={styles.emptyState}>
+        <Image 
+          source={reading} 
+          style={styles.emptyImage} 
+        />
+        <Text style={styles.emptyText}>
+          "Every expert was once a beginner. Start your learning journey today!"
+        </Text>
       </View>
-      
       </SafeAreaView>
     </ScrollView>
   )
@@ -131,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:10,
     backgroundColor: "transparent",
-
+    // marginTop:30
     // backgroundColor:'grey',
   },
   welcome:{
@@ -187,5 +237,42 @@ const styles = StyleSheet.create({
   topContainer: {
     borderBottomLeftRadius: 40, 
     borderBottomRightRadius: 40,
-  }
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  emptyImage: {
+    width: 100, 
+    height: 100, 
+    marginBottom: 10,
+  },
+  emptyText: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    color: '#555',
+  },
+  notificationHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  notificationItem: {
+    backgroundColor: '#F0F0F0',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 5,
+  },
 })

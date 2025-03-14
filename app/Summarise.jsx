@@ -10,7 +10,7 @@ import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'
 import '../global.css'
 import { ID, storage } from '../lib/appwrite/appwrite.js'
 import getEnvVars from '../config.js'
-import scan from '../assets/icons/scan.png'
+import scan from '../assets/icons/scanold.png'
 import upload from '../assets/icons/upload_new.png'
 
 
@@ -182,7 +182,7 @@ const Summarise = () => {
             
             <TouchableOpacity onPress={uploadVideo}>
               <View style={styles.box}>
-                <Image source={upload} style={{ width: 40, height: 40, marginRight: 5 }} />
+                <Image source={upload} style={{ width: 50, height: 50, marginRight: 5 }} />
                 <Text>Upload video</Text>
               </View>
             </TouchableOpacity>

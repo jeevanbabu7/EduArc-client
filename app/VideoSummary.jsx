@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView,Image } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { ButtonText, Input } from '@gluestack-ui/themed';
 import { InputField } from '@gluestack-ui/themed';
 import { Button } from '@gluestack-ui/themed';
 import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants';
+import upload from '../assets/icons/upload_new.png'
 
 const VideoSummary = () => {
   const [file, setFile] = useState(null);
@@ -60,29 +61,38 @@ const VideoSummary = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
   <View style={styles.container}>
-    <Text style={styles.title}>Upload a Video to Summarise</Text>
-    <Text style={styles.subtitle}>
-      Upload a video file, and we’ll summarise it for you.
-    </Text>
+    <Text style={styles.title}>Upload a Video</Text>
+    
 
-    <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
+    {/* <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
       <Text style={styles.buttonText}>Upload Video</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
 
-    <Text style={{ marginTop: 20, ...styles.subtitle }}>or</Text>
-
-    <View style={styles.inputContainer}>
-      <Input variant="outline" size="lg" isDisabled={false} isInvalid={false} isReadOnly={false} style={styles.inputField}>
-        <InputField 
-          placeholder="Video url here.." 
-          value={videoURL} 
-          onChangeText={handleChange} 
-        />
-      </Input>
-      <Button style={styles.submitButton} onPress={handleSend}>
-        <ButtonText>Send</ButtonText>
-      </Button>
+    <View style={styles.container2}>
+        <View style={styles.box}>
+          <TouchableOpacity style={styles.box1} onPress={uploadFile}>
+            <Image source={upload} style={{ width: 50, height: 50, marginRight: 5 }} />
+            <Text>Upload video</Text>
+          </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            <Input variant="outline" size="lg" isDisabled={false} isInvalid={false} isReadOnly={false} style={styles.inputField}>
+              <InputField 
+                placeholder="Video url here.." 
+                value={videoURL} 
+                onChangeText={handleChange} 
+              />
+            </Input>
+            <Button style={styles.submitButton} onPress={handleSend}>
+              <ButtonText>Send</ButtonText>
+            </Button>
+          </View>
+        </View>
     </View>
+
+
+    {/* <Text style={{ marginTop: 20, ...styles.subtitle }}>or</Text> */}
+
+    
 
     {videoSummary.length > 0 && (
       <View style={styles.summaryContainer}>
@@ -95,6 +105,9 @@ const VideoSummary = () => {
         ))}
       </View>
     )}
+    <Text style={styles.subtitle}>
+      Upload a video file, and we’ll summarise it for you.
+    </Text>
   </View>
 </ScrollView>
   );
@@ -107,6 +120,24 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  container2:{
+    gap:20
+  },
+  box: {
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: '#D3D3D3',  // Use borderColor instead of bordercolor
+    padding: 20,
+    minWidth:'100%',
+    gap:10
+  },
+  box1: {
+    alignItems: 'center',
+    padding: 20,
+    minWidth:'100%',
+    gap:10
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -114,13 +145,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
+    marginTop:10,
     fontSize: 16,
     color: '#7f8c8d',
     textAlign: 'center',
     marginBottom: 30,
   },
   button: {
-    backgroundColor: '#0504aa',
+    backgroundColor: '#4D75F9',
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 25,
@@ -145,7 +177,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
     width: '100%',
   },
   inputField: {
@@ -156,7 +187,7 @@ const styles = StyleSheet.create({
     width: '30%',
     paddingVertical: 10,
     borderRadius: 15,
-    backgroundColor: '#282a2d',
+    backgroundColor: '#003BFF',
   },
   summaryContainer: {
     marginTop: 30,
