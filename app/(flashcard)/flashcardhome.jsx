@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+
 const CustomCheckbox = ({ isChecked, onToggle }) => (
-  <TouchableOpacity onPress={onToggle} style={styles.checkboxContainer}>
-    <View style={[styles.checkbox, isChecked && styles.checked]} />
+  <TouchableOpacity onPress={onToggle} style={[styles.checkboxContainer, isChecked && styles.checked]}>
+    {isChecked && <Ionicons name="checkmark" size={20} color="#0504aa" />}
   </TouchableOpacity>
 );
 
-const QuizHome = () => {
+const FlashHome = () => {
   const [selectedTopics, setSelectedTopics] = useState([]);
   const topics = [
     { id: '1', title: 'Math' },
@@ -26,38 +28,39 @@ const QuizHome = () => {
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
-        {/* <Image
-          source={{ uri: 'https://example.com/quiz-icon.png' }} // Replace with your image URL
-          style={styles.headerImage}
-        /> */}
         <Text style={styles.title}>Choose Content to generate FlashCards</Text>
         <Text style={styles.subtitle}>
           Select topics to customize your experience. Ready to test your knowledge?
         </Text>
       </View>           
 
-      {/* Topics Section */}
-      <View style={styles.transparentView}>
-        {topics.map((topic) => (
-          <View key={topic.id} style={styles.topicContainer}>
+      {/* Topics List */}
+      <FlatList
+        data={topics}
+        keyExtractor={(item) => item.id}
+        style={styles.listContainer}
+        renderItem={({ item }) => (
+          <View key={item.id} style={styles.topicContainer}>
             <CustomCheckbox
-              isChecked={selectedTopics.includes(topic.id)}
-              onToggle={() => toggleSelection(topic.id)}
+              isChecked={selectedTopics.includes(item.id)}
+              onToggle={() => toggleSelection(item.id)}
             />
-            <Text style={styles.topicText}>{topic.title}</Text>
+            <Text style={styles.topicText}>{item.title}</Text>
           </View>
-        ))}
-        {selectedTopics.length > 0 && (
-          <TouchableOpacity style={styles.startQuizButton} onPress={() => router.push('./flashcardscreen')}>
-            <Text style={styles.startQuizText}>Generate</Text>
-          </TouchableOpacity>
         )}
-      </View>
+      />
+
+      {/* Generate Button */}
+      {selectedTopics.length > 0 && (
+        <TouchableOpacity style={styles.startQuizButton} onPress={() => router.push('./flashcardscreen')}>
+          <Text style={styles.startQuizText}>Generate</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Progress Bar */}
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${selectedTopics.length * 25}%` }]} />
+          <View style={[styles.progressFill, { width: `${(selectedTopics.length / topics.length) * 100}%` }]} />
         </View>
         <Text style={styles.progressText}>
           {selectedTopics.length} / {topics.length} Topics Selected
@@ -66,7 +69,7 @@ const QuizHome = () => {
 
       {/* Footer Section */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Tip: You can select multiple topics for a broader learning!</Text>
+        <Text style={styles.footerText}>Tip: You can select multiple topics for broader learning!</Text>
       </View>
     </View>
   );
@@ -75,19 +78,12 @@ const QuizHome = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f2ff', // Light blue background
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: '#f0f2ff',
     padding: 20,
   },
   header: {
     alignItems: 'center',
     marginBottom: 20,
-  },
-  headerImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
   },
   title: {
     fontSize: 24,
@@ -100,45 +96,42 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     marginTop: 5,
-    marginBottom: 20,
   },
-  transparentView: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 20,
-    padding: 20,
+  listContainer: {
+    flex: 1,
     width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
   },
   topicContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
-    width: '100%',
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 10,
+    paddingHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   topicText: {
     fontSize: 18,
     color: '#0504aa',
-    marginLeft: 10,
+    marginLeft: 15, // More space after the icon
   },
   checkboxContainer: {
-    width: 24,
-    height: 24,
+    width: 26,
+    height: 26,
     borderWidth: 2,
     borderColor: '#0504aa',
-    borderRadius: 4,
+    borderRadius: 6,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  checkbox: {
-    width: '80%',
-    height: '80%',
-  },
   checked: {
-    backgroundColor: '#0504aa',
+    borderColor: '#0504aa',
   },
   startQuizButton: {
     marginTop: 20,
@@ -185,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuizHome;
+export default FlashHome;

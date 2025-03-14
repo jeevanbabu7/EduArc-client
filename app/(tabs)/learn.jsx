@@ -52,11 +52,15 @@ const Learn = () => {
             borderTopRightRadius: 20,
             paddingHorizontal: 20, // Only horizontal padding
             paddingBottom: 20, // Avoid unnecessary top padding
-            backgroundColor: '#fff',
+            backgroundColor: '#f0f2ff',
             justifyContent: 'center',
             alignItems: 'center',
             position: 'absolute', // Ensures it starts from the very top
             bottom: 0, // Aligns it to the bottom
+          },
+          draggableIcon: { 
+            backgroundColor: '#000',
+            marginTop:0
           },
         }}
       >
@@ -148,7 +152,7 @@ const styles = StyleSheet.create({
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       padding: 20,
-      backgroundColor: '#fff',
+      backgroundColor: '#f0f2ff',
       height: '40%',
     },
     draggableIcon: { backgroundColor: '#000' },
