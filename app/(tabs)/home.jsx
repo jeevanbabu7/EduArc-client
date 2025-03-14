@@ -15,7 +15,6 @@ import { Drawer } from 'expo-router/drawer';
 import { removeItem } from '../../scripts/asyncStorage';
 import { InputGroup, InputField, InputLeftAddon, Input } from "@gluestack-ui/themed";
 import { useUser } from '../../context/userContext';
-import NotificationSheet from '../../components/BottomSheet';
 import RBSheet from 'react-native-raw-bottom-sheet';
 const primary = '#ffff';
 const Home = () => {
@@ -133,8 +132,6 @@ const Home = () => {
                 </View>
               </View>
           </View>
-        {/* <Text className="text-red-400">Hii</Text> */}
-        
       </View>
       {/* <View style={styles.courselist}>
         <View><Text style={{fontSize: 18,fontWeight:'bold',margin:10}}>Recent Courses</Text></View>
@@ -181,7 +178,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:10,
     backgroundColor: "transparent",
-    // marginTop:30
+    marginTop:30
     // backgroundColor:'grey',
   },
   welcome:{

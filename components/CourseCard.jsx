@@ -1,23 +1,46 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React,{useRef} from 'react';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const CourseCard = ({ title, onPress }) => {
+  const refRBSheet = useRef(null);
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}> {/* Attach onPress */}
+    <View style={styles.card} >
       <View style={styles.content}>
         <View style={styles.iconContainer}>
           <FontAwesome name="book" size={20} color="#0504aa" />
         </View>
-        <View style={styles.textContainer}>
+        <TouchableOpacity style={styles.textContainer}onPress={onPress} >
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.date}>Last opened: Jan 1, 2025</Text>
-        </View>
-        <View style={styles.iconContainer}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconContainer} onPress={() => refRBSheet.current.open()}>
           <Ionicons name="ellipsis-vertical" size={20} color="#0504aa" />
-        </View>
+        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+      <RBSheet
+          ref={refRBSheet}
+          draggable={true}
+          closeOnPressMask={true}
+          customStyles={{
+            wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' }, // Dim background
+            container: {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              padding: 20,
+              backgroundColor: '#fff',
+              height: '50%'
+            },
+            draggableIcon: { backgroundColor: '#000' },
+          }}
+        >
+          <Text>Option</Text>
+          <Text>Option</Text>
+          <Text>Option</Text>
+          <Text>Option</Text>
+      </RBSheet>
+    </View>
   );
 };
 
