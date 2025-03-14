@@ -162,6 +162,9 @@ const Home = () => {
         <Text style={styles.emptyText}>
           "Every expert was once a beginner. Start your learning journey today!"
         </Text>
+        <TouchableOpacity style={styles.addcoursebutton}>
+          <Text style={{color:'white'}}>Add courses +</Text>
+        </TouchableOpacity>
       </View>
       </SafeAreaView>
     </ScrollView>
@@ -265,4 +268,10 @@ const styles = StyleSheet.create({
     color: '#555',
     marginTop: 5,
   },
+  addcoursebutton:{
+    borderRadius:10,
+    padding:10,
+    marginTop:10,
+    backgroundColor:'#015CE0'
+  }
 })
