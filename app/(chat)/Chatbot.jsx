@@ -5,9 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import io from "socket.io-client";
 import { useUser } from '../../context/userContext';
-
+import * as DocumentPicker from 'expo-document-picker';
 import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants'
 import { useNavigation } from 'expo-router';
+import getEnvVars from '../../config.js';
+import { useToast } from '@gluestack-ui/themed';
+import { ID } from 'react-native-appwrite';
+import { storage } from '../../lib/appwrite/appwrite.js';
 
 
 const ChatBot = () => {
@@ -18,6 +22,63 @@ const ChatBot = () => {
   const [keyPressed, setKeyPressed] = useState(false);
   const [socket, setSocket] = useState(null);
   const navigation = useNavigation();
+  const { PDF_BUCKET_ID } = getEnvVars();
+
+    console.log(PDF_BUCKET_ID);
+    const [file, setFile] = useState(null);
+    const [fileURL, setFileURL] = useState(null);
+  
+    const toast = useToast();
+    console.log(PDF_BUCKET_ID);
+    console.log(fileURL);
+    
+  
+    const fetchFileBlob = async (fileUri) => {
+      const response = await fetch(fileUri);
+      return await response.blob();
+    };
+  
+    const storeFileInAppwrite = async () => {
+      try {
+        console.log(file);
+        
+        const fileBlob = await fetchFileBlob(file.uri);
+        const response = await storage.createFile('67bccd990005a5d175c4', ID.unique(), fileBlob, [`write("any")`]);
+  
+        return response.$id;
+      } catch (error) {
+        console.error("Upload Error:", error);
+        Alert.alert('Error', 'An error occurred while uploading the file to Appwrite.');
+      }
+    };
+  
+    
+  
+    const uploadFile = async () => {
+      try {
+        console.log("Uploading file...");
+        
+        const result = await DocumentPicker.getDocumentAsync({
+          type: 'application/pdf',
+          copyToCacheDirectory: true,
+        });
+        console.log("File:", result);
+        
+        if (!result.canceled) {
+          setFile(result.assets[0]);
+          const fileID = await storeFileInAppwrite();
+          console.log("File ID:", fileID);
+          
+          setFileURL(() => {
+            return `https://cloud.appwrite.io/v1/storage/buckets/67bccd990005a5d175c4/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`
+          });
+
+          
+        }
+      } catch (error) {
+        Alert.alert('Error', 'An error occurred while picking the file.');
+      }
+    };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -32,7 +93,7 @@ const ChatBot = () => {
   useEffect(() => {
     const fetchPreviousMessages = async () => {
       try {
-        const response = await fetch(`http://172.16.32.162:3000/api/chat/get-messages/67d3ef1f6d1812088b501946`);
+        const response = await fetch(`http://192.168.1.7:3000/api/chat/get-messages/67d3ef1f6d1812088b501946`);
         const data = await response.json();
         console.log("hiiiiiiiiiiii");
         console.log(response);
@@ -111,7 +172,7 @@ const ChatBot = () => {
   }, [socket]);
     
     useEffect(() => {
-        const newSocket = io.connect(`http://172.16.32.162:${3000}`);
+        const newSocket = io.connect(`http://192.168.1.7:${3000}`);
         setSocket(newSocket);
         newSocket.emit('create-chat', "67d3ee4435aa92b97a1a70dc");
 
@@ -120,29 +181,55 @@ const ChatBot = () => {
 
 
   
-  const handleSend = () => {
-    
-    if (inputText.trim()) {
-      const userMessage = {
-        _id: Math.random().toString(36).substring(7),
-        text: inputText,
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-        },
-      };
+  const handleSend = async () => {
+    try {
+      if(fileURL){
+        // save the file to the chroma database 
+        const response = await fetch('http://127.0.0.1:5000/api/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            file_link: `https://cloud.appwrite.io/v1/storage/buckets/67bccd990005a5d175c4/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`
+          })
+        });
+        const data = await response.json();
+        console.log(data);
+        const userMessage = {
+          _id: Math.random().toString(36).substring(7),
+          text: fileURL,
+          createdAt: new Date(),
+          user: {
+            _id: 1,
+          },
+        };
+      }
       
-      socket.emit('send-message', {
-          chatSessionId: "67d3ef1f6d1812088b501946",
-          sender: "user",
-          content: inputText
-      });
-
-
-      
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, [userMessage]));
-      // onSend([userMessage]);
-      setInputText('');
+      if (inputText.trim()) {
+        const userMessage = {
+          _id: Math.random().toString(36).substring(7),
+          text: inputText,
+          createdAt: new Date(),
+          user: {
+            _id: 1,
+          },
+        };
+        
+        socket.emit('send-message', {
+            chatSessionId: "67d3ef1f6d1812088b501946",
+            sender: "user",
+            content: inputText
+        });
+  
+  
+        
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, [userMessage]));
+        // onSend([userMessage]);
+        setInputText('');
+      }
+    }catch(error) {
+      console.error(error);
     }
   };
 
@@ -177,7 +264,9 @@ const ChatBot = () => {
         )}
         renderInputToolbar={() => (
           <View style={styles.inputContainer}>
-            <Fontisto name="paperclip" size={20} color="black" style={styles.icon} />
+            <TouchableOpacity onPress={uploadFile}>
+              <Fontisto name="paperclip" size={20} color="black" style={styles.icon} />
+            </TouchableOpacity>
             <TextInput
               value={inputText}
               onChangeText={setInputText}
