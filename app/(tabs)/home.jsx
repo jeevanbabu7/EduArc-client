@@ -46,6 +46,8 @@ const Home = () => {
           ref={refRBSheet}
           draggable={true}
           closeOnPressMask={true}
+          animationType="slide"
+          onClose={() => setTimeout(() => console.log('Sheet Closed'), 100)}
           customStyles={{
             wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' }, // Dim background
             container: {
@@ -162,6 +164,9 @@ const Home = () => {
         <Text style={styles.emptyText}>
           "Every expert was once a beginner. Start your learning journey today!"
         </Text>
+        <TouchableOpacity style={styles.addcoursebutton}>
+          <Text style={{color:'white'}}>Add courses +</Text>
+        </TouchableOpacity>
       </View>
       </SafeAreaView>
     </ScrollView>
@@ -222,13 +227,6 @@ const styles = StyleSheet.create({
   courselist:{
     flex:1,
     backgroundColor:"transparent",
-    // borderWidth:1,
-    // borderColor:'white',
-    // shadowColor: '#000', // Shadow for iOS
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 4,
-    // elevation: 5, // Shadow for Android
     marginHorizontal:10
   },
   topContainer: {
@@ -272,4 +270,10 @@ const styles = StyleSheet.create({
     color: '#555',
     marginTop: 5,
   },
+  addcoursebutton:{
+    borderRadius:10,
+    padding:10,
+    marginTop:10,
+    backgroundColor:'#015CE0'
+  }
 })

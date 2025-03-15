@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity,TextInput } from 'react-native';
 import React, { useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import MaterialCard from '../../components/MaterialCard';
+import LearnCourseCard from '../../components/LearnCourseCard.jsx';
 import { useRouter } from 'expo-router';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
@@ -29,6 +29,8 @@ const Learn = () => {
         draggable={true}
         closeOnPressMask={true}
         customStyles={styles.sheet}
+        animationType="slide"
+        onClose={() => setTimeout(() => console.log('Sheet Closed'), 100)}
       >
         {/* <Text style={styles.sheetTitle}>Menu</Text> */}
         <TouchableOpacity onPress={() => refSettingsSheet.current.open()}>
@@ -44,6 +46,7 @@ const Learn = () => {
         ref={refAddCourseSheet}
         draggable={true}
         closeOnPressMask={true}
+        dragOnContent={true}
         customStyles={{
           wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
           container: {
@@ -52,11 +55,15 @@ const Learn = () => {
             borderTopRightRadius: 20,
             paddingHorizontal: 20, // Only horizontal padding
             paddingBottom: 20, // Avoid unnecessary top padding
-            backgroundColor: '#fff',
+            backgroundColor: '#f0f2ff',
             justifyContent: 'center',
             alignItems: 'center',
             position: 'absolute', // Ensures it starts from the very top
             bottom: 0, // Aligns it to the bottom
+          },
+          draggableIcon: { 
+            backgroundColor: '#000',
+            marginTop:0
           },
         }}
       >
@@ -89,7 +96,7 @@ const Learn = () => {
           { key: 'DBMS' }
         ]}
         renderItem={({ item }) => (
-          <MaterialCard title={item.key} onPress={() => router.push('(courses)/Materials')} />
+          <LearnCourseCard title={item.key} onPress={() => router.push('(courses)/Tools')} />
         )}
         keyExtractor={(item) => item.key}
       />
@@ -148,7 +155,7 @@ const styles = StyleSheet.create({
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       padding: 20,
-      backgroundColor: '#fff',
+      backgroundColor: '#f0f2ff',
       height: '40%',
     },
     draggableIcon: { backgroundColor: '#000' },

@@ -12,7 +12,7 @@ export default function Layout() {
         headerTintColor: 'black',
         headerTitle: 'Chat',
         headerRight: () => (
-          <TouchableOpacity style={{ marginRight: 15 }}>
+          <TouchableOpacity>
             <Image source={hamburger} style={styles.menuIcon} />
           </TouchableOpacity>
         ),
@@ -23,7 +23,7 @@ export default function Layout() {
 
 const styles = StyleSheet.create({
     menuIcon:{
-        width: 25,
-        height: 25
+        width: 24,
+        height: 24
     }
     });
