@@ -46,6 +46,8 @@ const Home = () => {
           ref={refRBSheet}
           draggable={true}
           closeOnPressMask={true}
+          animationType="slide"
+          onClose={() => setTimeout(() => console.log('Sheet Closed'), 100)}
           customStyles={{
             wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' }, // Dim background
             container: {
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:10,
     backgroundColor: "transparent",
-    // marginTop:30
+    marginTop:30
     // backgroundColor:'grey',
   },
   welcome:{

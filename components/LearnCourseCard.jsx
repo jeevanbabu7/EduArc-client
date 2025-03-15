@@ -6,7 +6,7 @@ import edit from '../assets/icons/edit.png';
 import deleteicon from '../assets/icons/delete.png';
 import info from '../assets/icons/info.png';
 
-const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
+const LearnCourseCard = ({ title, onPress, onEdit, onDelete }) => {
   const refRBSheet = useRef(null);
 
   return (
@@ -33,9 +33,9 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
       <RBSheet
         ref={refRBSheet}
         draggable={true}
+        dragOnContent={true}
         closeOnPressMask={true}
         customStyles={styles.sheet}
-        dragOnContent={true}
       >
         {/* Edit Option */}
         <TouchableOpacity style={styles.sheetItem} onPress={() => {
@@ -43,7 +43,7 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
           onEdit && onEdit();
         }}>
           <Image source={edit} style={styles.sheetIcon} />
-          <Text style={styles.sheetText}>Edit</Text>
+          <Text style={styles.sheetText}>Edit Course</Text>
         </TouchableOpacity>
 
         {/* Delete Option */}
@@ -55,7 +55,7 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
           ]);
         }}>
           <Image source={deleteicon} style={styles.sheetIcon} />
-          <Text style={styles.sheetText}>Delete</Text>
+          <Text style={styles.sheetText}>Delete Course</Text>
         </TouchableOpacity>
 
         {/* View Details Option */}
@@ -71,74 +71,74 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
   );
 };
 
-export default MaterialCard;
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    borderBottomWidth: 0.5,
-    borderColor: 'grey',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-  },
-  content: {
-    flexDirection: 'row',
+    card: {
+        backgroundColor: '#fff',
+        borderBottomWidth: 0.5,
+        borderColor: 'grey',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+    },
+    content: {
+        flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   iconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textContainer: {
-    flex: 1,
-    marginHorizontal: 10,
-  },
-  title: {
-    fontSize: 18,
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  date: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 4,
-  },
-  sheet: {
-    wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-    container: {
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      padding: 20,
-      backgroundColor: '#f0f2ff',
-      height: '40%',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-    draggableIcon: { backgroundColor: '#000' },
-  },
-  sheetItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    gap:10
-  },
-  sheetIcon: {
-    width: 24, // Adjust based on your icon size
-    height: 24,
-    marginRight: 10,
-    resizeMode: 'contain', // Ensures the icon fits properly
-  },
-  sheetText: {
-    fontSize: 18, // Make text slightly larger
-    color: '#333',
-    fontWeight:'500'
-  },
-  cancelButton: {
-    padding: 15,
-    alignItems: 'center',
+    textContainer: {
+        flex: 1,
+        marginHorizontal: 10,
+    },
+    title: {
+        fontSize: 18,
+        color: '#000',
+        fontWeight: 'bold',
+    },
+    date: {
+        fontSize: 14,
+        color: '#555',
+        marginTop: 4,
+    },
+    sheet: {
+        wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
+        container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            padding: 20,
+            backgroundColor: '#f0f2ff',
+            height: '40%',
+        },
+        draggableIcon: { backgroundColor: '#000' },
+    },
+    sheetItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 15,
+        gap:10
+    },
+    sheetIcon: {
+        width: 24, // Adjust based on your icon size
+        height: 24,
+        marginRight: 10,
+        resizeMode: 'contain', // Ensures the icon fits properly
+    },
+    sheetText: {
+        fontSize: 18, // Make text slightly larger
+        color: '#333',
+        fontWeight:'500'
+    },
+    cancelButton: {
+        padding: 15,
+        alignItems: 'center',
   },
   cancelText: {
-    fontSize: 18,
-    color: '#0504aa',
-    fontWeight: 'bold',
-  },
+      fontSize: 18,
+      color: '#0504aa',
+      fontWeight: 'bold',
+    },
 });
+export default LearnCourseCard;
