@@ -12,7 +12,15 @@ const Learn = () => {
   const refMenuSheet = useRef(null);
   const refAddCourseSheet = useRef(null);
   const refSettingsSheet = useRef(null);
-
+  const dummycourses = [
+    { key: 'Data Structures' },
+    { key: 'Operating Systems' },
+    { key: 'Linear Algebra' },
+    { key: 'Commerce' },
+    { key: 'Maths' },
+    { key: 'Science' },
+    { key: 'DBMS' }
+  ]
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* Top Bar */}
@@ -86,15 +94,7 @@ const Learn = () => {
       {/* Course List */}
       <FlatList
         style={styles.cardContainer}
-        data={[
-          { key: 'Data Structures' },
-          { key: 'Operating Systems' },
-          { key: 'Linear Algebra' },
-          { key: 'Commerce' },
-          { key: 'Maths' },
-          { key: 'Science' },
-          { key: 'DBMS' }
-        ]}
+        data={dummycourses}
         renderItem={({ item }) => (
           <LearnCourseCard title={item.key} onPress={() => router.push('(courses)/Tools')} />
         )}
