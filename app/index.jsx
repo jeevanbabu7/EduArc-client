@@ -1,3 +1,4 @@
+import './gesture-handler';
 import { Text, View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
