@@ -7,7 +7,8 @@ const ENV = {
     PORT: '5000',
     APPWRITE_PROJECT_ID: '67bcccfe0010a29974a4',
     APPWRITE_PLATFORM: 'com.gcek.eduarc',
-    PDF_BUCKET_ID: '67bccd990005a5d175c4'
+    PDF_BUCKET_ID: '67bccd990005a5d175c4',
+    COHERE_API_KEY: 'BXwcyHn8jv7a1Rk1TxZmrIc7bTlmGKVHTsRgu53h'
   },
   prod: {
     API_URL: 'https://your-production-url.com',

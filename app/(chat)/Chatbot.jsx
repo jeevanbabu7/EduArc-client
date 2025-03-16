@@ -13,7 +13,7 @@ import { useToast } from '@gluestack-ui/themed';
 import { ID } from 'react-native-appwrite';
 import { storage } from '../../lib/appwrite/appwrite.js';
 import axios from 'axios';
-import { streamModelResponse } from '../../lib/cohere.js';
+import { getModelResponse } from '../../lib/cohere.js';
 
 const ChatBot = () => {
   console.log(IP_ADDRESS);
@@ -229,23 +229,20 @@ const ChatBot = () => {
         // onSend([userMessage]);
         setInputText('');
 
-        await streamModelResponse(inputText, (token) => {
-          // setResponse((prev) => prev + token); // Append token to response
-          console.log(token); // Print each token to the console
-        });
+        const botmsg = await getModelResponse(inputText);
         
   
-        // const botMessage = {
-        //   _id: Math.random().toString(36).substring(7),
-        //   text: botmsg,
-        //   createdAt: new Date(),
-        //   user: {
-        //     _id: 2,
-        //     name: 'ChatBot',
-        //     avatar: 'https://placekitten.com/100/100',
-        //   },
-        // };
-        // setMessages((previousMessages) => GiftedChat.append(previousMessages, [botMessage]));
+        const botMessage = {
+          _id: Math.random().toString(36).substring(7),
+          text: botmsg,
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'ChatBot',
+            avatar: 'https://placekitten.com/100/100',
+          },
+        };
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, [botMessage]));
       }
     }catch(error) {
       console.error(error);
