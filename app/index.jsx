@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import OnboardingScreen from '../components/OnboardingScreen';
 import { getItem } from '../scripts/asyncStorage';
-import { useUser } from '../context/userContext';
+import UserProvider, { useUser } from '../context/userContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config';
@@ -55,8 +55,9 @@ export default function Index() {
  
   return <GestureHandlerRootView style={{ flex: 1 }}>
     <GluestackUIProvider config={config}>
-      <OnboardingScreen />
-      
+        <UserProvider>
+          <OnboardingScreen />
+        </UserProvider>
     </GluestackUIProvider >
     </GestureHandlerRootView>
 }

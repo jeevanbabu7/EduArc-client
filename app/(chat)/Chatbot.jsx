@@ -14,24 +14,23 @@ import { ID } from 'react-native-appwrite';
 import { storage } from '../../lib/appwrite/appwrite.js';
 import axios from 'axios';
 import { getModelResponse } from '../../lib/cohere.js';
-
+import { useLocalSearchParams } from 'expo-router';
 const ChatBot = () => {
-  console.log(IP_ADDRESS);
+  const msg = useParams();
+  console.log('hii',msg);
+  
 
-  const [messages, setMessages] = useState([]);
-  const [inputText, setInputText] = useState('');
-  const [keyPressed, setKeyPressed] = useState(false);
-  const [socket, setSocket] = useState(null);
-  const navigation = useNavigation();
-  const { PDF_BUCKET_ID } = getEnvVars();
+    const [messages, setMessages] = useState([]);
+    const [inputText, setInputText] = useState('');
+    const [keyPressed, setKeyPressed] = useState(false);
+    const [socket, setSocket] = useState(null);
+    const navigation = useNavigation();
+    const { PDF_BUCKET_ID } = getEnvVars();
 
-    console.log(PDF_BUCKET_ID);
     const [file, setFile] = useState(null);
     const [fileURL, setFileURL] = useState(null);
   
     const toast = useToast();
-    console.log(PDF_BUCKET_ID);
-    console.log(fileURL);
     
   
     const fetchFileBlob = async (fileUri) => {
@@ -41,7 +40,7 @@ const ChatBot = () => {
   
     const storeFileInAppwrite = async () => {
       try {
-        console.log(file);
+
         
         const fileBlob = await fetchFileBlob(file.uri);
         const response = await storage.createFile('67bccd990005a5d175c4', ID.unique(), fileBlob, [`write("any")`]);
@@ -84,6 +83,7 @@ const ChatBot = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Chat',
+
     });
   }, [navigation]);
   const { user } = useUser();

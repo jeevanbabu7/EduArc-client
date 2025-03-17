@@ -56,6 +56,7 @@
     "react-native": "^0.76.7",
     "react-native-appwrite": "^0.7.0",
     "react-native-async-storage": "^0.0.1",
+    "react-native-auto-route": "^0.3.3",
     "react-native-document-picker": "^9.3.1",
     "react-native-drawer-layout": "^4.1.1",
     "react-native-elements": "^3.4.3",

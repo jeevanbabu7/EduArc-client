@@ -1,25 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { useNavigation, Slot } from "expo-router"; 
 import hamburger from "../../assets/icons/hamburger-icon.png";
 import edit from '../../assets/icons/edit.png';
-// Dummy Chat History
-const chatHistory = [
-  { id: 1, title: "Chat with Alice" },
-  { id: 2, title: "Chat with Bob" },
-  { id: 3, title: "Chat with Charlie" },
-];
-
+import getEnvVars from "../../config";
+import axios from "axios";
 // Custom Drawer Content - Only Chat History
-function CustomDrawerContent(props) {
+function CustomDrawerContent() {
+  const router = useRouter();
+  const [chatHistory, setChatHistory] = useState([
+    { id: 1, title: "Chat with Alice" },
+    { id: 2, title: "Chat with Bob" },
+    { id: 3, title: "Chat with Charlie" },
+  ]);
+  
+  const navigation = useNavigation();
+  const { HOME_IP_ADDRESS } = getEnvVars();
+
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      const res = await axios.get(`http://172.16.33.57:3000/api/chat/get-chat-sessions/67d3ee4435aa92b97a1a70dc`);
+      setChatHistory(res.data.chatSessions);
+    };
+    fetchChatHistory();
+  }, []);
+
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView>
       <View style={styles.chatContainer}>
         <Text style={styles.chatTitle}>Chat History</Text>
         {chatHistory.map((chat) => (
-          <TouchableOpacity key={chat.id} style={styles.chatItem}>
-            <Text style={styles.chatText}>{chat.title}</Text>
+          <TouchableOpacity 
+            key={chat._id} 
+            style={styles.chatItem} 
+            onPress={() => router.navigate({screen: "Chatbot", params: {
+              msg: "hii"
+            }})
+          }
+          >
+            <Text style={styles.chatText}>{chat._id}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -36,15 +56,15 @@ export default function Layout() {
 
   return (
     <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={() => <CustomDrawerContent />}
       screenOptions={{
-        drawerPosition: "left", // Drawer opens from right
+        drawerPosition: "left",
         drawerStyle: { width: 250 },
       }}
     >
-      {/* The Slot component renders the actual chatbot screen */}
       <Drawer.Screen
-        name="ChatbotScreen"
+        name="Chatbot"
+        initialParams={{ chatId: 1, chatTitle: "Chat with Alice" }}
         options={{
           headerStyle: { backgroundColor: "#ffffff" },
           headerTintColor: "black",
