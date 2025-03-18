@@ -1,34 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
-import { useNavigation, Slot } from "expo-router"; 
-import hamburger from "../../assets/icons/hamburger-icon.png";
+import { Slot } from "expo-router";
+import axios from "axios";
 import edit from '../../assets/icons/edit.png';
 import getEnvVars from "../../config";
-import axios from "axios";
-import { useRouter } from "expo-router";
+import { ChatProvider, useChat } from "../../hooks/ChatContext"; // Update path as needed
 
-// Custom Drawer Content - Only Chat History
+const Drawer = createDrawerNavigator();
+
+// Dummy data for chat history
+const DUMMY_CHAT_HISTORY = [
+  { id: "chat1", title: "Chat with Alice" },
+  { id: "chat2", title: "Chat with Bob" },
+  { id: "chat3", title: "Chat with Charlie" }
+];
+
+// Custom drawer content component - Notice this is defined INSIDE the layout component now
 function CustomDrawerContent({ navigation }) {
-  const router = useRouter();
-  const [chatHistory, setChatHistory] = useState([
-    { id: 1, title: "Chat with Alice" },
-    { id: 2, title: "Chat with Bob" },
-    { id: 3, title: "Chat with Charlie" },
-  ]);
-  
+  const [chatHistory, setChatHistory] = useState(DUMMY_CHAT_HISTORY);
+  const { setCurrentChat } = useChat(); // Use the context
   const { HOME_IP_ADDRESS } = getEnvVars();
-
+  
   useEffect(() => {
-    const fetchChatHistory = async () => {
-      const res = await axios.get(`http://192.168.75.18:3000/api/chat/get-chat-sessions/67d3ee4435aa92b97a1a70dc`);
-      setChatHistory(res.data.chatSessions);
-    };
     fetchChatHistory();
   }, []);
+  
+  const fetchChatHistory = async () => {
+    try {
+      const userId = "67d3ee4435aa92b97a1a70dc";
+      const response = await axios.get(`http://${HOME_IP_ADDRESS}/api/chat/get-chat-sessions/${userId}`);
+      
+      if (response.data.chatSessions && response.data.chatSessions.length > 0) {
+        setChatHistory(response.data.chatSessions);
+      }
+    } catch (error) {
+      console.error("Failed to fetch chat history:", error);
+    }
+  };
 
   const handleChatPress = (chat) => {
-    navigation.navigate('Chatbot', { chatId: chat._id, chatTitle: chat.title });
+    // Update the current chat in context
+    setCurrentChat({
+      id: chat.id,
+      title: chat.title
+    });
+    
+    // Log for debugging
+    // console.log("Selected chat:", chat);
+    
+    // Close the drawer
+    navigation.closeDrawer();
   };
 
   return (
@@ -37,7 +59,7 @@ function CustomDrawerContent({ navigation }) {
         <Text style={styles.chatTitle}>Chat History</Text>
         {chatHistory.map((chat) => (
           <TouchableOpacity 
-            key={chat._id} 
+            key={chat.id.toString()}
             style={styles.chatItem} 
             onPress={() => handleChatPress(chat)}
           >
@@ -49,42 +71,35 @@ function CustomDrawerContent({ navigation }) {
   );
 }
 
-// Create Drawer Navigator
-const Drawer = createDrawerNavigator();
+// Header right component
+const HeaderRight = () => (
+  <TouchableOpacity>
+    <Image source={edit} style={styles.menuIcon} />
+  </TouchableOpacity>
+);
 
-// Layout Component with the Hamburger Menu
 export default function Layout() {
-  const navigation = useNavigation();
-
   return (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        drawerPosition: "left",
-        drawerStyle: { width: 250 },
-      }}
-    >
-      <Drawer.Screen
-        name="Chatbot"
-        initialParams={{ chatId: 1, chatTitle: "Chat with Alice" }}
-        options={{
+    <ChatProvider>
+      <Drawer.Navigator
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+        screenOptions={{
+          drawerPosition: "left",
+          drawerStyle: { width: 250 },
           headerStyle: { backgroundColor: "#ffffff" },
           headerTintColor: "black",
           headerTitle: "Chat",
-          headerRight: () => (
-            <TouchableOpacity>
-              <Image source={edit} style={styles.menuIcon} />
-            </TouchableOpacity>
-          ),
+          headerRight: HeaderRight,
         }}
       >
-        {() => <Slot />} 
-      </Drawer.Screen>
-    </Drawer.Navigator>
+        <Drawer.Screen name="index">
+          {() => <Slot />}
+        </Drawer.Screen>
+      </Drawer.Navigator>
+    </ChatProvider>
   );
 }
 
-// Styles
 const styles = StyleSheet.create({
   menuIcon: {
     width: 24,

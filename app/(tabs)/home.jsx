@@ -32,7 +32,7 @@ const Home = () => {
   ];
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: "#F5F9FF"}}>
       <SafeAreaView style={{flex:1,backgroundColor: "#F5F9FF"}}>
       <View className="bg-[#4D75F9]" style={styles.topContainer}>
         <View style={styles.topbar}>
