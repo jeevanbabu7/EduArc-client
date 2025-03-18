@@ -6,8 +6,10 @@ import hamburger from "../../assets/icons/hamburger-icon.png";
 import edit from '../../assets/icons/edit.png';
 import getEnvVars from "../../config";
 import axios from "axios";
+import { useRouter } from "expo-router";
+
 // Custom Drawer Content - Only Chat History
-function CustomDrawerContent() {
+function CustomDrawerContent({ navigation }) {
   const router = useRouter();
   const [chatHistory, setChatHistory] = useState([
     { id: 1, title: "Chat with Alice" },
@@ -15,16 +17,19 @@ function CustomDrawerContent() {
     { id: 3, title: "Chat with Charlie" },
   ]);
   
-  const navigation = useNavigation();
   const { HOME_IP_ADDRESS } = getEnvVars();
 
   useEffect(() => {
     const fetchChatHistory = async () => {
-      const res = await axios.get(`http://172.16.33.57:3000/api/chat/get-chat-sessions/67d3ee4435aa92b97a1a70dc`);
+      const res = await axios.get(`http://192.168.75.18:3000/api/chat/get-chat-sessions/67d3ee4435aa92b97a1a70dc`);
       setChatHistory(res.data.chatSessions);
     };
     fetchChatHistory();
   }, []);
+
+  const handleChatPress = (chat) => {
+    navigation.navigate('Chatbot', { chatId: chat._id, chatTitle: chat.title });
+  };
 
   return (
     <DrawerContentScrollView>
@@ -34,12 +39,9 @@ function CustomDrawerContent() {
           <TouchableOpacity 
             key={chat._id} 
             style={styles.chatItem} 
-            onPress={() => router.navigate({screen: "Chatbot", params: {
-              msg: "hii"
-            }})
-          }
+            onPress={() => handleChatPress(chat)}
           >
-            <Text style={styles.chatText}>{chat._id}</Text>
+            <Text style={styles.chatText}>{chat.title}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -56,7 +58,7 @@ export default function Layout() {
 
   return (
     <Drawer.Navigator
-      drawerContent={() => <CustomDrawerContent />}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerPosition: "left",
         drawerStyle: { width: 250 },
