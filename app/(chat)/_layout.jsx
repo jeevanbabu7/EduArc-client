@@ -5,7 +5,7 @@ import { Slot } from "expo-router";
 import axios from "axios";
 import edit from '../../assets/icons/edit.png';
 import getEnvVars from "../../config";
-import { ChatProvider, useChat } from "../../hooks/ChatContext"; // Update path as needed
+import {ChatProvider} from '../../context/ChatContext';
 
 const Drawer = createDrawerNavigator();
 
@@ -80,6 +80,7 @@ const HeaderRight = () => (
 
 export default function Layout() {
   return (
+    <ChatProvider>
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
@@ -100,7 +101,8 @@ export default function Layout() {
         <Drawer.Screen name="index">
           {() => <Slot />}
         </Drawer.Screen>
-      </Drawer.Navigator>
+      </Drawer.Screen>
+    </Drawer.Navigator>
     </ChatProvider>
   );
 }
