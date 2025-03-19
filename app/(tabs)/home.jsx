@@ -36,7 +36,7 @@ const Home = () => {
       <SafeAreaView style={{flex:1,backgroundColor: "#F5F9FF"}}>
       <View className="bg-[#4D75F9]" style={styles.topContainer}>
         <View style={styles.topbar}>
-          <Ionicons name="menu" size={25} color="#FFFFFF" />
+          {/* <Ionicons name="menu" size={25} color="#FFFFFF" /> */}
           <Text style={{ fontWeight: 'bold',fontSize:20, color: "#FFFFFF"}}>EduArc</Text>
           <TouchableOpacity onPress={() => refRBSheet.current.open()}>
               <Ionicons name="notifications" size={25} color="#ffff"  />
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:10,
     backgroundColor: "transparent",
-    marginTop:30
+    // marginTop:30
     // backgroundColor:'grey',
   },
   welcome:{
