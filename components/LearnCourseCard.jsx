@@ -6,9 +6,9 @@ import edit from '../assets/icons/edit.png';
 import deleteicon from '../assets/icons/delete.png';
 import info from '../assets/icons/info.png';
 
-const LearnCourseCard = ({ title, onPress, onEdit, onDelete }) => {
+const LearnCourseCard = ({ name, id, onPress, onEdit, onDelete }) => {
   const refRBSheet = useRef(null);
-
+  
   return (
     <View style={styles.card}>
       <View style={styles.content}>
@@ -19,7 +19,7 @@ const LearnCourseCard = ({ title, onPress, onEdit, onDelete }) => {
 
         {/* Course Name & Last Opened */}
         <TouchableOpacity style={styles.textContainer} onPress={onPress}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{name}</Text>
           <Text style={styles.date}>Last opened: Jan 1, 2025</Text>
         </TouchableOpacity>
 
@@ -51,7 +51,7 @@ const LearnCourseCard = ({ title, onPress, onEdit, onDelete }) => {
           refRBSheet.current.close();
           Alert.alert("Delete Course", "Are you sure you want to delete this course?", [
             { text: "Cancel", style: "cancel" },
-            { text: "Delete", onPress: () => onDelete && onDelete() }
+            { text: "Delete", onPress: () => onDelete && onDelete(id) }
           ]);
         }}>
           <Image source={deleteicon} style={styles.sheetIcon} />

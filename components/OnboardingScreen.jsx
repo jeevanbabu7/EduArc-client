@@ -46,7 +46,7 @@ const OnboardingScreen = () => {
   };
 
   const handleSkip = () => {
-    router.replace('(auth)/signin'); // Redirect to (tabs)/home
+    router.replace('(auth)/signup'); // Redirect to (tabs)/home
   };
 
   const doneButton = ({ ...props }) => {

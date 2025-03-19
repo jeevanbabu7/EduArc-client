@@ -66,10 +66,10 @@ const LoginForm = () => {
             <View style={styles.innerContainer}>
               
               <View>
-                <Text style={styles.header}>Register</Text>
-                <Pressable onPress={() => router.push('/(auth)/signin')}>
+                <Text style={styles.header}>Login</Text>
+                <Pressable onPress={() => router.push('/(auth)/signup')}>
                   <Text style={styles.footer}>
-                    Already registered ? <Text style={styles.link}>Sign in</Text>
+                    Already registered ? <Text style={styles.link}>Sign up</Text>
                   </Text>
                   </Pressable>
               </View>

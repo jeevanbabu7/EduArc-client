@@ -105,7 +105,7 @@ export default function UserProvider(props) {
   async function init() {
     try {
       const loggedIn = await account.get();
-      // console.log("Logged in user", loggedIn);
+      console.log("Logged in user", loggedIn);
       
       setUser(loggedIn);
 
@@ -121,7 +121,7 @@ export default function UserProvider(props) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ current: user, login, logout, register, toast, googleAuth }}>
+    <UserContext.Provider value={{ currentUser: user, login, logout, register, toast, googleAuth }}>
       {props.children}
     </UserContext.Provider>
   );

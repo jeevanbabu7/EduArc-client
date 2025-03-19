@@ -1,26 +1,80 @@
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity,TextInput } from 'react-native';
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import LearnCourseCard from '../../components/LearnCourseCard.jsx';
 import { useRouter } from 'expo-router';
 import RBSheet from 'react-native-raw-bottom-sheet';
-
+import getEnvVars from '../../config.js';
+import { useUser } from '../../context/userContext.jsx';
 const Learn = () => {
   const router = useRouter();
-
+  const {IP_ADDRESS} = getEnvVars();
   // Create refs for each bottom sheet
   const refMenuSheet = useRef(null);
   const refAddCourseSheet = useRef(null);
   const refSettingsSheet = useRef(null);
-  const dummycourses = [
-    { key: 'Data Structures' },
-    { key: 'Operating Systems' },
-    { key: 'Linear Algebra' },
-    { key: 'Commerce' },
-    { key: 'Maths' },
-    { key: 'Science' },
-    { key: 'DBMS' }
-  ]
+  const [courses, setCourses] = useState([]);
+  const { user } = useUser();
+  const [courseName, setCourseName] = useState('');
+
+  
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const course = await fetch(`${IP_ADDRESS}:3000/api/course/get-courses/67da90c4f3484363454fb84a`);
+      const courseData = await course.json();
+      setCourses(courseData.courses);
+
+    }
+    fetchCourses();
+  }, []);
+  
+
+  const handleAddCourse = async () => {
+    try {
+      console.log(courseName);
+      
+      const response = await fetch(`${IP_ADDRESS}:3000/api/course/add-course`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: '67da90c4f3484363454fb84a',
+          name: courseName,
+        }),
+      });
+      const data = await response.json();
+      console.log(data.course);
+      
+      if (response.ok) {
+        setCourses([...courses, data]);
+        refAddCourseSheet.current.close();
+      }
+    }catch(err) {
+      console.log(err);
+    }
+  }
+
+  const onDelete = async (courseId) => {
+    try {
+      const response = await fetch(`${IP_ADDRESS}:3000/api/course/delete-course`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseId,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setCourses(courses.filter((course) => course._id !== courseId));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* Top Bar */}
@@ -81,9 +135,11 @@ const Learn = () => {
           style={styles.input}
           placeholder="Enter Course Name"
           placeholderTextColor="#888"
+          value={courseName}
+          onChangeText={(text) => setCourseName(text)}
         />
 
-        <TouchableOpacity style={styles.submitButton}>
+        <TouchableOpacity style={styles.submitButton} onPress={handleAddCourse}>
           <Text style={styles.submitButtonText}>Add Course</Text>
         </TouchableOpacity>
       </RBSheet>
@@ -94,9 +150,9 @@ const Learn = () => {
       {/* Course List */}
       <FlatList
         style={styles.cardContainer}
-        data={dummycourses}
+        data={courses}
         renderItem={({ item }) => (
-          <LearnCourseCard title={item.key} onPress={() => router.push('(courses)/Tools')} />
+          <LearnCourseCard name={item.name} onDelete={onDelete} onPress={() => router.push('(courses)/Tools')} />
         )}
         keyExtractor={(item) => item.key}
       />
