@@ -14,19 +14,20 @@ const Learn = () => {
   const refAddCourseSheet = useRef(null);
   const refSettingsSheet = useRef(null);
   const [courses, setCourses] = useState([]);
-  const { user } = useUser();
+  const { currentUser } = useUser();
   const [courseName, setCourseName] = useState('');
 
   
   useEffect(() => {
+    if(currentUser == null) return;
     const fetchCourses = async () => {
-      const course = await fetch(`${IP_ADDRESS}:3000/api/course/get-courses/67da90c4f3484363454fb84a`);
+      const course = await fetch(`${IP_ADDRESS}:3000/api/course/get-courses/${currentUser.$id}`);
       const courseData = await course.json();
       setCourses(courseData.courses);
 
     }
     fetchCourses();
-  }, []);
+  }, [currentUser]);
   
 
   const handleAddCourse = async () => {
@@ -39,16 +40,17 @@ const Learn = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: '67da90c4f3484363454fb84a',
+          userId: currentUser.$id,
           name: courseName,
         }),
       });
       const data = await response.json();
-      console.log(data.course);
+      
       
       if (response.ok) {
-        setCourses([...courses, data]);
+        setCourses([...courses, data.course]);
         refAddCourseSheet.current.close();
+        router.push('(courses)/Materials')
       }
     }catch(err) {
       console.log(err);
@@ -63,7 +65,7 @@ const Learn = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          courseId,
+          courseId
         }),
       });
       const data = await response.json();

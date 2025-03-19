@@ -105,7 +105,7 @@ export default function UserProvider(props) {
   async function init() {
     try {
       const loggedIn = await account.get();
-      console.log("Logged in user", loggedIn);
+      // console.log("Logged in user", loggedIn);
       
       setUser(loggedIn);
 

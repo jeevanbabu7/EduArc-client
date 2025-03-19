@@ -10,17 +10,14 @@ import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
 import reading from '../../assets/icons/reading-book.png'
 import { useNavigation, useRouter,router } from 'expo-router';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Drawer } from 'expo-router/drawer';
-import { removeItem } from '../../scripts/asyncStorage';
 import { InputGroup, InputField, InputLeftAddon, Input } from "@gluestack-ui/themed";
 import { useUser } from '../../context/userContext';
 import RBSheet from 'react-native-raw-bottom-sheet';
 const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
-  const {user} = useUser()  
-  console.log(user);
+  const {currentUser} = useUser();
+  
   const refRBSheet = useRef(null);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -77,7 +74,7 @@ const Home = () => {
         </RBSheet>
         <View style={styles.welcome}>
           <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>Welcome Back,</Text>
-          <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>{user}</Text>
+          <Text style={{fontSize: 18,fontWeight: 'bold', color: "#FFFFFF"}}>{currentUser?.name}</Text>
         </View>
         <View className="flex flex-row justify-center items-center h-32">
           <Input
