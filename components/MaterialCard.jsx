@@ -5,7 +5,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import edit from '../assets/icons/edit.png';
 import deleteicon from '../assets/icons/delete.png';
 import info from '../assets/icons/info.png';
-
+import summary from '../assets/icons/summarise.png'
 const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
   const refRBSheet = useRef(null);
 
@@ -56,6 +56,18 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
         }}>
           <Image source={deleteicon} style={styles.sheetIcon} />
           <Text style={styles.sheetText}>Delete</Text>
+        </TouchableOpacity>
+
+        {/* Chat with Pdf */}
+        <TouchableOpacity style={styles.sheetItem} onPress={() => {
+          refRBSheet.current.close();
+          Alert.alert("Delete Course", "Are you sure you want to delete this course?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Delete", onPress: () => onDelete && onDelete() }
+          ]);
+        }}>
+          <Image source={summary} style={styles.sheetIcon} />
+          <Text style={styles.sheetText}>Chat with Pdf</Text>
         </TouchableOpacity>
 
         {/* View Details Option */}
@@ -118,8 +130,8 @@ const styles = StyleSheet.create({
   sheetItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    gap:10
+    paddingVertical: 10,
+    gap:10,
   },
   sheetIcon: {
     width: 24, // Adjust based on your icon size
