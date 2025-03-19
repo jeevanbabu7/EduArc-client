@@ -7,7 +7,7 @@ import io from "socket.io-client";
 import { useUser } from '../../context/userContext';
 import * as DocumentPicker from 'expo-document-picker';
 import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants'
-import { useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import getEnvVars from '../../config.js';
 import { useToast } from '@gluestack-ui/themed';
 import { ID } from 'react-native-appwrite';
@@ -32,6 +32,7 @@ const ChatBot = () => {
   const [fileURL, setFileURL] = useState(null);
 
   const toast = useToast();
+  const {IP_ADDRESS} = getEnvVars();
 
   const fetchFileBlob = async (fileUri) => {
     const response = await fetch(fileUri);
@@ -77,7 +78,7 @@ const ChatBot = () => {
   useEffect(() => {
     const fetchPreviousMessages = async () => {
       try {
-        const response = await fetch(`http://172.16.33.191:3000/api/chat/get-messages/${chatId}`);
+        const response = await fetch(`${IP_ADDRESS}:3000/api/chat/get-messages/${chatId}`);
         const data = await response.json();
 
         if (data.messages.length > 0) {

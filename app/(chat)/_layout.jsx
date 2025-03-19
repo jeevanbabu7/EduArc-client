@@ -5,7 +5,8 @@ import { Slot } from "expo-router";
 import axios from "axios";
 import edit from '../../assets/icons/edit.png';
 import getEnvVars from "../../config";
-import {ChatProvider} from '../../context/ChatContext';
+import {ChatProvider, useChat} from '../../context/ChatContext';
+import { useUser } from "../../context/userContext";
 
 const Drawer = createDrawerNavigator();
 
@@ -20,24 +21,30 @@ const DUMMY_CHAT_HISTORY = [
 function CustomDrawerContent({ navigation }) {
   const [chatHistory, setChatHistory] = useState(DUMMY_CHAT_HISTORY);
   const { setCurrentChat } = useChat(); // Use the context
-  const { HOME_IP_ADDRESS } = getEnvVars();
-  
+  const { HOME_IP_ADDRESS, IP_ADDRESS } = getEnvVars();
+  const {currentUser} = useUser();
   useEffect(() => {
-    fetchChatHistory();
-  }, []);
-  
-  const fetchChatHistory = async () => {
-    try {
-      const userId = "67d3ee4435aa92b97a1a70dc";
-      const response = await axios.get(`http://${HOME_IP_ADDRESS}/api/chat/get-chat-sessions/${userId}`);
+    const fetchChatHistory = async () => {
+      if(!currentUser) return;
+      try {
       
-      if (response.data.chatSessions && response.data.chatSessions.length > 0) {
-        setChatHistory(response.data.chatSessions);
+        
+        const userId = currentUser.$id;
+        
+        const response = await axios.get(`${IP_ADDRESS}/api/chat/get-chat-sessions/${userId}`);
+        console.log("Chat history response:", response);
+        
+        if (response.data.chatSessions && response.data.chatSessions.length > 0) {
+          setChatHistory(response.data.chatSessions);
+        }
+      } catch (error) {
+        console.error("Failed to fetch chat history:", error);
       }
-    } catch (error) {
-      console.error("Failed to fetch chat history:", error);
-    }
-  };
+    };
+    fetchChatHistory();
+  }, [currentUser]);
+  
+  
 
   const handleChatPress = (chat) => {
     // Update the current chat in context
@@ -89,19 +96,15 @@ export default function Layout() {
       }}
     >
       <Drawer.Screen
-        name="Chatbot"
-        initialParams={{ chatId: 1, chatTitle: "Chat with Alice" }}
-        options={{
-          headerStyle: { backgroundColor: "#ffffff" },
-          headerTintColor: "black",
-          headerTitle: "Chat",
-          headerRight: HeaderRight,
-        }}
-      >
-        <Drawer.Screen name="index">
-          {() => <Slot />}
-        </Drawer.Screen>
-      </Drawer.Screen>
+  name="Chatbot"
+  component={Slot}
+  options={{
+    headerStyle: { backgroundColor: "#ffffff" },
+    headerTintColor: "black",
+    headerTitle: "Chat",
+    headerRight: HeaderRight,
+  }}
+/>
     </Drawer.Navigator>
     </ChatProvider>
   );
