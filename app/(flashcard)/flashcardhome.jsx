@@ -17,7 +17,7 @@ const FlashHome = () => {
     { id: '3', title: 'History' },
     { id: '4', title: 'Technology' },
   ];
-
+  
   const toggleSelection = (id) => {
     setSelectedTopics((prev) =>
       prev.includes(id) ? prev.filter((topicId) => topicId !== id) : [...prev, id]
