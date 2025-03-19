@@ -24,6 +24,8 @@ const Learn = () => {
       const course = await fetch(`${IP_ADDRESS}:3000/api/course/get-courses/${currentUser.$id}`);
       const courseData = await course.json();
       setCourses(courseData.courses);
+      // console.log(courseData.courses);
+      
 
     }
     fetchCourses();
@@ -154,7 +156,7 @@ const Learn = () => {
         style={styles.cardContainer}
         data={courses}
         renderItem={({ item }) => (
-          <LearnCourseCard name={item.name} onDelete={onDelete} onPress={() => router.push('(courses)/Tools')} />
+          <LearnCourseCard name={item.name} id={item._id} onDelete={onDelete} onPress={() => router.push('(courses)/Tools')} />
         )}
         keyExtractor={(item) => item.key}
       />
