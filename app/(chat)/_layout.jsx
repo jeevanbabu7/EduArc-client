@@ -5,7 +5,7 @@ import { Slot } from "expo-router";
 import axios from "axios";
 import edit from '../../assets/icons/edit.png';
 import getEnvVars from "../../config";
-import { ChatProvider, useChat } from "../../hooks/ChatContext"; // Update path as needed
+import {ChatProvider} from '../../context/ChatContext';
 
 const Drawer = createDrawerNavigator();
 
@@ -63,7 +63,7 @@ function CustomDrawerContent({ navigation }) {
             style={styles.chatItem} 
             onPress={() => handleChatPress(chat)}
           >
-            <Text style={styles.chatText}>{chat.title}</Text>
+            <Text style={styles.chatText}>{chat._id}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -81,11 +81,17 @@ const HeaderRight = () => (
 export default function Layout() {
   return (
     <ChatProvider>
-      <Drawer.Navigator
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-        screenOptions={{
-          drawerPosition: "left",
-          drawerStyle: { width: 250 },
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        drawerPosition: "left",
+        drawerStyle: { width: 250 },
+      }}
+    >
+      <Drawer.Screen
+        name="Chatbot"
+        initialParams={{ chatId: 1, chatTitle: "Chat with Alice" }}
+        options={{
           headerStyle: { backgroundColor: "#ffffff" },
           headerTintColor: "black",
           headerTitle: "Chat",
@@ -95,7 +101,8 @@ export default function Layout() {
         <Drawer.Screen name="index">
           {() => <Slot />}
         </Drawer.Screen>
-      </Drawer.Navigator>
+      </Drawer.Screen>
+    </Drawer.Navigator>
     </ChatProvider>
   );
 }

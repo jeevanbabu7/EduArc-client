@@ -14,12 +14,13 @@ import { ID } from 'react-native-appwrite';
 import { storage } from '../../lib/appwrite/appwrite.js';
 import axios from 'axios';
 import { getModelResponse } from '../../lib/cohere.js';
-import { useChat } from "../../hooks/ChatContext.js";
+import { useChat } from "../../context/ChatContext.js";
 const ChatBot = () => {
   // const { chatId, chatTitle } = useLocalSearchParams(););
   const { currentChat } = useChat();
   const { id: chatId, title: chatTitle } = currentChat;
   console.log("Current chat in Chatbot - ID:", chatId, "Title:", chatTitle);
+  const data = useLocalSearchParams();
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [keyPressed, setKeyPressed] = useState(false);
