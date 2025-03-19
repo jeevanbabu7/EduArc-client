@@ -15,7 +15,7 @@ import upload from '../assets/icons/upload_new.png'
 
 
 const Summarise = () => {
-  const { PDF_BUCKET_ID } = getEnvVars();
+  const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
   console.log(PDF_BUCKET_ID);
   
   const [file, setFile] = useState(null);
@@ -32,16 +32,19 @@ const Summarise = () => {
 
   const fetchFileBlob = async (fileUri) => {
     const response = await fetch(fileUri);
-    return await response.blob();
+    return response.blob();
   };
 
-  const storeFileInAppwrite = async () => {
+
+  const storeFileInAppwrite = async (file) => {
     try {
-      console.log(file);
       
       const fileBlob = await fetchFileBlob(file.uri);
+      console.log("mmmm",fileBlob);
+      
       const response = await storage.createFile('67bccd990005a5d175c4', ID.unique(), fileBlob, [`write("any")`]);
-
+      
+      
       return response.$id;
     } catch (error) {
       console.error("Upload Error:", error);
@@ -57,16 +60,20 @@ const Summarise = () => {
         type: 'application/pdf',
         copyToCacheDirectory: true,
       });
-      console.log("File:", result);
       
       if (!result.canceled) {
         setFile(result.assets[0]);
-        const fileID = await storeFileInAppwrite();
-        console.log("File ID:", fileID);
+        storeFileInAppwrite(result.assets[0]).then((fileID) => {
+          console.log("mmmm", fileID);
+          
+          setFileURL(`https://cloud.appwrite.io/v1/storage/buckets/67bccd990005a5d175c4/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`);
+        }
+        ).catch((error) => {
+          console.error("Upload Error:", error);
+          Alert.alert('Error', 'An error occurred while uploading the file to Appwrite.');
+        }
+        );
         
-        setFileURL(() => {
-          return `https://cloud.appwrite.io/v1/storage/buckets/67bccd990005a5d175c4/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`
-        });
       }
     } catch (error) {
       Alert.alert('Error', 'An error occurred while picking the file.');
@@ -106,7 +113,9 @@ const Summarise = () => {
   const generateSummary = async () => {
     try {
       setLoading(true);
-      const result = await fetch(`http://192.168.90.18:${PORT}/api/summary/pdf`, {
+      
+      
+      const result = await fetch(`${IP_ADDRESS}/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,44 +131,9 @@ const Summarise = () => {
     }
   };
 
-  const storeFileInFirebase = async () => {
-    if (!file) {
-      setError(true);
-      Alert.alert("Error", "Please select a file first.");
-      return;
-    }
 
-    setUploading(true);
-    const response = await fetch(file.uri);
-    const blob = await response.blob();
 
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + "-" + file.name;
-    const storageRef = ref(storage, `uploads/${fileName}`);
-
-    const uploadTask = uploadBytesResumable(storageRef, blob);
-
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      },
-      (error) => {
-        setUploading(false);
-        Alert.alert('Upload failed', error.message);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFileURL(downloadURL);
-          setUploading(false);
-          Alert.alert('Success', 'File uploaded successfully!');
-        });
-      }
-    );
-
-    return;
-  };
-
+    
   return (
     
       <SafeAreaView style={{ flex: 1, overflow: 'scroll' }}>

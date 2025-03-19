@@ -21,14 +21,16 @@ function CustomDrawerContent({ navigation }) {
 
   useEffect(() => {
     const fetchChatHistory = async () => {
-      const res = await axios.get(`http://192.168.75.18:3000/api/chat/get-chat-sessions/67d3ee4435aa92b97a1a70dc`);
+      const res = await axios.get(`http://172.16.33.11:3000/api/chat/get-chat-sessions/67d3ee4435aa92b97a1a70dc`);
       setChatHistory(res.data.chatSessions);
     };
     fetchChatHistory();
   }, []);
 
   const handleChatPress = (chat) => {
-    navigation.navigate('Chatbot', { chatId: chat._id, chatTitle: chat.title });
+    console.log("hii");
+    
+    router.push('Chatbot', { chatId: chat._id, chatTitle: chat.title });
   };
 
   return (
@@ -41,7 +43,7 @@ function CustomDrawerContent({ navigation }) {
             style={styles.chatItem} 
             onPress={() => handleChatPress(chat)}
           >
-            <Text style={styles.chatText}>{chat.title}</Text>
+            <Text style={styles.chatText}>{chat._id}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -65,7 +67,7 @@ export default function Layout() {
       }}
     >
       <Drawer.Screen
-        name="Chatbot"
+        name="ChatbotDrawer"
         initialParams={{ chatId: 1, chatTitle: "Chat with Alice" }}
         options={{
           headerStyle: { backgroundColor: "#ffffff" },

@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 
 const ENV = {
   dev: {
-    IP_ADDRESS: "http://192.168.90.18",
+    IP_ADDRESS: "http://172.16.33.11:5000",
     COLLEGE_IP_ADDRESS: "http://172.16.33.57",
     PORT: '5000',
     APPWRITE_PROJECT_ID: '67bcccfe0010a29974a4',

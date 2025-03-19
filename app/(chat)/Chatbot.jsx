@@ -18,6 +18,7 @@ import { useLocalSearchParams } from 'expo-router';
 
 const ChatBot = () => {
   const { chatId, chatTitle } = useLocalSearchParams();
+  const data = useLocalSearchParams();
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [keyPressed, setKeyPressed] = useState(false);
