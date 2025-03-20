@@ -210,19 +210,19 @@ const ChatBot = () => {
           <Bubble
             {...props}
             wrapperStyle={{
-              left: { backgroundColor: '#f3f4f6', marginLeft: -34 },
-              right: { backgroundColor: '#f3f4f6' },
+              left: { backgroundColor: '#f3f4f6', marginLeft: -34 ,width:'100%'},
+              right: { backgroundColor: '#6699cc' },
             }}
             textStyle={{
               left: { color: '#374151' },
-              right: { color: '#374151' },
+              right: { color: '#f9fafb' },
             }}
-          />
+          /> 
         )}
         renderInputToolbar={() => (
           <View style={styles.inputContainer}>
             <TouchableOpacity onPress={uploadFile}>
-              <Fontisto name="paperclip" size={20} color="black" style={styles.icon} />
+              <Fontisto name="paperclip" size={22} color="black" style={styles.icon} />
             </TouchableOpacity>
             <TextInput
               value={inputText}
@@ -231,7 +231,8 @@ const ChatBot = () => {
               placeholder="Type your message..."
               placeholderTextColor="#9ca3af"
               onKeyPress={handleKeyPress}
-              returnKeyType="done"
+              multiline={true}
+              returnKeyType="default"
               blurOnSubmit={false}
             />
             <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9fafb',
-    paddingTop: 32,
+    // paddingTop: 32,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -261,7 +262,14 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     marginHorizontal: 10,
     marginVertical: 15,
-  },
+    maxHeight: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+},
+
   input: {
     flex: 1,
     backgroundColor: '#ffffff',

@@ -6,6 +6,8 @@ import { InputField } from '@gluestack-ui/themed';
 import { Button } from '@gluestack-ui/themed';
 import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants';
 import upload from '../assets/icons/upload_new.png'
+import up from '../assets/icons/up.png'
+
 
 const VideoSummary = () => {
   const [file, setFile] = useState(null);
@@ -62,12 +64,6 @@ const VideoSummary = () => {
     <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
   <View style={styles.container}>
     <Text style={styles.title}>Upload a Video</Text>
-    
-
-    {/* <TouchableOpacity style={[styles.button, styles.shadow]} onPress={uploadFile}>
-      <Text style={styles.buttonText}>Upload Video</Text>
-    </TouchableOpacity> */}
-
     <View style={styles.container2}>
         <View style={styles.box}>
           <TouchableOpacity style={styles.box1} onPress={uploadFile}>
@@ -82,9 +78,9 @@ const VideoSummary = () => {
                 onChangeText={handleChange} 
               />
             </Input>
-            <Button style={styles.submitButton} onPress={handleSend}>
-              <ButtonText>Send</ButtonText>
-            </Button>
+            <TouchableOpacity style={styles.submitButton} onPress={handleSend}>
+              <Image source={up} style={styles.upButton}/>
+            </TouchableOpacity>
           </View>
         </View>
     </View>
@@ -151,15 +147,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
   },
-  button: {
-    backgroundColor: '#4D75F9',
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '80%',
-  },
   buttonText: {
     color: '#fff',
     fontSize: 16,
@@ -180,14 +167,24 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   inputField: {
-    width: '70%',
-    marginRight: 10,
+    width: '80%',
+    borderColor:'#0504aa',
+    borderRadius:0,
+    borderTopLeftRadius:10,
+    borderBottomLeftRadius:10,
+
+    // marginRight: 10,
+    // borderRadius:15
   },
   submitButton: {
-    width: '30%',
+    width: '20%',
     paddingVertical: 10,
-    borderRadius: 15,
-    backgroundColor: '#003BFF',
+    // borderRadius: 15,
+    backgroundColor: '#0504aa',
+    alignItems:'center',
+    borderTopRightRadius:10,
+    borderBottomRightRadius:10
+
   },
   summaryContainer: {
     marginTop: 30,
@@ -221,7 +218,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 50,  // Adjust as needed
   },
-  
+  upButton:{
+    height:24,
+    width:24
+  }
 });
 
 export default VideoSummary;
