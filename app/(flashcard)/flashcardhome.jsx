@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const CustomCheckbox = ({ isChecked, onToggle }) => (
   <TouchableOpacity onPress={onToggle} style={[styles.checkboxContainer, isChecked && styles.checked]}>
@@ -10,6 +11,7 @@ const CustomCheckbox = ({ isChecked, onToggle }) => (
 );
 
 const FlashHome = () => {
+  const refRBSheet = useRef(null);
   const [selectedTopics, setSelectedTopics] = useState([]);
   const topics = [
     { id: '1', title: 'Math' },
@@ -17,7 +19,12 @@ const FlashHome = () => {
     { id: '3', title: 'History' },
     { id: '4', title: 'Technology' },
   ];
-  
+  const dummy_flashcards = [
+    { id: '1', title: 'New Course Added', message: 'You have a new course available: React Native Basics' },
+    { id: '2', title: 'Assignment Due', message: 'Your "Data Structures" assignment is due tomorrow.' },
+    { id: '3', title: 'Live Class Reminder', message: 'Join the live class for "Machine Learning" at 5 PM today.' },
+    { id: '4', title: 'Profile Update', message: 'Your profile details were successfully updated.' },
+  ];
   const toggleSelection = (id) => {
     setSelectedTopics((prev) =>
       prev.includes(id) ? prev.filter((topicId) => topicId !== id) : [...prev, id]
@@ -56,7 +63,43 @@ const FlashHome = () => {
           <Text style={styles.startQuizText}>Generate</Text>
         </TouchableOpacity>
       )}
+      {selectedTopics.length ==0 && (
+        <>
+          <TouchableOpacity style={styles.startQuizButton} onPress={() => refRBSheet.current.open()}>
+            <Text style={styles.startQuizText}>Show Saved FlashCards</Text>
+          </TouchableOpacity>
+          <RBSheet
+                  ref={refRBSheet}
+                  draggable={false} // Changed to false to remove the notch
+                  closeOnPressMask={true}
+                  customStyles={{
+                    wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
+                    container: {
+                      borderTopLeftRadius: 20,
+                      borderTopRightRadius: 20,
+                      padding: 0, // Removed padding to allow header to sit at the top
+                      backgroundColor: '#f0f2ff',
+                      height: '75%',
+                    },
+                    // Removed draggableIcon style since we're not using it anymore
+                  }}
+                >
+                  <Text style={styles.savedFlashcard}>Saved FlashCards</Text>
+                  <FlatList
+                    data={dummy_flashcards}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <View style={styles.notificationItem}>
+                        <Text style={styles.notificationTitle}>{item.title}</Text>
+                      </View>
+                    )}
+                    contentContainerStyle={styles.listContainer}
+                  />
+                </RBSheet>
+        </>
+        
 
+      )}
       {/* Progress Bar */}
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBar}>
@@ -175,6 +218,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     textAlign: 'center',
+  },
+  savedFlashcard: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingVertical:20,
+    borderBottomWidth:2,
+    borderColor:'#d1d5db'
+  },
+  listContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  notificationItem: {
+    // backgroundColor: '#f0f2ff',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+    borderWidth:1,
+    borderColor:'#d1d5db'
+  },
+  notificationTitle: {
+    fontSize: 16,
   },
 });
 
