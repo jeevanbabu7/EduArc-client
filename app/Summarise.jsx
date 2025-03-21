@@ -288,7 +288,7 @@ const Summarise = () => {
       <ScrollView
         contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1, paddingBottom: 50 }]}
       >
-        <Text style={styles.title}>Upload a Document</Text>
+        {!file && (<Text style={styles.title}>Upload a File</Text>)}
 
         {!file && (
           <View style={styles.container2}>
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderColor: '#D3D3D3',
     padding: 20,
-    minWidth: 200,
+    minWidth: '100%',
     gap: 10,
   },
   disabledBox: {

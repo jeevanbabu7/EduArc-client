@@ -9,6 +9,7 @@ import upload from '../../assets/icons/upload.png'
 import summarise from '../../assets/icons/summarise.png'
 import more from '../../assets/icons/more.png'
 import reading from '../../assets/icons/reading-book.png'
+import flash from '../../assets/icons/flash.png'
 import { useNavigation, useRouter,router } from 'expo-router';
 import { InputGroup, InputField, InputLeftAddon, Input } from "@gluestack-ui/themed";
 import { useUser } from '../../context/userContext';
@@ -17,7 +18,6 @@ const primary = '#ffff';
 const Home = () => {
   const router = useRouter();
   const {currentUser} = useUser();
-  
   const refRBSheet = useRef(null);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -127,7 +127,7 @@ const Home = () => {
                 <Tool title={'Summary'} iconSource={summarise} onPress={() => router.push('/Summarise')}/>
                 </View>
                 <View className="flex-1">
-                <Tool title={'More'} iconSource={more}/>
+                <Tool title={'FlashCards'} iconSource={flash} onPress={() => router.push('/(flashcard)/flashcardhome')}/> 
                 </View>
               </View>
           </View>
@@ -161,7 +161,7 @@ const Home = () => {
         <Text style={styles.emptyText}>
           "Every expert was once a beginner. Start your learning journey today!"
         </Text>
-        <TouchableOpacity style={styles.addcoursebutton}>
+        <TouchableOpacity style={styles.addcoursebutton} onPress={()=> router.push('learn')}>
           <Text style={{color:'white'}}>Add courses +</Text>
         </TouchableOpacity>
       </View>

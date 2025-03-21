@@ -8,7 +8,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { makeRedirectUri } from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser';
 import { useRouter } from "expo-router";
-
 const UserContext = createContext();
 
 export function useUser() {

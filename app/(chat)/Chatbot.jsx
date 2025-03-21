@@ -211,11 +211,15 @@ const ChatBot = () => {
             {...props}
             wrapperStyle={{
               left: { backgroundColor: '#f3f4f6', marginLeft: -34 ,width:'100%'},
-              right: { backgroundColor: '#6699cc' },
+              right: { backgroundColor: '#f0f2ff' },
             }}
             textStyle={{
               left: { color: '#374151' },
-              right: { color: '#f9fafb' },
+              right: { color: '#374151' },
+            }}
+            timeTextStyle={{
+              left: { color: '#4B5563' }, 
+              right: { color: '#4B5563' },
             }}
           /> 
         )}

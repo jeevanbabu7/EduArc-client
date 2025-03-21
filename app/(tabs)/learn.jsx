@@ -52,7 +52,7 @@ const Learn = () => {
       if (response.ok) {
         setCourses([...courses, data.course]);
         refAddCourseSheet.current.close();
-        router.push('(courses)/Materials')
+        router.push('(courses)/Materials') 
       }
     }catch(err) {
       console.log(err);
@@ -84,9 +84,9 @@ const Learn = () => {
       {/* Top Bar */}
       <View style={styles.topbar}>
         <Text style={{ fontSize: 18, fontWeight: 'bold' }}>My Courses</Text>
-        <TouchableOpacity onPress={() => refMenuSheet.current.open()}>
+        {/* <TouchableOpacity onPress={() => refMenuSheet.current.open()}>
           <Ionicons name="menu" size={22} color="#0504aa" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* Bottom Sheet for Menu */}
@@ -162,7 +162,7 @@ const Learn = () => {
       />
 
       {/* Floating Add Button */}
-      <TouchableOpacity style={styles.uploadButton} onPress={() => refAddCourseSheet.current.open()}>
+      <TouchableOpacity style={styles.uploadButton} onPress={() =>{ refAddCourseSheet.current.open();setCourseName('');}}>
         <Text style={styles.uploadButtonText}>+</Text>
       </TouchableOpacity>
     </SafeAreaView>

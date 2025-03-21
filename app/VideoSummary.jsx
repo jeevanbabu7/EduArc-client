@@ -117,7 +117,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container2:{
-    gap:20
+    gap: 20,
+    
   },
   box: {
     alignItems: 'center',
@@ -168,14 +169,11 @@ const styles = StyleSheet.create({
   },
   inputField: {
     width: '80%',
-    borderColor:'#0504aa',
     borderRadius:0,
     borderTopLeftRadius:10,
     borderBottomLeftRadius:10,
-
-    // marginRight: 10,
-    // borderRadius:15
-  },
+  }, 
+  
   submitButton: {
     width: '20%',
     paddingVertical: 10,
