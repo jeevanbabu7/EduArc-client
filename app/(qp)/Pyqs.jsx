@@ -15,7 +15,7 @@ function Materials() {
   return (
     <View style={styles.container}>
       {/* Material List */}
-      <FlatList
+      <FlatListc
         style={styles.container}
         data={[
           { key: 'Question Paper 1' },
@@ -29,7 +29,7 @@ function Materials() {
         renderItem={({ item }) => (
           <MaterialCard
             title={item.key}
-            onPress={() => router.push('(courses)/Materials')}
+            onPress={null}
           />
         )}
         keyExtractor={(item) => item.key}

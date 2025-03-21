@@ -46,8 +46,7 @@ const Upload = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Upload or Scan Image</Text>
-
+      {!image && (<Text style={styles.title}>Upload or Scan Image</Text>)}
       {!image && (<View style={styles.container2}>
         <TouchableOpacity onPress={pickImage}>
           <View style={styles.box}>

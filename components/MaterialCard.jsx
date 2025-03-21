@@ -46,17 +46,6 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
           <Text style={styles.sheetText}>Edit</Text>
         </TouchableOpacity>
 
-        {/* Delete Option */}
-        <TouchableOpacity style={styles.sheetItem} onPress={() => {
-          refRBSheet.current.close();
-          Alert.alert("Delete Course", "Are you sure you want to delete this course?", [
-            { text: "Cancel", style: "cancel" },
-            { text: "Delete", onPress: () => onDelete && onDelete() }
-          ]);
-        }}>
-          <Image source={deleteicon} style={styles.sheetIcon} />
-          <Text style={styles.sheetText}>Delete</Text>
-        </TouchableOpacity>
 
         {/* Chat with Pdf */}
         <TouchableOpacity style={styles.sheetItem} onPress={() => {
@@ -70,6 +59,18 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
           <Text style={styles.sheetText}>Chat with Pdf</Text>
         </TouchableOpacity>
 
+        {/* Delete Option */}
+        <TouchableOpacity style={styles.sheetItem} onPress={() => {
+          refRBSheet.current.close();
+          Alert.alert("Delete Course", "Are you sure you want to delete this course?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Delete", onPress: () => onDelete && onDelete() }
+          ]);
+        }}>
+          <Image source={deleteicon} style={styles.sheetIcon} />
+          <Text style={styles.sheetText}>Delete</Text>
+        </TouchableOpacity>
+        
         {/* View Details Option */}
         <TouchableOpacity style={styles.sheetItem} onPress={() => {
           refRBSheet.current.close();
