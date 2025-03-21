@@ -14,8 +14,7 @@ function Materials() {
 
   return (
     <View style={styles.container}>
-      {/* Material List */}
-      <FlatListc
+      <FlatList
         style={styles.container}
         data={[
           { key: 'Question Paper 1' },
