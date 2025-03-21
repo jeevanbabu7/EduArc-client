@@ -14,7 +14,6 @@ function Materials() {
 
   return (
     <View style={styles.container}>
-      {/* Material List */}
       <FlatList
         style={styles.container}
         data={[
