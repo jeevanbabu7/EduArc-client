@@ -7,6 +7,7 @@ import { getItem } from '../scripts/asyncStorage';
 import UserProvider, { useUser } from '../context/userContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { ChatProvider } from '../context/ChatContext';
 import { config } from '@gluestack-ui/config';
 export default function Index() {
   // const [showOnboarding, setShowOnboarding] = useState(null);
@@ -55,9 +56,11 @@ export default function Index() {
  
   return <GestureHandlerRootView style={{ flex: 1 }}>
     <GluestackUIProvider config={config}>
-        <UserProvider>
-          <OnboardingScreen />
-        </UserProvider>
+        <ChatProvider>
+          <UserProvider>
+            <OnboardingScreen />
+          </UserProvider>
+        </ChatProvider>
     </GluestackUIProvider >
     </GestureHandlerRootView>
 }

@@ -2,16 +2,13 @@
 import React, { createContext, useState, useContext } from 'react';
 
 // Create the context with a default value
-const ChatContext = createContext({
-  currentChat: { id: 'default', title: 'New Chat' },
-  setCurrentChat: () => {}
-});
+const ChatContext = createContext();
 
 // Create a provider component
 export const ChatProvider = ({ children }) => {
   const [currentChat, setCurrentChat] = useState({
-    id: 'default',
-    title: 'New Chat'
+    id: '123',
+    title: null
   });
 
   const value = { currentChat, setCurrentChat };

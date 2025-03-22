@@ -10,6 +10,7 @@ import getEnvVars from '../config.js';
 import scan from '../assets/icons/scanold.png';
 import upload from '../assets/icons/upload_new.png';
 import * as FileSystem from 'expo-file-system';
+import axios from 'axios';
 
 const Summarise = () => {
   const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
@@ -70,76 +71,14 @@ const Summarise = () => {
     }
   };
   
-  const storeFileInAppwrite = async (file, retry = 0) => {
-    try {
-      console.log(`Attempt ${retry + 1} to upload file: ${file.name}`);
-      
-      // Method 1: Using fetch and blob
-      let fileBlob;
-      try {
-        const response = await fetch(file.uri);
-        fileBlob = await response.blob();
-        console.log("File blob created via fetch", fileBlob);
-      } catch (fetchError) {
-        console.warn("Fetch blob failed, trying alternative method:", fetchError);
-        
-        // Method 2: Try FileSystem approach if fetch fails
-        try {
-          fileBlob = await getFileData(file.uri);
-          console.log("File blob created via FileSystem", fileBlob);
-        } catch (fsError) {
-          console.error("Both blob creation methods failed:", fsError);
-          throw new Error("Unable to prepare file for upload");
-        }
-      }
-      
-      // Upload with more detailed error handling
-      console.log(`Uploading to bucket: ${bucketId}`);
-      const fileId = ID.unique();
-      console.log(`Generated file ID: ${fileId}`);
-      
-      const response = await storage.createFile(
-        bucketId,
-        fileId,
-        fileBlob,
-        ['write("any")']
-      );
-      
-      console.log("File uploaded successfully", response);
-      return response.$id;
-    } catch (error) {
-      console.error(`Upload Error (attempt ${retry + 1}):`, error);
-      
-      // // Handle specific Appwrite errors
-      // if (error.message.includes('Network request failed')) {
-      //   if (retry < 2) { // Try up to 3 times (0, 1, 2)
-      //     console.log(`Retrying upload (${retry + 1}/3)...`);
-      //     // Wait before retrying
-      //     await new Promise(resolve => setTimeout(resolve, 1000));
-      //     return storeFileInAppwrite(file, retry + 1);
-      //   } else {
-      //     throw new Error('Network connection to Appwrite failed after multiple attempts. Check your internet connection or try again later.');
-      //   }
-      // }
-      
-      // // Handle other specific errors
-      // if (error.code === 401) {
-      //   throw new Error('Authentication failed. Please restart the app.');
-      // } else if (error.code === 403) {
-      //   throw new Error('Permission denied for file upload.');
-      // } else if (error.code === 413) {
-      //   throw new Error('File is too large to upload.');
-      // }
-      
-      // throw error;
-    }
-  };
+  
 
   const uploadFile = async () => {
     try {
       setUploading(true);
       setError(false);
       
+      // Pick the document
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
         copyToCacheDirectory: true,
@@ -160,11 +99,56 @@ const Summarise = () => {
         setUploading(false);
         return;
       }
+
+      // Use direct upload with formData approach
+      const uri = selectedFile.uri;
+      const filename = selectedFile.name;
+      const fileId = ID.unique();
       
-      // Start upload with retry capability 
-      const fileID = await storeFileInAppwrite(selectedFile);
+      // Create FormData object - this works better cross-platform
+      const formData = new FormData();
+      formData.append('file', {
+        uri,
+        name: filename,
+        type: selectedFile.mimeType || 'application/pdf'
+      });
       
-      const fileURL = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`;
+      
+      // Get the Appwrite endpoint and project ID
+      const endpoint = "https://cloud.appwrite.io/v1";
+      const projectId = "67bcccfe0010a29974a4";
+      
+      // Create headers with the correct authentication
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+        'X-Appwrite-Project': projectId,
+      };
+      
+      // Add the API key if available
+      // if (client.config.key) {
+      //   headers['X-Appwrite-Key'] = client.config.key;
+      // }
+      
+      // Direct upload using axios with formData
+      const uploadUrl = `${endpoint}/storage/buckets/${bucketId}/files`;
+
+// Create a FormData object that includes the fileId
+      const form = new FormData();
+      form.append('fileId', fileId);
+      form.append('file', {
+        uri,
+        name: filename,
+        type: selectedFile.mimeType || 'application/pdf'
+      });
+
+      // Make the request
+      const uploadResponse = await axios.post(uploadUrl, form, { 
+        headers
+      });
+      console.log('Upload response:', uploadResponse.data);
+      
+      // Set the file URL
+      const fileURL = `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${projectId}`;
       console.log("File URL set:", fileURL);
       setFileURL(fileURL);
       
@@ -181,14 +165,21 @@ const Summarise = () => {
       });
     } catch (error) {
       console.error("File Upload Error:", error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+      }
       setError(true);
-      Alert.alert('Upload Error', error.message || 'An error occurred while uploading the file.');
+      Alert.alert(
+        'Upload Error', 
+        `An error occurred: ${error.message || 'Unknown error'}. Please try again.`
+      );
     } finally {
       setUploading(false);
     }
   };
 
-  // Similar changes to uploadVideo function
+  // Update uploadVideo with similar approach
   const uploadVideo = async () => {
     try {
       setUploading(true);
@@ -200,7 +191,6 @@ const Summarise = () => {
       });
   
       if (result.canceled) {
-        Alert.alert('Upload Cancelled', 'No video was selected.');
         setUploading(false);
         return;
       }
@@ -209,16 +199,49 @@ const Summarise = () => {
       console.log("Selected video:", selectedFile);
       setFile(selectedFile);
       
-      // Check file size for videos
-      if (selectedFile.size > 50 * 1024 * 1024) { // 50MB limit for videos
+      // Check file size
+      if (selectedFile.size > 50 * 1024 * 1024) { // 50MB limit
         Alert.alert('File Too Large', 'Please select a video smaller than 50MB.');
         setUploading(false);
         return;
       }
+
+      // Use the same FormData approach as in uploadFile
+      const uri = selectedFile.uri;
+      const filename = selectedFile.name;
+      const fileId = ID.unique();
       
-      const fileID = await storeFileInAppwrite(selectedFile);
+      const formData = new FormData();
+      formData.append('file', {
+        uri,
+        name: filename,
+        type: selectedFile.mimeType || 'video/mp4'
+      });
       
-      const videoURL = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${fileID}/view?project=67bcccfe0010a29974a4&mode=admin`;
+      const endpoint = client.config.endpoint;
+      const projectId = client.config.project;
+      
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+        'X-Appwrite-Project': projectId,
+      };
+      
+      if (client.config.key) {
+        headers['X-Appwrite-Key'] = client.config.key;
+      }
+      
+      const uploadUrl = `${endpoint}/storage/buckets/${bucketId}/files`;
+      
+      const uploadResponse = await axios.post(uploadUrl, formData, { 
+        headers,
+        params: {
+          fileId: fileId
+        }
+      });
+      
+      console.log('Upload response:', uploadResponse.data);
+      
+      const videoURL = `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${projectId}`;
       console.log("Video URL set:", videoURL);
       setFileURL(videoURL);
       
@@ -235,8 +258,15 @@ const Summarise = () => {
       });
     } catch (error) {
       console.error('Video Upload Error:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+      }
       setError(true);
-      Alert.alert('Upload Error', error.message || 'An error occurred while uploading the video.');
+      Alert.alert(
+        'Upload Error', 
+        `An error occurred: ${error.message || 'Unknown error'}. Please try again.`
+      );
     } finally {
       setUploading(false);
     }

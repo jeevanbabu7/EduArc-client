@@ -17,22 +17,26 @@ import { getModelResponse } from '../../lib/cohere.js';
 import { useChat } from "../../context/ChatContext.js";
 const ChatBot = () => {
   // const { chatId, chatTitle } = useLocalSearchParams(););
-  const { currentChat } = useChat();
+  const { currentChat, setCurrentChat } = useChat();
   const { id: chatId, title: chatTitle } = currentChat;
-  console.log("Current chat in Chatbot - ID:", chatId, "Title:", chatTitle);
   const data = useLocalSearchParams();
+
+
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
-  const [keyPressed, setKeyPressed] = useState(false);
   const [socket, setSocket] = useState(null);
   const navigation = useNavigation();
-  const { PDF_BUCKET_ID } = getEnvVars();
 
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
-
+  const {currentUser} = useUser();
+  
   const toast = useToast();
   const {IP_ADDRESS} = getEnvVars();
+  console.log(IP_ADDRESS)
+  const [isNewChat, setIsNewChat] = useState(true);
+
+  // fetch chat messages
 
   const fetchFileBlob = async (fileUri) => {
     const response = await fetch(fileUri);
@@ -77,11 +81,13 @@ const ChatBot = () => {
 
   useEffect(() => {
     const fetchPreviousMessages = async () => {
+      if(chatId == null) return;
       try {
         const response = await fetch(`${IP_ADDRESS}:3000/api/chat/get-messages/${chatId}`);
         const data = await response.json();
 
         if (data.messages.length > 0) {
+          setIsNewChat(false);
           setMessages((prev) => {
             const messages = data.messages.map((message) => {
               if (message.sender === 'user') {
@@ -150,17 +156,49 @@ const ChatBot = () => {
     });
   }, [socket]);
 
-  useEffect(() => {
-    const newSocket = io.connect(`http://192.168.1.7:${3000}`);
-    setSocket(newSocket);
-    newSocket.emit('create-chat', chatId);
 
-    return () => newSocket.close();
-  }, [chatId]);
 
   const handleSend = async () => {
     try {
+      console.log(isNewChat);
+  
+      // if (isNewChat) {
+        setIsNewChat(false);
+        console.log("Creating new chat session");
+  
+        const response = await fetch(`${IP_ADDRESS}:3000/api/chat/new-chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: currentUser.$id,
+          }),
+        });
+        console.log("Chat creation response:", response);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        const responseData = await response.json();
+        console.log("Chat creation response:", responseData);
+      // }
+  
       if (inputText.trim()) {
+
+        const response = await fetch(`${IP_ADDRESS}:3000/api/chat/send-message`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chatSessionId: chatId,
+            content: inputText,
+            sender: "user",
+          }),
+        });
+        // console.log("Message sending response:", response);
         const userMessage = {
           _id: Math.random().toString(36).substring(7),
           text: inputText,
@@ -169,12 +207,22 @@ const ChatBot = () => {
             _id: 1,
           },
         };
-
+  
         setMessages((previousMessages) => GiftedChat.append(previousMessages, [userMessage]));
         setInputText('');
-
+  
         const botmsg = await getModelResponse(inputText);
-
+        const botResponse = await fetch(`${IP_ADDRESS}:3000/api/chat/send-message`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chatSessionId: chatId,
+            content: botmsg,
+            sender: "bot",
+          }),
+        });
         const botMessage = {
           _id: Math.random().toString(36).substring(7),
           text: botmsg,
@@ -185,12 +233,14 @@ const ChatBot = () => {
             avatar: 'https://placekitten.com/100/100',
           },
         };
+  
         setMessages((previousMessages) => GiftedChat.append(previousMessages, [botMessage]));
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error sending message:", error);
     }
   };
+  
 
   const handleKeyPress = (event) => {
     if (event.nativeEvent.key !== 'Enter' && event.nativeEvent.key !== 'NumpadEnter') {
