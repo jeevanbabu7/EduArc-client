@@ -82,10 +82,10 @@ const Learn = () => {
     }
   }
   return (
-    <SafeAreaView style={{ flex: 1 ,backgroundColor:'#f0f2ff'}}>
+    <SafeAreaView style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topbar}>
-        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>My Courses</Text>
+        <Text style={{ fontSize: 24, fontWeight: '600' }}>My Courses</Text>
       </View>
 
       {/* Bottom Sheet for Add Course */}
@@ -167,17 +167,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#ffff',
-    // borderBottomWidth: 1,
-    // borderColor: '#ddd',
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 4,
-    // elevation: 5,
+    backgroundColor: '#F5F9FF',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    marginBottom:15
+  },
+  container:{
+    flex: 1 ,
+    backgroundColor:'#F5F9FF'
   },
   cardContainer: {
-    backgroundColor: '#ffff',
+    backgroundColor: '#F5F9FF',
   },
   uploadButton: {
     position: 'absolute',
