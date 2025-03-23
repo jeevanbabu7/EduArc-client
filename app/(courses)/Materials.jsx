@@ -2,15 +2,19 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react
 import React from 'react';
 import MaterialCard from '../../components/MaterialCard';
 import { useRouter } from 'expo-router';
-
+import { useLocalSearchParams } from 'expo-router';
 function Materials() {
   const handleUpload = () => {
     Alert.alert('Upload File', 'File upload functionality will be implemented here.');
     // Add logic for uploading files here
     //save materials locally for each course in different folders and render it here 
   };
+  const {params} = useLocalSearchParams();
+  console.log(JSON.parse(params));
+  
 
   const router = useRouter();
+
 
   return (
     <View style={styles.container}>

@@ -146,7 +146,10 @@ const Learn = () => {
         style={styles.cardContainer}
         data={courses}
         renderItem={({ item }) => (
-          <LearnCourseCard name={item.name} id={item._id} onDelete={onDelete} onPress={() => router.push('(courses)/Tools')} />
+          <LearnCourseCard name={item.name} id={item._id}  onDelete={onDelete} onPress={() => router.push({pathname: '(courses)/Tools', params: JSON.stringify({
+            course: item,
+            title: item.name,
+          })})} />
         )}
         keyExtractor={(item) => item.key}
       />

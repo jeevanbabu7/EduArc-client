@@ -15,6 +15,8 @@ import { storage } from '../../lib/appwrite/appwrite.js';
 import axios from 'axios';
 import { getModelResponse } from '../../lib/cohere.js';
 import { useChat } from "../../context/ChatContext.js";
+import LottieView from 'lottie-react-native';
+
 const ChatBot = () => {
   // const { chatId, chatTitle } = useLocalSearchParams(););
   const { currentChat, setCurrentChat } = useChat();
@@ -33,8 +35,9 @@ const ChatBot = () => {
   
   const toast = useToast();
   const {IP_ADDRESS} = getEnvVars();
-  console.log(IP_ADDRESS)
+  // console.log(IP_ADDRESS)
   const [isNewChat, setIsNewChat] = useState(true);
+  const [isThinking, setIsThinking] = useState(false);
 
   // fetch chat messages
 
@@ -211,7 +214,15 @@ const ChatBot = () => {
         setMessages((previousMessages) => GiftedChat.append(previousMessages, [userMessage]));
         setInputText('');
   
+        // Show thinking animation
+        setIsThinking(true);
+        
+        // Get bot response
         const botmsg = await getModelResponse(inputText);
+        
+        // Hide thinking animation
+        setIsThinking(false);
+        
         const botResponse = await fetch(`${IP_ADDRESS}:3000/api/chat/send-message`, {
           method: "POST",
           headers: {
@@ -237,6 +248,7 @@ const ChatBot = () => {
         setMessages((previousMessages) => GiftedChat.append(previousMessages, [botMessage]));
       }
     } catch (error) {
+      setIsThinking(false);
       console.error("Error sending message:", error);
     }
   };
@@ -249,6 +261,38 @@ const ChatBot = () => {
     handleSend();
   };
 
+  const renderBubble = (props) => {
+    return <Bubble {...props} wrapperStyle={{
+      left: { backgroundColor: '#f3f4f6', marginLeft: -34, width: '100%' },
+      right: { backgroundColor: '#f0f2ff' },
+    }}
+    textStyle={{
+      left: { color: '#374151' },
+      right: { color: '#374151' },
+    }}
+    timeTextStyle={{
+      left: { color: '#4B5563' },
+      right: { color: '#4B5563' },
+    }} />;
+  };
+  
+  // Render thinking indicator
+  const renderFooter = () => {
+    if (isThinking) {
+      return (
+        <View style={styles.thinkingContainer}>
+          <LottieView
+            source={require('../../assets/animations/thinking-dots.json')}
+            autoPlay
+            loop
+            style={styles.thinkingAnimation}
+          />
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <GiftedChat
@@ -256,23 +300,8 @@ const ChatBot = () => {
         user={{
           _id: 1,
         }}
-        renderBubble={(props) => (
-          <Bubble
-            {...props}
-            wrapperStyle={{
-              left: { backgroundColor: '#f3f4f6', marginLeft: -34 ,width:'100%'},
-              right: { backgroundColor: '#f0f2ff' },
-            }}
-            textStyle={{
-              left: { color: '#374151' },
-              right: { color: '#374151' },
-            }}
-            timeTextStyle={{
-              left: { color: '#4B5563' }, 
-              right: { color: '#4B5563' },
-            }}
-          /> 
-        )}
+        renderBubble={renderBubble}
+        renderFooter={renderFooter}
         renderInputToolbar={() => (
           <View style={styles.inputContainer}>
             <TouchableOpacity onPress={uploadFile}>
@@ -323,7 +352,14 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
 },
-
+  thinkingContainer: {
+    padding: 10,
+    marginLeft: 15,
+  },
+  thinkingAnimation: {
+    width: 70,
+    height: 40,
+  },
   input: {
     flex: 1,
     backgroundColor: '#ffffff',
