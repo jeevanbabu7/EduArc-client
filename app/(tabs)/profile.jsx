@@ -75,14 +75,14 @@ export default Profile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F5F9FF',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#ffff',
+    backgroundColor: '#F5F9FF',
     borderBottomWidth: 1,
     borderColor: '#ddd',
     shadowColor: '#000',
@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#333',
   },
   profileCard: {
     marginTop: 20,
