@@ -84,28 +84,7 @@ const Learn = () => {
       {/* Top Bar */}
       <View style={styles.topbar}>
         <Text style={{ fontSize: 18, fontWeight: 'bold' }}>My Courses</Text>
-        {/* <TouchableOpacity onPress={() => refMenuSheet.current.open()}>
-          <Ionicons name="menu" size={22} color="#0504aa" />
-        </TouchableOpacity> */}
       </View>
-
-      {/* Bottom Sheet for Menu */}
-      <RBSheet
-        ref={refMenuSheet}
-        draggable={true}
-        closeOnPressMask={true}
-        customStyles={styles.sheet}
-        animationType="slide"
-        onClose={() => setTimeout(() => console.log('Sheet Closed'), 100)}
-      >
-        {/* <Text style={styles.sheetTitle}>Menu</Text> */}
-        <TouchableOpacity onPress={() => refSettingsSheet.current.open()}>
-          <Text style={styles.sheetItem}>Settings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.sheetItem}>Logout</Text>
-        </TouchableOpacity>
-      </RBSheet>
 
       {/* Bottom Sheet for Add Course */}
       <RBSheet
@@ -178,13 +157,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#ffff',
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    // borderBottomWidth: 1,
+    // borderColor: '#ddd',
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 5,
   },
   cardContainer: {
     backgroundColor: '#ffff',
