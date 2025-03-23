@@ -1,64 +1,208 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView,Image,Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-
-const CustomCheckbox = ({ isChecked, onToggle }) => (
-  <TouchableOpacity onPress={onToggle} style={[styles.checkboxContainer, isChecked && styles.checked]}>
-    {isChecked && <Ionicons name="checkmark" size={18} color="#0504aa" />}
-  </TouchableOpacity>
-);
+import { SafeAreaView } from 'react-native-safe-area-context';
+import scan from '../../assets/icons/scanold.png';
+import upload from '../../assets/icons/newfolder.png';
+import getEnvVars from '../../config.js';
+import * as FileSystem from 'expo-file-system';
+import axios from 'axios';
+import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
+import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
+import '../../global.css';
+import { ID, storage, client } from '../../lib/appwrite/appwrite.js';
 
 const QuizHome = () => {
   const [selectedMaterials, setSelectedMaterials] = useState([]);
-
-  // Dummy list of materials (replace with actual data)
-  const materials = [
-    { id: '1', title: 'Algebra Basics' },
-    { id: '2', title: 'Physics: Motion' },
-    { id: '3', title: 'World War II History' },
-    { id: '4', title: 'Computer Networks' },
-    { id: '5', title: 'Organic Chemistry' },
-  ];
-
-  const toggleMaterialSelection = (id) => {
-    setSelectedMaterials((prev) =>
-      prev.includes(id) ? prev.filter((matId) => matId !== id) : [...prev, id]
-    );
-  };
-
+  const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
+    const bucketId = PDF_BUCKET_ID || '67bccd990005a5d175c4';
+    
+    const [file, setFile] = useState(null);
+    const [fileURL, setFileURL] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [summary, setSummary] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
+  
+    const toast = useToast();
+  useEffect(() => {
+      const checkConnection = async () => {
+        try {
+          // Try a lightweight ping request to Appwrite
+          await client.account.createAnonymousSession();
+          console.log("Successfully connected to Appwrite");
+        } catch (error) {
+          console.warn("Failed to connect to Appwrite:", error);
+          Alert.alert(
+            "Connection Issue", 
+            "There might be a problem connecting to our servers. Make sure you're connected to the internet.",
+            [{ text: "OK" }]
+          );
+        }
+      };
+      
+      checkConnection();
+    }, []);
+    
+    // Fetch file data using FileSystem for more reliable handling
+    const getFileData = async (fileUri) => {
+      try {
+        // For iOS, we need to handle the file:// protocol
+        let uri = fileUri;
+        if (Platform.OS === 'ios' && !fileUri.startsWith('file://')) {
+          uri = `file://${fileUri}`;
+        }
+        
+        // Read the file as base64
+        const base64Data = await FileSystem.readAsStringAsync(uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        
+        // Convert base64 to blob
+        const byteArray = Buffer.from(base64Data, 'base64');
+        const blob = new Blob([byteArray], { type: file.mimeType });
+        
+        return blob;
+      } catch (error) {
+        console.error("Error reading file:", error);
+        throw new Error(`Failed to read file: ${error.message}`);
+      }
+    };
+    
+    
+  
+    const uploadFile = async () => {
+      try {
+        setUploading(true);
+        setError(false);
+        
+        // Pick the document
+        const result = await DocumentPicker.getDocumentAsync({
+          type: 'application/pdf',
+          copyToCacheDirectory: true,
+        });
+        
+        if (result.canceled) {
+          setUploading(false);
+          return;
+        }
+        
+        const selectedFile = result.assets[0];
+        console.log("Selected file:", selectedFile);
+        setFile(selectedFile);
+        
+        // Check file size
+        if (selectedFile.size > 10 * 1024 * 1024) { // 10MB limit
+          Alert.alert('File Too Large', 'Please select a file smaller than 10MB.');
+          setUploading(false);
+          return;
+        }
+  
+        // Use direct upload with formData approach
+        const uri = selectedFile.uri;
+        const filename = selectedFile.name;
+        const fileId = ID.unique();
+        
+        // Create FormData object - this works better cross-platform
+        const formData = new FormData();
+        formData.append('file', {
+          uri,
+          name: filename,
+          type: selectedFile.mimeType || 'application/pdf'
+        });
+        
+        
+        // Get the Appwrite endpoint and project ID
+        const endpoint = "https://cloud.appwrite.io/v1";
+        const projectId = "67bcccfe0010a29974a4";
+        
+        // Create headers with the correct authentication
+        const headers = {
+          'Content-Type': 'multipart/form-data',
+          'X-Appwrite-Project': projectId,
+        };
+        
+        // Add the API key if available
+        // if (client.config.key) {
+        //   headers['X-Appwrite-Key'] = client.config.key;
+        // }
+        
+        // Direct upload using axios with formData
+        const uploadUrl = `${endpoint}/storage/buckets/${bucketId}/files`;
+  
+  // Create a FormData object that includes the fileId
+        const form = new FormData();
+        form.append('fileId', fileId);
+        form.append('file', {
+          uri,
+          name: filename,
+          type: selectedFile.mimeType || 'application/pdf'
+        });
+  
+        // Make the request
+        const uploadResponse = await axios.post(uploadUrl, form, { 
+          headers
+        });
+        console.log('Upload response:', uploadResponse.data);
+        
+        // Set the file URL
+        const fileURL = `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${projectId}`;
+        console.log("File URL set:", fileURL);
+        setFileURL(fileURL);
+        
+        toast.show({
+          render: () => {
+            return (
+              <Toast action="success">
+                <VStack space="xs">
+                  <ToastDescription>File uploaded successfully</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
+      } catch (error) {
+        console.error("File Upload Error:", error);
+        if (error.response) {
+          console.error('Response data:', error.response.data);
+          console.error('Response status:', error.response.status);
+        }
+        setError(true);
+        Alert.alert(
+          'Upload Error', 
+          `An error occurred: ${error.message || 'Unknown error'}. Please try again.`
+        );
+      } finally {
+        setUploading(false);
+      }
+    };
+  
   return (
-    <View style={styles.container}>
+    <SafeAreaView  
+      style={styles.container} 
+    >
       {/* Header Section */}
       <View style={styles.header}>
-        <Text style={styles.title}>Select Materials for Your Quiz</Text>
+        <Text style={styles.headertitle}>Select Materials for Your Quiz</Text>
         <Text style={styles.subtitle}>Pick the study materials you'd like to be quizzed on.</Text>
       </View>
 
-      {/* Material List Section */}
-      <FlatList
-        data={materials}
-        keyExtractor={(item) => item.id}
-        style={styles.materialList}
-        renderItem={({ item }) => (
-          <View style={styles.materialContainer}>
-            <CustomCheckbox
-              isChecked={selectedMaterials.includes(item.id)}
-              onToggle={() => toggleMaterialSelection(item.id)}
-            />
-            <Text style={styles.materialText}>{item.title}</Text>
+      <View style={styles.container2}>
+        <TouchableOpacity onPress={uploadFile} disabled={uploading}>
+          <View style={[styles.box, uploading && styles.disabledBox]}>
+            <Image source={scan} style={{ width: 44, height: 44, marginRight: 5 }} />
+            <Text>Upload PDF</Text>
           </View>
-        )}
-      />
-
-      {/* Progress Bar */}
-      <View style={styles.progressBarContainer}>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${(selectedMaterials.length / materials.length) * 100}%` }]} />
-        </View>
-        <Text style={styles.progressText}>
-          {selectedMaterials.length} / {materials.length} Materials Selected
-        </Text>
+        </TouchableOpacity>
+        
+        {/* <TouchableOpacity onPress={null} disabled={null}>
+          <View style={[styles.box]}>
+            <Image source={upload} style={{ width: 50, height: 50, marginRight: 5 }} />
+            <Text>Choose from Materials</Text>
+          </View>
+        </TouchableOpacity> */}
       </View>
 
       {/* Start Quiz Button */}
@@ -72,22 +216,22 @@ const QuizHome = () => {
       <View style={styles.footer}>
         <Text style={styles.footerText}>Tip: Select multiple materials to customize your quiz!</Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f2ff',
+    backgroundColor: '#ffff',
     padding: 20,
   },
   header: {
-    alignItems: 'center',
     marginBottom: 20,
+    alignItems:'center'
   },
-  title: {
-    fontSize: 24,
+  headertitle: {
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#0504aa',
     textAlign: 'center',
@@ -98,8 +242,44 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 5,
   },
+  
+  selectedComponent: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+    zIndex: 1, // Lower zIndex for this component
+  },
+  componentTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0504aa',
+    marginBottom: 10,
+  },
+  componentText: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 15,
+  },
+  uploadButton: {
+    backgroundColor: '#0504aa',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  uploadButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   materialList: {
-    flex: 1,
+    maxHeight: 300,
     width: '100%',
   },
   materialContainer: {
@@ -147,27 +327,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  progressBarContainer: {
-    width: '100%',
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  progressBar: {
-    height: 10,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 5,
-    width: '100%',
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#0504aa',
-  },
-  progressText: {
-    marginTop: 5,
-    color: '#0504aa',
-    fontSize: 14,
-  },
   footer: {
     marginTop: 20,
     alignItems: 'center',
@@ -176,6 +335,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     textAlign: 'center',
+  },
+  container2: {
+    flexDirection: 'column',
+    gap: 20,
+    marginVertical: 20,
+  },
+  box: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: 'rgb(183, 203, 226)',
+    padding: 20,
+    minWidth: '100%',
+    gap: 10,
+  },
+  disabledBox: {
+    opacity: 0.6,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 10,
+    marginTop: 20,
   },
 });
 
