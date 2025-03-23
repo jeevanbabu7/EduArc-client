@@ -89,8 +89,8 @@ export default MaterialCard;
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderBottomWidth: 0.5,
-    borderColor: 'grey',
+    borderBottomWidth: 1,
+    borderColor: 'rgb(232, 232, 232)',
     paddingVertical: 15,
     paddingHorizontal: 10,
   },
