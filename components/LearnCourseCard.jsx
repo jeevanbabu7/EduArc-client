@@ -5,31 +5,30 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import edit from '../assets/icons/edit.png';
 import deleteicon from '../assets/icons/delete.png';
 import info from '../assets/icons/info.png';
+import folder from '../assets/icons/folder.png';
 
 const LearnCourseCard = ({ name, id, onPress, onEdit, onDelete }) => {
   const refRBSheet = useRef(null);
   
   return (
     <View style={styles.card}>
-      <View style={styles.content}>
-        {/* Book Icon */}
-        <View style={styles.iconContainer}>
-          <FontAwesome name="book" size={20} color="#0504aa" />
+      <TouchableOpacity  onPress={onPress}>
+        <View>
+            <Image source={folder} style={styles.foldericon}></Image>
         </View>
-
-        {/* Course Name & Last Opened */}
+      </TouchableOpacity>
+      
+      <View style={styles.content}>
         <TouchableOpacity style={styles.textContainer} onPress={onPress}>
           <Text style={styles.title}>{name}</Text>
           <Text style={styles.date}>Last opened: Jan 1, 2025</Text>
         </TouchableOpacity>
 
-        {/* More Options (Ellipsis Icon) */}
         <TouchableOpacity style={styles.iconContainer} onPress={() => refRBSheet.current.open()}>
           <Ionicons name="ellipsis-vertical" size={20} color="#0504aa" />
         </TouchableOpacity>
       </View>
 
-      {/* Bottom Sheet for Options */}
       <RBSheet
         ref={refRBSheet}
         draggable={true}
@@ -75,23 +74,27 @@ const LearnCourseCard = ({ name, id, onPress, onEdit, onDelete }) => {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
-        borderBottomWidth: 0.5,
-        borderColor: 'grey',
-        paddingVertical: 15,
-        paddingHorizontal: 10,
+        borderWidth: 2,
+        borderColor: 'rgb(183, 203, 226)',
+        padding: 15,
+        marginBottom:20,
+        marginHorizontal:10,
+        borderRadius:10
     },
     content: {
         flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    
   },
-  iconContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
+  foldericon:{
+    height:30,
+    width:30,
+    marginBottom:10
+  },
     textContainer: {
         flex: 1,
-        marginHorizontal: 10,
+        marginLeft:2
     },
     title: {
         fontSize: 18,
@@ -129,7 +132,7 @@ const styles = StyleSheet.create({
     sheetText: {
         fontSize: 18, // Make text slightly larger
         color: '#333',
-        fontWeight:'500'
+        fontWeight:'400'
     },
     cancelButton: {
         padding: 15,
