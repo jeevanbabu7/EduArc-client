@@ -1,69 +1,49 @@
-import React, { useRef, useEffect } from 'react';
-import { Slot, useNavigation } from 'expo-router';
-import { TouchableOpacity, Image, StyleSheet, Text, FlatList, View } from 'react-native';
-import hamburger from '../../assets/icons/hamburger-icon.png';
-import RBSheet from 'react-native-raw-bottom-sheet';
+import React, { useRef, useEffect,useCallback } from 'react';
+import { Slot, useNavigation, useRouter } from 'expo-router';
+import { TouchableOpacity, Image, StyleSheet, Text, FlatList, View,Platform,BackHandler,SafeAreaView} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Layout = () => {
   const navigation = useNavigation();
-  const refRBSheet = useRef(null);
-  const dummy_flashcards = [
-    { id: '1', title: 'New Course Added', message: 'You have a new course available: React Native Basics' },
-    { id: '2', title: 'Assignment Due', message: 'Your "Data Structures" assignment is due tomorrow.' },
-    { id: '3', title: 'Live Class Reminder', message: 'Join the live class for "Machine Learning" at 5 PM today.' },
-    { id: '4', title: 'Profile Update', message: 'Your profile details were successfully updated.' },
-  ];
+  const router = useRouter();
   
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'FlashCards',
-      headerRight: () => (
-        <TouchableOpacity 
-          onPress={() => {
-            if (refRBSheet.current) {
-              refRBSheet.current.open();
-            } else {
-              console.log('RBSheet ref is not available');
-            }
-          }}
-        >
-          <Image source={hamburger} style={styles.menuIcon} />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+  useFocusEffect(
+      useCallback(() => {
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+          return true; // This disables the back button
+        });
+        return () => backHandler.remove();
+      }, [])
+    );
+   React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false,
+        gestureEnabled: false,
+      });
+    }, [navigation]);
 
   return (
     <>
-      <Slot />
-      <RBSheet
-        ref={refRBSheet}
-        draggable={false} // Changed to false to remove the notch
-        closeOnPressMask={true}
-        customStyles={{
-          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-          container: {
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            padding: 0, // Removed padding to allow header to sit at the top
-            backgroundColor: '#f0f2ff',
-            height: '75%',
-          },
-          // Removed draggableIcon style since we're not using it anymore
-        }}
-      >
-        <Text style={styles.savedFlashcard}>Saved FlashCards</Text>
-        <FlatList
-          data={dummy_flashcards}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.notificationItem}>
-              <Text style={styles.notificationTitle}>{item.title}</Text>
-            </View>
-          )}
-          contentContainerStyle={styles.listContainer}
-        />
-      </RBSheet>
+      <SafeAreaView style={styles.container}>
+            {/* Custom header */}
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.closeButtonContainer}
+            onPress={() => router.replace('/Tools')}
+            activeOpacity={0.6}
+          >
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>FlashCards</Text>
+        </View>
+        
+        {/* Main content */}
+        <View style={styles.content}>
+          <Slot />
+        </View>
+      </SafeAreaView>
+      
     </>
   );
 };
@@ -71,31 +51,44 @@ const Layout = () => {
 export default Layout;
 
 const styles = StyleSheet.create({
-  menuIcon: {
-    width: 24,
-    height: 24,
-  },
-  savedFlashcard: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    paddingVertical:20,
-    borderBottomWidth:2,
-    borderColor:'#d1d5db'
-  },
-  listContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  notificationItem: {
-    // backgroundColor: '#f0f2ff',
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 5,
-    borderWidth:1,
-    borderColor:'#d1d5db'
-  },
-  notificationTitle: {
-    fontSize: 16,
-  },
+  container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      height: 56,
+      borderBottomWidth: 1,
+      borderBottomColor: '#e0e0e0',
+      backgroundColor: '#fff',
+      ...Platform.select({
+        android: {
+          elevation: 4,
+        },
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.2,
+          shadowRadius: 2,
+        },
+      }),
+    },
+    closeButtonContainer: {
+      padding: 8,
+      borderRadius: 20,
+      width: 40,
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginLeft: 8, // Moves the title closer to the Close button
+    },
+    content: {
+      flex: 1,
+    },
 });

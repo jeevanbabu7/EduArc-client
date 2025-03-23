@@ -24,7 +24,7 @@ export default function CourseLayout() {
       >
         <Tab.Screen name="Materials" component={Materials} />
         <Tab.Screen name="Tools" component={Tools} />
-        <Tab.Screen name="Xyz" component={Xyz} />
+        <Tab.Screen name="Progress" component={Xyz} />
       </Tab.Navigator>
     </>
   );
