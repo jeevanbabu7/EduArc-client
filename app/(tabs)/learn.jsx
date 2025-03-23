@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity,TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity,TextInput,Image } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import LearnCourseCard from '../../components/LearnCourseCard.jsx';
@@ -6,6 +6,8 @@ import { useRouter } from 'expo-router';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import getEnvVars from '../../config.js';
 import { useUser } from '../../context/userContext.jsx';
+import newfolder from '../../assets/icons/newfolder.png';
+
 const Learn = () => {
   const router = useRouter();
   const {IP_ADDRESS} = getEnvVars();
@@ -24,7 +26,7 @@ const Learn = () => {
       const course = await fetch(`${IP_ADDRESS}:3000/api/course/get-courses/${currentUser.$id}`);
       const courseData = await course.json();
       setCourses(courseData.courses);
-      // console.log(courseData.courses);
+      console.log(courses);
       
 
     }
@@ -80,7 +82,7 @@ const Learn = () => {
     }
   }
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 ,backgroundColor:'#f0f2ff'}}>
       {/* Top Bar */}
       <View style={styles.topbar}>
         <Text style={{ fontSize: 18, fontWeight: 'bold' }}>My Courses</Text>
@@ -129,8 +131,17 @@ const Learn = () => {
 
 
 
-
+      
       {/* Course List */}
+      {courses.length === 0 && (
+        <View style={styles.emptyState}>
+          <Image source={newfolder} style={styles.emptyImage} />
+          <Text style={styles.emptyText}>
+            Add courses you want to learn, Upload materials and use our AI tools
+          </Text>
+        </View>
+      )}
+
       <FlatList
         style={styles.cardContainer}
         data={courses}
@@ -238,5 +249,22 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor:'white',
+    height:'100%'
+  },
+  emptyImage: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
 });
