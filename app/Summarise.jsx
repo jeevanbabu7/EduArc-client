@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView, Image, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView, Image, Platform, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
-import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
-import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
+import { AvatarImage, Button, ButtonText, Spinner } from "@gluestack-ui/themed";
+import { useToast, Toast, ToastDescription } from '@gluestack-ui/themed'; 
 import '../global.css';
 import { ID, storage, client } from '../lib/appwrite/appwrite.js';
 import getEnvVars from '../config.js';
@@ -11,39 +11,71 @@ import scan from '../assets/icons/scanold.png';
 import upload from '../assets/icons/upload_new.png';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
+import { Box, Heading, HStack, VStack, Avatar, FlatList } from '@gluestack-ui/themed';
+import {useUser} from '../context/userContext.jsx';
+
 
 const Summarise = () => {
   const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
   const bucketId = PDF_BUCKET_ID || '67bccd990005a5d175c4';
-  
+  const windowWidth = Dimensions.get('window').width;
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const {currentUser} = useUser()
+  // console.log("User:", currentUser);
+  
 
+  const [summaryHistory, setSummaryHistory] = useState([
+    { id: 1, summary: "This is a summary of the first document" },
+    { id: 2, summary: "This is a summary of the second document" },
+    { id: 3, summary: "This is a summary of the third document" },
+    { id: 4, summary: "This is a summary of the fourth document" },
+    { id: 5, summary: "This is a summary of the fifth document" },
+    { id: 6, summary: "This is a summary of the sixth document" },
+    { id: 7, summary: "This is a summary of the seventh document" },
+    { id: 8, summary: "This is a summary of the eighth document" },
+    { id: 9, summary: "This is a summary of the ninth document" },
+    { id: 10, summary: "This is a summary of the tenth document" },
+  ]);
   const toast = useToast();
   
   // Check connection to Appwrite on component mount
-  useEffect(() => {
-    const checkConnection = async () => {
-      try {
-        // Try a lightweight ping request to Appwrite
-        await client.account.createAnonymousSession();
-        console.log("Successfully connected to Appwrite");
-      } catch (error) {
-        console.warn("Failed to connect to Appwrite:", error);
-        Alert.alert(
-          "Connection Issue", 
-          "There might be a problem connecting to our servers. Make sure you're connected to the internet.",
-          [{ text: "OK" }]
-        );
-      }
-    };
+  // useEffect(() => {
+  //   const checkConnection = async () => {
+  //     try {
+  //       // Try a lightweight ping request to Appwrite
+  //       await client.account.createAnonymousSession();
+  //       console.log("Successfully connected to Appwrite");
+  //     } catch (error) {
+  //       console.warn("Failed to connect to Appwrite:", error);
+  //       Alert.alert(
+  //         "Connection Issue", 
+  //         "There might be a problem connecting to our servers. Make sure you're connected to the internet.",
+  //         [{ text: "OK" }]
+  //       );
+  //     }
+  //   };
     
-    checkConnection();
+  //   checkConnection();
+  // }, []);
+
+  useEffect(() => {
+    const getSummaryHistory = async () => {
+      try {
+        // Fetch summary history from the API
+        const response = await axios.get(`${IP_ADDRESS}:3000/api/summary/get-summary-history/${currentUser.$id}`);
+        console.log("Summary history response:", response.data.summaries);
+        setSummaryHistory(response.data.summaries);
+      } catch (error) {
+        console.error("Summary History Error:", error);
+        Alert.alert('Error', `Failed to fetch summary history: ${error.message}`);
+    }
+  }
+    getSummaryHistory();
   }, []);
   
   // Fetch file data using FileSystem for more reliable handling
@@ -284,7 +316,7 @@ const Summarise = () => {
       console.log(`Sending request to: ${IP_ADDRESS}/api/summary/pdf`);
       console.log(`With payload: ${JSON.stringify({ pdf_url: fileURL })}`);
       
-      const result = await fetch(`${IP_ADDRESS}/api/summary/pdf`, {
+      const result = await fetch(`http://192.168.1.4:5000/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -299,6 +331,16 @@ const Summarise = () => {
 
       const data = await result.json();
       console.log("Summary response:", data);
+      console.log("Summary response type:", data);
+      
+      
+      axios.post(`${IP_ADDRESS}:3000/api/summary/new-summary`, {
+        summary: data.response,
+      }).then((response) => {
+        setSummary(response.response);
+      }).catch((error) => {
+        console.log(error);
+      });
       
       if (!data.response || !Array.isArray(data.response)) {
         throw new Error('Invalid response format from server');
@@ -312,11 +354,16 @@ const Summarise = () => {
       setLoading(false);
     }
   };
+
+  console.log("Summary History:", summaryHistory);
+  
   
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, overflow: "scroll" }}>
       <ScrollView
-        contentContainerStyle={[styles.container, { alignItems: 'center', flexGrow: 1, paddingBottom: 50 }]}
+        contentContainerStyle={{ ...styles.container, flexGrow: 1, paddingBottom: 20 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         {!file && (<Text style={styles.title}>Upload a File</Text>)}
 
@@ -385,8 +432,8 @@ const Summarise = () => {
             <Text style={styles.title}>Summary</Text>
             {summary.map((item, index) => (
               <View key={index} style={styles.summaryItem}>
-                <Text style={styles.summaryHeading}>{item.heading}</Text>
-                <Text style={styles.summaryText}>{item.summary}</Text>
+                <Text style={styles.summaryHeading}>{item.title}</Text>
+                <Text style={styles.summaryText}>{item.content}</Text>
               </View>
             ))}
           </View>
@@ -402,6 +449,64 @@ const Summarise = () => {
           <View style={styles.loadingContainer}>
             <Spinner size="large" color="$indigo600" />
             <Text style={styles.loadingText}>Generating summary...</Text>
+          </View>
+        )}
+
+        {/* Responsive Summary History Section */}
+        {summaryHistory && (
+          <View style={styles.summaryBox}>
+            <Text style={styles.summaryTitle}>Summary History</Text>
+            <View style={styles.historyContainer}>
+              {/* For larger screens, use a grid layout */}
+              {windowWidth >= 768 ? (
+                <FlatList
+                  data={summaryHistory} // Show only the first 4 items
+                  keyExtractor={(item) => item._id}
+                  numColumns={2}
+                  renderItem={({ item }) => (
+                    <View style={styles.gridItem}>
+                      <TouchableOpacity style={styles.historyCard}>
+                        <Text style={styles.summaryHeading}>Summary {item._id}</Text>
+                        {/* <Text 
+                          style={styles.summaryText}
+                          numberOfLines={3}
+                          ellipsizeMode="tail"
+                        >
+                          {item.summary}
+                        </Text> */}
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  contentContainerStyle={styles.gridContainer}
+                />
+              ) : (
+                // For mobile screens, use horizontal scrolling
+                <FlatList
+                  data={summaryHistory} // Show only the first 4 items
+                  keyExtractor={(item) => item._id}
+                  renderItem={({ item }) => (
+                    <View style={styles.gridItem}>
+                      <TouchableOpacity style={styles.historyCard}>
+                        <Text style={styles.summaryHeading}>Summary {item._id}</Text>
+                        {/* <Text 
+                          style={styles.summaryText}
+                          numberOfLines={3}
+                          ellipsizeMode="tail"
+                        >
+                          {item.summary}
+                        </Text> */}
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  contentContainerStyle={styles.gridContainer}
+                />
+              )}
+            </View>
+            
+            {/* View All Button */}
+            <TouchableOpacity style={styles.viewAllButton}>
+              <Text style={styles.viewAllText}>View All</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -549,6 +654,60 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
+  summaryBox: {
+    marginTop: 20,
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#ecf0f1',
+    borderRadius: 15,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 10,
+  },
+  historyContainer: {
+    marginTop: 10,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  gridItem: {
+    width: '50%',
+    padding: 5,
+  },
+  historyCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 15,
+    marginRight: 10,
+    marginBottom: 10,
+    minWidth: 250,
+    maxWidth: 300,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  viewAllButton: {
+    marginTop: 15,
+    alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    backgroundColor: '#0504aa',
+    borderRadius: 20,
+  },
+  viewAllText: {
+    color: '#ffffff',
+    fontWeight: '500',
+  },
+  menuIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 15, 
+  },
 });
-
 export default Summarise;
