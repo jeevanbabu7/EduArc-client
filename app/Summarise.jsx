@@ -13,7 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Box, Heading, HStack, VStack, Avatar, FlatList } from '@gluestack-ui/themed';
 import {useUser} from '../context/userContext.jsx';
-
+import { useRouter } from 'expo-router';
 
 const Summarise = () => {
   const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
@@ -26,6 +26,7 @@ const Summarise = () => {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState(null);
   const {currentUser} = useUser()
+  const router = useRouter();
   // console.log("User:", currentUser);
   
 
@@ -355,6 +356,13 @@ const Summarise = () => {
     }
   };
 
+  const navigateToSummaryDetails = (summaryId) => {
+    router.push({
+      pathname: 'SummaryDetails',
+      params: { id: summaryId }
+    });
+  };
+
   console.log("Summary History:", summaryHistory);
   
   
@@ -465,7 +473,10 @@ const Summarise = () => {
                   numColumns={2}
                   renderItem={({ item }) => (
                     <View style={styles.gridItem}>
-                      <TouchableOpacity style={styles.historyCard}>
+                      <TouchableOpacity 
+                        style={styles.historyCard}
+                        onPress={() => navigateToSummaryDetails(item._id)}
+                      >
                         <Text style={styles.summaryHeading}>Summary {item._id}</Text>
                         {/* <Text 
                           style={styles.summaryText}
@@ -486,7 +497,10 @@ const Summarise = () => {
                   keyExtractor={(item) => item._id}
                   renderItem={({ item }) => (
                     <View style={styles.gridItem}>
-                      <TouchableOpacity style={styles.historyCard}>
+                      <TouchableOpacity 
+                        style={styles.historyCard}
+                        onPress={() => navigateToSummaryDetails(item._id)}
+                      >
                         <Text style={styles.summaryHeading}>Summary {item._id}</Text>
                         {/* <Text 
                           style={styles.summaryText}
@@ -504,7 +518,10 @@ const Summarise = () => {
             </View>
             
             {/* View All Button */}
-            <TouchableOpacity style={styles.viewAllButton}>
+            <TouchableOpacity 
+              style={styles.viewAllButton}
+              onPress={() => router.push('SummaryHistory')}
+            >
               <Text style={styles.viewAllText}>View All</Text>
             </TouchableOpacity>
           </View>
