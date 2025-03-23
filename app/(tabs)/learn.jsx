@@ -52,9 +52,13 @@ const Learn = () => {
       
       
       if (response.ok) {
-        setCourses([...courses, data.course]);
+        const newCourse = data.course;
+        setCourses([...courses, newCourse]);
         refAddCourseSheet.current.close();
-        router.push('(courses)/Materials') 
+        router.push({
+          pathname: '(courses)/Materials',
+          params: { courseData: JSON.stringify(newCourse) }
+        });
       }
     }catch(err) {
       console.log(err);
@@ -146,12 +150,17 @@ const Learn = () => {
         style={styles.cardContainer}
         data={courses}
         renderItem={({ item }) => (
-          <LearnCourseCard name={item.name} id={item._id}  onDelete={onDelete} onPress={() => router.push({pathname: '(courses)/Tools', params: JSON.stringify({
-            course: item,
-            title: item.name,
-          })})} />
+          <LearnCourseCard 
+            name={item.name} 
+            id={item._id}  
+            onDelete={onDelete} 
+            onPress={() => router.push({
+              pathname: '(courses)/Materials', 
+              params: { courseData: JSON.stringify(item) }
+            })} 
+          />
         )}
-        keyExtractor={(item) => item.key}
+        keyExtractor={(item) => item._id || item.id}
       />
 
       {/* Floating Add Button */}
