@@ -112,7 +112,7 @@ const VideoSummary = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f5f7',
+    backgroundColor: '#F5F9FF',
     padding: 20,
     alignItems: 'center',
   },
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderRadius: 7,
-    borderColor: '#D3D3D3',  // Use borderColor instead of bordercolor
+    borderColor: 'rgb(183, 203, 226)',  // Use borderColor instead of bordercolor
     padding: 20,
     minWidth:'100%',
     gap:10
