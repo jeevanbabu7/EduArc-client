@@ -13,7 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Box, Heading, HStack, VStack, Avatar, FlatList } from '@gluestack-ui/themed';
 import {useUser} from '../context/userContext.jsx';
-import { useRouter } from 'expo-router';
+import { useRouter,useLocalSearchParams } from 'expo-router';
 
 const Summarise = () => {
   const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
@@ -29,6 +29,8 @@ const Summarise = () => {
   const router = useRouter();
   // console.log("User:", currentUser);
   
+  const { courseData } = useLocalSearchParams();
+  const course = courseData ? JSON.parse(courseData) : null;
 
   const [summaryHistory, setSummaryHistory] = useState([
     { id: 1, summary: "This is a summary of the first document" },
@@ -373,7 +375,7 @@ const Summarise = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {!file && (<Text style={styles.title}>Upload a File</Text>)}
+        {!file && (<Text style={styles.title}>Upload a File {course.name}</Text>)}
 
         {!file && (
           <View style={styles.container2}>
