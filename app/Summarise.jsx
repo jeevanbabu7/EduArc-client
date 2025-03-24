@@ -375,7 +375,7 @@ const Summarise = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {!file && (<Text style={styles.title}>Upload a File {course.name}</Text>)}
+        {!file && (<Text style={styles.title}>Upload a File</Text>)}
 
         {!file && (
           <View style={styles.container2}>
@@ -522,7 +522,7 @@ const Summarise = () => {
             {/* View All Button */}
             <TouchableOpacity 
               style={styles.viewAllButton}
-              onPress={() => router.push('SummaryHistory')}
+              onPress={() => router.push('SummaryDetails')}
             >
               <Text style={styles.viewAllText}>View All</Text>
             </TouchableOpacity>
@@ -536,7 +536,7 @@ const Summarise = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f5f7',
+    backgroundColor: '#F5F9FF',
     padding: 20,
     alignItems: 'center',
   },
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderRadius: 7,
-    borderColor: '#D3D3D3',
+    borderColor: 'rgb(183, 203, 226)',
     padding: 20,
     minWidth: '100%',
     gap: 10,
