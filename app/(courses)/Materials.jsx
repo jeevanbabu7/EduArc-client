@@ -29,14 +29,20 @@ function Materials() {
     }
   }, []);
   
-  const fetchMaterials = async (courseId) => {
+  async function fetchMaterials(courseId) {  
     try {
       // Replace with your actual API endpoint
-      const response = await fetch(`${IP_ADDRESS}:3000/api/materials/get-materials/${courseId}`);
+      console.log("Fetching materials for course:");
+      
+      const response = await fetch(`${IP_ADDRESS}:3000/api/material/get-materials/${courseId}`);
+
+      
       
       if (response.ok) {
         const data = await response.json();
-        setMaterials(data.materials || []);
+        // console.log("Materials data:", data.materials);
+        
+        setMaterials(data.materials.materials || []);
       }
     } catch (error) {
       console.error("Error fetching materials:", error);
@@ -61,7 +67,7 @@ function Materials() {
       
       // Fix path formatting and ensure it works with Expo Router
       router.push({
-        pathname: "/(courses)/UploadMaterial",
+        pathname: "/UploadMaterial",
         params: {
           courseId: course._id,
           courseName: course.name
@@ -97,14 +103,16 @@ function Materials() {
           <MaterialCard
             title={item.title}
             onPress={() => {
-              if (item.fileUrl) {
-                router.push({
-                  pathname: '(courses)/ViewMaterial',
-                  params: { materialId: item._id, materialUrl: item.fileUrl }
-                });
-              } else {
-                Alert.alert('Info', 'No file available for this material yet.');
-              }
+              console.log("Material selected:", item);
+              
+              // if (item.fileUrl) {
+              //   router.push({
+              //     pathname: '(courses)/ViewMaterial',
+              //     params: { materialId: item._id, materialUrl: item.fileUrl }
+              //   });
+              // } else {
+              //   Alert.alert('Info', 'No file available for this material yet.');
+              // }
             }}
           />
         )}

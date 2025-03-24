@@ -9,12 +9,14 @@ import {
   ActivityIndicator, 
   SafeAreaView, 
   Platform,
-  ScrollView
+  ScrollView,
+  FlatList
 } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
-import { ID, storage } from '../../lib/appwrite/appwrite.js';
-import getEnvVars from '../../config.js';
+import { ID } from '../lib/appwrite/appwrite.js';
+import { uploadFileToAppwrite } from '../lib/appwrite/fileStorage.js';
+import getEnvVars from '../config.js';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
@@ -30,9 +32,9 @@ export default function UploadMaterial() {
   const courseName = params.courseName || params.coursename || 'Course';
   
   const [materialTitle, setMaterialTitle] = useState('');
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const { IP_ADDRESS } = getEnvVars();
+  const { IP_ADDRESS, APPWRITE_PROJECT_ID, PDF_BUCKET_ID } = getEnvVars();
   
   useEffect(() => {
     console.log("Course ID:", courseId);
@@ -50,24 +52,30 @@ export default function UploadMaterial() {
           'application/vnd.openxmlformats-officedocument.presentationml.presentation'
         ],
         copyToCacheDirectory: true,
+        multiple: true, // Enable multiple file selection
       });
       
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const selectedFile = result.assets[0];
-        console.log("Selected file:", selectedFile);
+        // Filter out files larger than 10MB
+        const validFiles = result.assets.filter(file => {
+          if (file.size > 10 * 1024 * 1024) {
+            Alert.alert('File Too Large', `File "${file.name}" is larger than 10MB and was skipped`);
+            return false;
+          }
+          return true;
+        });
         
-        // File size check (limit to 10MB)
-        if (selectedFile.size > 10 * 1024 * 1024) {
-          Alert.alert('File Too Large', 'Please select a file smaller than 10MB');
-          return;
-        }
-        
-        setFile(selectedFile);
+        // Add the new files to existing files
+        setFiles(prevFiles => [...prevFiles, ...validFiles]);
       }
     } catch (error) {
       console.error('Error picking document:', error);
       Alert.alert('Error', 'Failed to pick document. Please try again.');
     }
+  };
+
+  const removeFile = (index) => {
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
   
   const uploadMaterial = async () => {
@@ -76,8 +84,8 @@ export default function UploadMaterial() {
       return;
     }
     
-    if (!file) {
-      Alert.alert('Missing File', 'Please select a file to upload');
+    if (files.length === 0) {
+      Alert.alert('Missing Files', 'Please select at least one file to upload');
       return;
     }
     
@@ -89,55 +97,35 @@ export default function UploadMaterial() {
     setUploading(true);
     
     try {
-      // Step 1: Prepare the file
-      const uri = file.uri;
-      const fileId = ID.unique();
+      // Upload all files to Appwrite storage and collect their URLs
+      const fileUrls = [];
+      const fileDetails = [];
       
-      // Method 1: Using formData for better cross-platform compatibility
-      const formData = new FormData();
-      formData.append('file', {
-        uri: Platform.OS === 'ios' ? uri.replace('file://', '') : uri,
-        name: file.name,
-        type: file.mimeType
-      });
+      for (const file of files) {
+        const uploadResult = await uploadFileToAppwrite(file, APPWRITE_PROJECT_ID, PDF_BUCKET_ID);
+        console.log('Upload response:', uploadResult.response);
+        console.log('File URL:', uploadResult.fileUrl);
+        
+        fileUrls.push(uploadResult.fileUrl);
+        fileDetails.push({
+          fileName: file.name,
+          fileUrl: uploadResult.fileUrl,
+          fileSize: file.size,
+          fileType: file.mimeType
+        });
+      }
+
+      console.log("File URLs:", fileDetails);
       
-      // Step 2: Upload to Appwrite
-      const endpoint = "https://cloud.appwrite.io/v1";
-      const projectId = "67bcccfe0010a29974a4";
-      const bucketId = "67bccd990005a5d175c4";
       
-      const headers = {
-        'Content-Type': 'multipart/form-data',
-        'X-Appwrite-Project': projectId
-      };
-      
-      // Make the upload request
-      console.log(`Uploading to ${endpoint}/storage/buckets/${bucketId}/files`);
-      
-      const uploadResponse = await axios({
-        method: 'post',
-        url: `${endpoint}/storage/buckets/${bucketId}/files`,
-        headers: headers,
-        data: formData,
-        params: { fileId }
-      });
-      
-      console.log('Upload response:', uploadResponse.data);
-      
-      // Step 3: Get the file URL
-      const fileUrl = `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${projectId}`;
-      
-      // Step 4: Save material to your database
-      console.log("Saving material to database:", {
+      // Save material with multiple files to database
+      console.log("Saving material with files to database:", {
         courseId,
         title: materialTitle,
-        fileUrl,
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.mimeType
+        files: fileDetails
       });
       
-      const materialResponse = await fetch(`${IP_ADDRESS}:3000/api/materials/add-material`, {
+      const materialResponse = await fetch(`${IP_ADDRESS}:3000/api/material/add-material`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,10 +133,7 @@ export default function UploadMaterial() {
         body: JSON.stringify({
           courseId,
           title: materialTitle,
-          fileUrl,
-          fileName: file.name,
-          fileSize: file.size,
-          fileType: file.mimeType
+          files: fileDetails
         })
       });
       
@@ -196,48 +181,53 @@ export default function UploadMaterial() {
               placeholderTextColor="#999"
             />
             
-            <Text style={styles.label}>Document File</Text>
-            <Text style={styles.supportedFormats}>Supported formats: PDF, Word, PowerPoint</Text>
+            <Text style={styles.label}>Document Files</Text>
+            <Text style={styles.supportedFormats}>Supported formats: PDF, Word, PowerPoint (Max 10MB per file)</Text>
+            
+            {files.length > 0 && (
+              <View style={styles.selectedFilesContainer}>
+                {files.map((file, index) => (
+                  <View key={index} style={styles.selectedFileContainer}>
+                    <Ionicons name="document-text" size={24} color="#0504aa" />
+                    <View style={styles.fileDetails}>
+                      <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
+                        {file.name}
+                      </Text>
+                      <Text style={styles.fileSize}>
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </Text>
+                    </View>
+                    <TouchableOpacity 
+                      style={styles.removeButton}
+                      onPress={() => removeFile(index)}
+                      disabled={uploading}
+                    >
+                      <Ionicons name="close-circle" size={22} color="#ff4444" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )}
             
             <TouchableOpacity 
               style={styles.filePicker}
               onPress={pickDocument}
               disabled={uploading}
             >
-              {file ? (
-                <View style={styles.selectedFileContainer}>
-                  <Ionicons name="document-text" size={24} color="#0504aa" />
-                  <View style={styles.fileDetails}>
-                    <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
-                      {file.name}
-                    </Text>
-                    <Text style={styles.fileSize}>
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </Text>
-                  </View>
-                  <TouchableOpacity 
-                    style={styles.changeButton}
-                    onPress={pickDocument}
-                    disabled={uploading}
-                  >
-                    <Text style={styles.changeButtonText}>Change</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View style={styles.selectFilePrompt}>
-                  <Ionicons name="cloud-upload-outline" size={32} color="#666" />
-                  <Text style={styles.selectFileText}>Tap to select a document</Text>
-                </View>
-              )}
+              <View style={styles.selectFilePrompt}>
+                <Ionicons name="cloud-upload-outline" size={32} color="#666" />
+                <Text style={styles.selectFileText}>Tap to select documents</Text>
+                <Text style={styles.selectFileSubtext}>You can select multiple files</Text>
+              </View>
             </TouchableOpacity>
             
             <TouchableOpacity
               style={[
                 styles.uploadButton,
-                (!materialTitle.trim() || !file || uploading) && styles.disabledButton
+                (!materialTitle.trim() || files.length === 0 || uploading) && styles.disabledButton
               ]}
               onPress={uploadMaterial}
-              disabled={!materialTitle.trim() || !file || uploading}
+              disabled={!materialTitle.trim() || files.length === 0 || uploading}
             >
               {uploading ? (
                 <View style={styles.loadingContainer}>
@@ -324,10 +314,23 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 8,
   },
+  selectFileSubtext: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+  },
+  selectedFilesContainer: {
+    marginBottom: 16,
+  },
   selectedFileContainer: {
-    padding: 16,
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    marginBottom: 8,
   },
   fileDetails: {
     flex: 1,
@@ -342,6 +345,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+  },
+  removeButton: {
+    padding: 4,
   },
   changeButton: {
     backgroundColor: '#0504aa',

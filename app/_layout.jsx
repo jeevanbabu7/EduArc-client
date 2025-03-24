@@ -47,6 +47,7 @@ const RootLayout = () => {
             <Stack.Screen name="(courses)" options={{ headerShown: false }} />
             <Stack.Screen name="(chat)" options={{ headerShown: false }} />
             <Stack.Screen name="(qp)" options={{ headerShown: false }} />
+            <Stack.Screen name="UploadMaterial" options={{ headerShown: false }} />
           </Stack>
         </ChatProvider>
         </UserProvider>
