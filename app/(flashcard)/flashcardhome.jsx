@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList,Platform,Image } fro
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import scan from '../../assets/icons/scanold.png';
+import cards from '../../assets/icons/cards.png';
 import menu from '../../assets/icons/hamburger-icon.png';
 import arrowup from '../../assets/icons/arrowup.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -239,6 +240,7 @@ const FlashHome = () => {
                   ref={refRBSheet}
                   draggable={false} // Changed to false to remove the notch
                   closeOnPressMask={true}
+                  closeOnPressBack={true}
                   customStyles={{
                     wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
                     container: {
@@ -256,9 +258,12 @@ const FlashHome = () => {
                     data={dummy_flashcards}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                      <View style={styles.notificationItem}>
-                        <Text style={styles.notificationTitle}>{item.title}</Text>
-                      </View>
+                      <TouchableOpacity>
+                        <View style={styles.notificationItem}>
+                          <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
+                          <Text style={styles.notificationTitle}>{item.title}</Text>
+                        </View>
+                      </TouchableOpacity>
                     )}
                     contentContainerStyle={styles.listContainer}
                   />
@@ -383,15 +388,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   notificationItem: {
-    // backgroundColor: '#f0f2ff',
+    backgroundColor: 'rgb(255, 255, 255)',
+    flexDirection: 'row',
     padding: 15,
     borderRadius: 10,
     marginVertical: 5,
-    borderWidth:1,
-    borderColor:'#d1d5db'
+    // Shadow properties for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // Elevation for Android
+    elevation: 3
   },
   notificationTitle: {
     fontSize: 16,
+    fontWeight:500
   },
   container2: {
     flexDirection: 'column',
