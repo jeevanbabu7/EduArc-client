@@ -78,6 +78,7 @@ const Learn = () => {
       });
       const data = await response.json();
       console.log(data);
+      setCourses(() => courses.filter((course) => course._id !== courseId));
       if (response.ok) {
         setCourses(courses.filter((course) => course._id !== courseId));
       }
@@ -86,7 +87,9 @@ const Learn = () => {
     }
   }
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+  }>
       {/* Top Bar */}
       <View style={styles.topbar}>
         <Text style={{ fontSize: 24, fontWeight: '600' }}>My Courses</Text>

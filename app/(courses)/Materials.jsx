@@ -47,11 +47,11 @@ function Materials() {
     } catch (error) {
       console.error("Error fetching materials:", error);
       // For now, let's use dummy data until the API is implemented
-      setMaterials([
-        { _id: '1', title: 'Module 1', fileUrl: '' },
-        { _id: '2', title: 'Module 2', fileUrl: '' },
-        { _id: '3', title: 'Module 3', fileUrl: '' },
-      ]);
+      // setMaterials([
+      //   { _id: '1', title: 'Module 1', fileUrl: '' },
+      //   { _id: '2', title: 'Module 2', fileUrl: '' },
+      //   { _id: '3', title: 'Module 3', fileUrl: '' },
+      // ]);
     }
   };
 
@@ -94,11 +94,7 @@ function Materials() {
       {/* Material List */}
       <FlatList
         style={styles.listContainer}
-        data={materials.length > 0 ? materials : [
-          { _id: '1', title: 'Module 1' },
-          { _id: '2', title: 'Module 2' },
-          { _id: '3', title: 'Module 3' },
-        ]}
+        data={materials}
         renderItem={({ item }) => (
           <MaterialCard
             title={item.title}

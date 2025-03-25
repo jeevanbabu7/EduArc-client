@@ -84,7 +84,7 @@ export default function UserProvider(props) {
       const newUser = await account.create(ID.unique(), email, password);
       
       try {
-        fetch(`http://172.16.33.254:3000/api/auth/newUser`, {
+        fetch(`http://${IP_ADDRESS}:3000/api/auth/newUser`, {
           name: newUser.name,
           email: newUser.email,
           userId: newUser.$id
@@ -96,7 +96,7 @@ export default function UserProvider(props) {
           body: JSON.stringify({
             name: newUser.name,
             email: newUser.email,
-            userId: newUser.$id
+            userId: newUser.$id 
           })}).then(res => {
             console.log(res);
             return res.json();
