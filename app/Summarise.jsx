@@ -9,8 +9,9 @@ import { ID, storage, client } from '../lib/appwrite/appwrite.js';
 import getEnvVars from '../config.js';
 import scan from '../assets/icons/scanold.png';
 import upload from '../assets/icons/upload_new.png';
-import menu from '../assets/icons/hamburger-icon.png';
 import arrowup from '../assets/icons/arrowup.png';
+import menu from '../assets/icons/hamburger-icon.png';
+import cards from '../assets/icons/cards.png';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Box, Heading, HStack, VStack, Avatar, FlatList } from '@gluestack-ui/themed';
@@ -36,18 +37,7 @@ const Summarise = () => {
   const { courseData } = useLocalSearchParams();
   const course = courseData ? JSON.parse(courseData) : null;
 
-  const [summaryHistory, setSummaryHistory] = useState([
-    { id: 1, summary: "This is a summary of the first document" },
-    { id: 2, summary: "This is a summary of the second document" },
-    { id: 3, summary: "This is a summary of the third document" },
-    { id: 4, summary: "This is a summary of the fourth document" },
-    { id: 5, summary: "This is a summary of the fifth document" },
-    { id: 6, summary: "This is a summary of the sixth document" },
-    { id: 7, summary: "This is a summary of the seventh document" },
-    { id: 8, summary: "This is a summary of the eighth document" },
-    { id: 9, summary: "This is a summary of the ninth document" },
-    { id: 10, summary: "This is a summary of the tenth document" },
-  ]);
+  const [summaryHistory, setSummaryHistory] = useState([]);
   const toast = useToast();
   
   // Check connection to Appwrite on component mount
@@ -480,7 +470,7 @@ const Summarise = () => {
                 borderTopLeftRadius: 20,
                 borderTopRightRadius: 20,
                 padding: 0, // Removed padding to allow header to sit at the top
-                backgroundColor: '#F5F9FF',
+                backgroundColor: 'white',
                 height: '75%',
               },
               // Removed draggableIcon style since we're not using it anymore
@@ -489,14 +479,12 @@ const Summarise = () => {
             <Text style={styles.savedFlashcard}>Summary History</Text>
             <FlatList
               data={summaryHistory}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item._id}
               renderItem={({ item }) => (
-                <TouchableOpacity>
-                  <View style={styles.notificationItem}>
+                  <TouchableOpacity style={styles.notificationItem}>
                     <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
-                    <Text style={styles.notificationTitle}>{item.title}</Text>
-                  </View>
-                </TouchableOpacity>
+                    <Text style={styles.notificationTitle}>{item.heading}</Text>
+                  </TouchableOpacity>
               )}
               contentContainerStyle={styles.listContainer}
             />
@@ -740,7 +728,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   notificationItem: {
-    backgroundColor: 'rgb(255, 255, 255)',
+    backgroundColor: 'white',
     flexDirection: 'row',
     padding: 15,
     borderRadius: 10,
