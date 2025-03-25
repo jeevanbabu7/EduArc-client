@@ -333,8 +333,11 @@ const Summarise = () => {
       
       axios.post(`${IP_ADDRESS}:3000/api/summary/new-summary`, {
         summary: data.response,
+        userId: currentUser.$id,
+        title: file.name,
       }).then((response) => {
-        setSummary(response.response);
+        // setSummary(response.response);
+        console.log(response);
       }).catch((error) => {
         console.log(error);
       });
@@ -483,7 +486,7 @@ const Summarise = () => {
               renderItem={({ item }) => (
                   <TouchableOpacity style={styles.notificationItem} onPress={() => navigateToSummaryDetails(item._id)}>
                     <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
-                    <Text style={styles.notificationTitle}>{item.heading}</Text>
+                    <Text style={styles.notificationTitle}>{item.title}</Text>
                   </TouchableOpacity>
               )}
               contentContainerStyle={styles.listContainer}
