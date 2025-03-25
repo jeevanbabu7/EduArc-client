@@ -84,9 +84,11 @@ const ChatBot = () => {
 
   useEffect(() => {
     const fetchPreviousMessages = async () => {
-      if(chatId == null) return;
+      // console.log("Fetching previous messages", chatId);
+      
+      if(currentChat.id == null) return;
       try {
-        const response = await fetch(`${IP_ADDRESS}:3000/api/chat/get-messages/${chatId}`);
+        const response = await fetch(`${IP_ADDRESS}:3000/api/chat/get-messages/${currentChat.id}`);
         const data = await response.json();
 
         if (data.messages.length > 0) {
@@ -140,7 +142,7 @@ const ChatBot = () => {
     };
 
     fetchPreviousMessages();
-  }, [chatId]);
+  }, [currentChat.id]);
 
   useEffect(() => {
     if (!socket) return;
@@ -165,7 +167,7 @@ const ChatBot = () => {
     try {
       console.log(isNewChat);
   
-      // if (isNewChat) {
+      if (isNewChat) {
         setIsNewChat(false);
         console.log("Creating new chat session");
   
@@ -186,7 +188,7 @@ const ChatBot = () => {
   
         const responseData = await response.json();
         console.log("Chat creation response:", responseData);
-      // }
+      }
   
       if (inputText.trim()) {
 

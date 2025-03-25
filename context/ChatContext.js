@@ -7,7 +7,7 @@ const ChatContext = createContext();
 // Create a provider component
 export const ChatProvider = ({ children }) => {
   const [currentChat, setCurrentChat] = useState({
-    id: '123',
+    id: null,
     title: null
   });
 

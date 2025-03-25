@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
-import { useNavigation, Slot } from "expo-router"; 
+import { useNavigation, Slot, router } from "expo-router"; 
 import hamburger from "../../assets/icons/hamburger-icon.png";
 import edit from '../../assets/icons/edit.png';
 import getEnvVars from "../../config";
@@ -22,6 +22,7 @@ function CustomDrawerContent() {
   const navigation = useNavigation();
   const { HOME_IP_ADDRESS, IP_ADDRESS } = getEnvVars();
   const {currentChat, setCurrentChat} = useChat();
+  
   console.log("Current Chat:", currentChat);
   
 
@@ -30,7 +31,7 @@ function CustomDrawerContent() {
     
     const fetchChatHistory = () => {
       console.log("Hii");
-      axios.get(`${IP_ADDRESS}:3000/api/chat/get-chat-sessions/67c7413f000ddf76f421`).then((res) => {
+      axios.get(`${IP_ADDRESS}:3000/api/chat/get-chat-sessions/${currentUser.$id}`).then((res) => {
         console.log(res.data);
         setChatHistory(res.data.chatSessions);
       }).catch((err) => {
@@ -75,6 +76,9 @@ const Drawer = createDrawerNavigator();
 // Layout Component with the Hamburger Menu
 export default function Layout() {
   const navigation = useNavigation();
+  const {currentChat, setCurrentChat } = useChat();
+  const {IP_ADDRESS} = getEnvVars();
+  const {currentUser} = useUser();
 
   return (
     <Drawer.Navigator
@@ -92,7 +96,25 @@ export default function Layout() {
           headerTintColor: "black",
           headerTitle: "Chat",
           headerRight: () => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              setCurrentChat({id: null, title: null})
+              
+              fetch(`${IP_ADDRESS}:3000/api/chat/new-chat`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userId: currentUser.$id,
+                }),
+              }).then((res) => res.json()).then((data) => {
+                console.log("Chat creation data:", data);
+                setCurrentChat({id: data.chatSession._id, title: data.chatSession._id});
+              }).catch((err) => {
+                console.log(err);
+              });
+
+            }}>
               <Image source={edit} style={styles.menuIcon} />
             </TouchableOpacity>
           ),
