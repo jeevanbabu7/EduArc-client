@@ -1,17 +1,21 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View,Alert } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Materials from './Materials';
 import Tools from './Tools';
 import Xyz from './Xyz';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function CourseLayout() {
+  const { courseData } = useLocalSearchParams();
+  const course = courseData ? JSON.parse(courseData) : null;
+
   return (
     <>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Data Structures</Text>
+        <Text style={styles.headerText}>{course.name}</Text>
       </View>
       <Tab.Navigator
         screenOptions={{

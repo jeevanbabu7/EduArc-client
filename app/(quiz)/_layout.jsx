@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Slot, useNavigation, useRouter } from 'expo-router';
+import { Slot, useNavigation, useRouter, useLocalSearchParams } from 'expo-router';
 import { TouchableOpacity, BackHandler, StyleSheet, View, Text, SafeAreaView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { QuizProvider } from '../../hooks/QuizContext';
@@ -8,22 +8,22 @@ import { useFocusEffect } from '@react-navigation/native';
 const Layout = () => {
   const navigation = useNavigation();
   const router = useRouter();
-  
+  const { courseData } = useLocalSearchParams();
+  const course = courseData ? JSON.parse(courseData) : null;
+
   // Disable the hardware back button
   useFocusEffect(
     useCallback(() => {
-      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-        return true; // This disables the back button
-      });
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true);
       return () => backHandler.remove();
     }, [])
   );
 
-  // Hide the default header
+  // Hide the default header and disable gestures
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
-      gestureEnabled: false,
+      gestureEnabled: false, // Disables swipe back
     });
   }, [navigation]);
 
@@ -33,14 +33,14 @@ const Layout = () => {
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.closeButtonContainer}
-          onPress={() => router.replace('/Tools')}
+          onPress={() => router.back()} // Navigates back normally instead of using pathname
           activeOpacity={0.6}
         >
           <Ionicons name="close" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Quiz</Text>
       </View>
-      
+
       {/* Main content */}
       <View style={styles.content}>
         <QuizProvider>
@@ -65,9 +65,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
     backgroundColor: '#fff',
     ...Platform.select({
-      android: {
-        elevation: 4,
-      },
+      android: { elevation: 4 },
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },

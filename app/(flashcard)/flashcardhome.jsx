@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList,Platform,Image } fro
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import scan from '../../assets/icons/scanold.png';
+import menu from '../../assets/icons/hamburger-icon.png';
+import arrowup from '../../assets/icons/arrowup.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import getEnvVars from '../../config.js';
 import * as FileSystem from 'expo-file-system';
@@ -218,11 +220,21 @@ const FlashHome = () => {
           <Text style={styles.startQuizText}>Generate</Text>
         </TouchableOpacity>
       )}
+      
+     
+      {/* Footer Section */}
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Tip: You can select multiple topics for broader learning!</Text>
+      </View>
+
       {selectedTopics.length ==0 && (
         <>
-          <TouchableOpacity style={styles.startQuizButton} onPress={() => refRBSheet.current.open()}>
-            <Text style={styles.startQuizText}>Show Saved FlashCards</Text>
+          <TouchableOpacity style={styles.bottomsheetbutton} onPress={() => refRBSheet.current.open()}>
+            <Image source={menu} style={{ width: 24, height: 24 }} />
+            <Text style={{fontSize: 18,fontWeight: 'bold'}}>Show Saved FlashCards</Text>
+            <Image source={arrowup} style={{ width: 24, height: 24 }} />
           </TouchableOpacity>
+
           <RBSheet
                   ref={refRBSheet}
                   draggable={false} // Changed to false to remove the notch
@@ -233,7 +245,7 @@ const FlashHome = () => {
                       borderTopLeftRadius: 20,
                       borderTopRightRadius: 20,
                       padding: 0, // Removed padding to allow header to sit at the top
-                      backgroundColor: '#f0f2ff',
+                      backgroundColor: '#F5F9FF',
                       height: '75%',
                     },
                     // Removed draggableIcon style since we're not using it anymore
@@ -255,19 +267,15 @@ const FlashHome = () => {
         
 
       )}
-     
-      {/* Footer Section */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Tip: You can select multiple topics for broader learning!</Text>
-      </View>
     </View>
+
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f2ff',
+    backgroundColor: '#F5F9FF',
     padding: 20,
   },
   header: {
@@ -344,12 +352,30 @@ const styles = StyleSheet.create({
     color: '#555',
     textAlign: 'center',
   },
+  bottomsheetbutton: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    gap:10,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    width: '100%', // Keeps button width balanced
+    position: 'absolute',
+    bottom: 30, // Positioned better at the bottom
+    alignSelf: 'center',
+    borderWidth:1,
+    borderColor:'rgb(183, 203, 226)'
+  },
+  
+  
   savedFlashcard: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     paddingVertical:20,
-    borderBottomWidth:2,
+    borderBottomWidth:1,
     borderColor:'#d1d5db'
   },
   listContainer: {

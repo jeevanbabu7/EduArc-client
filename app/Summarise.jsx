@@ -13,7 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Box, Heading, HStack, VStack, Avatar, FlatList } from '@gluestack-ui/themed';
 import {useUser} from '../context/userContext.jsx';
-import { useRouter } from 'expo-router';
+import { useRouter,useLocalSearchParams } from 'expo-router';
 
 const Summarise = () => {
   const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
@@ -29,6 +29,8 @@ const Summarise = () => {
   const router = useRouter();
   // console.log("User:", currentUser);
   
+  const { courseData } = useLocalSearchParams();
+  const course = courseData ? JSON.parse(courseData) : null;
 
   const [summaryHistory, setSummaryHistory] = useState([
     { id: 1, summary: "This is a summary of the first document" },
@@ -520,7 +522,7 @@ const Summarise = () => {
             {/* View All Button */}
             <TouchableOpacity 
               style={styles.viewAllButton}
-              onPress={() => router.push('SummaryHistory')}
+              onPress={() => router.push('SummaryDetails')}
             >
               <Text style={styles.viewAllText}>View All</Text>
             </TouchableOpacity>
@@ -534,7 +536,7 @@ const Summarise = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f5f7',
+    backgroundColor: '#F5F9FF',
     padding: 20,
     alignItems: 'center',
   },
@@ -548,7 +550,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderRadius: 7,
-    borderColor: '#D3D3D3',
+    borderColor: 'rgb(183, 203, 226)',
     padding: 20,
     minWidth: '100%',
     gap: 10,

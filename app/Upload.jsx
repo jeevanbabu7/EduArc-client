@@ -82,7 +82,7 @@ const Upload = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f2ff',
+    backgroundColor: '#F5F9FF',
     padding: 20,
     alignItems: 'center',
   },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderRadius: 7,
-    borderColor: '#D3D3D3',  // Use borderColor instead of bordercolor
+    borderColor: 'rgb(183, 203, 226)',  // Use borderColor instead of bordercolor
     padding: 20,
     minWidth:'100%',
     gap:10

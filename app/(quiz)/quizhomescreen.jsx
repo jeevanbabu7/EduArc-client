@@ -223,7 +223,7 @@ const QuizHome = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#F5F9FF',
     padding: 20,
   },
   header: {
