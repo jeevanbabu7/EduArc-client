@@ -247,7 +247,7 @@ const FlashHome = () => {
                       borderTopLeftRadius: 20,
                       borderTopRightRadius: 20,
                       padding: 0, // Removed padding to allow header to sit at the top
-                      backgroundColor: '#F5F9FF',
+                      backgroundColor: '#fff',
                       height: '75%',
                     },
                     // Removed draggableIcon style since we're not using it anymore
@@ -258,11 +258,9 @@ const FlashHome = () => {
                     data={dummy_flashcards}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                      <TouchableOpacity>
-                        <View style={styles.notificationItem}>
-                          <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
-                          <Text style={styles.notificationTitle}>{item.title}</Text>
-                        </View>
+                      <TouchableOpacity style={styles.notificationItem} >
+                        <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
+                        <Text style={styles.notificationTitle}>{item.title}</Text>
                       </TouchableOpacity>
                     )}
                     contentContainerStyle={styles.listContainer}
@@ -388,7 +386,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   notificationItem: {
-    backgroundColor: 'rgb(255, 255, 255)',
+    backgroundColor: 'white',
     flexDirection: 'row',
     padding: 15,
     borderRadius: 10,
