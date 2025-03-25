@@ -8,8 +8,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { makeRedirectUri } from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser';
 import { useRouter } from "expo-router";
+import axios from "axios";
 const UserContext = createContext();
 
+import getEnvVars from '../config.js';
 export function useUser() {
   return useContext(UserContext);
 }
@@ -18,7 +20,7 @@ export default function UserProvider(props) {
   const [user, setUser] = useState(null);
   const [msg, setMsg] = useState(null);
   const router = useRouter();
-
+  const { IP_ADDRESS } = getEnvVars();
   async function login(email, password) {
     try {
 
@@ -80,6 +82,34 @@ export default function UserProvider(props) {
     try {
     
       const newUser = await account.create(ID.unique(), email, password);
+      
+      try {
+        fetch(`http://172.16.33.254:3000/api/auth/newUser`, {
+          name: newUser.name,
+          email: newUser.email,
+          userId: newUser.$id
+        },{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: newUser.name,
+            email: newUser.email,
+            userId: newUser.$id
+          })}).then(res => {
+            console.log(res);
+            return res.json();
+          })
+        .then(data => {
+          console.log(data);
+        })
+        console.log("User data sent to backend successfully");
+      } catch (err) {
+        console.log("Error sending user data to backend:", err.message);
+        // Continue with registration process even if backend sync fails
+      }
+      
       toast('Account created successfully');
       
       return { success: true, user: newUser };
