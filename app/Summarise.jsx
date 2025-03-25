@@ -481,7 +481,7 @@ const Summarise = () => {
               data={summaryHistory}
               keyExtractor={(item) => item._id}
               renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.notificationItem}>
+                  <TouchableOpacity style={styles.notificationItem} onPress={() => navigateToSummaryDetails(item._id)}>
                     <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
                     <Text style={styles.notificationTitle}>{item.heading}</Text>
                   </TouchableOpacity>
