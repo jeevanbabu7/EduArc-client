@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView, Image, Platform, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
@@ -9,11 +9,15 @@ import { ID, storage, client } from '../lib/appwrite/appwrite.js';
 import getEnvVars from '../config.js';
 import scan from '../assets/icons/scanold.png';
 import upload from '../assets/icons/upload_new.png';
+import menu from '../assets/icons/hamburger-icon.png';
+import arrowup from '../assets/icons/arrowup.png';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Box, Heading, HStack, VStack, Avatar, FlatList } from '@gluestack-ui/themed';
 import {useUser} from '../context/userContext.jsx';
 import { useRouter,useLocalSearchParams } from 'expo-router';
+import RBSheet from 'react-native-raw-bottom-sheet';
+
 
 const Summarise = () => {
   const { PDF_BUCKET_ID, IP_ADDRESS } = getEnvVars();
@@ -28,7 +32,7 @@ const Summarise = () => {
   const {currentUser} = useUser()
   const router = useRouter();
   // console.log("User:", currentUser);
-  
+  const refRBSheet = useRef(null);
   const { courseData } = useLocalSearchParams();
   const course = courseData ? JSON.parse(courseData) : null;
 
@@ -464,70 +468,47 @@ const Summarise = () => {
 
         {/* Responsive Summary History Section */}
         {summaryHistory && (
-          <View style={styles.summaryBox}>
-            <Text style={styles.summaryTitle}>Summary History</Text>
-            <View style={styles.historyContainer}>
-              {/* For larger screens, use a grid layout */}
-              {windowWidth >= 768 ? (
-                <FlatList
-                  data={summaryHistory} // Show only the first 4 items
-                  keyExtractor={(item) => item._id}
-                  numColumns={2}
-                  renderItem={({ item }) => (
-                    <View style={styles.gridItem}>
-                      <TouchableOpacity 
-                        style={styles.historyCard}
-                        onPress={() => navigateToSummaryDetails(item._id)}
-                      >
-                        <Text style={styles.summaryHeading}>Summary {item._id}</Text>
-                        {/* <Text 
-                          style={styles.summaryText}
-                          numberOfLines={3}
-                          ellipsizeMode="tail"
-                        >
-                          {item.summary}
-                        </Text> */}
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  contentContainerStyle={styles.gridContainer}
-                />
-              ) : (
-                // For mobile screens, use horizontal scrolling
-                <FlatList
-                  data={summaryHistory} // Show only the first 4 items
-                  keyExtractor={(item) => item._id}
-                  renderItem={({ item }) => (
-                    <View style={styles.gridItem}>
-                      <TouchableOpacity 
-                        style={styles.historyCard}
-                        onPress={() => navigateToSummaryDetails(item._id)}
-                      >
-                        <Text style={styles.summaryHeading}>Summary {item._id}</Text>
-                        {/* <Text 
-                          style={styles.summaryText}
-                          numberOfLines={3}
-                          ellipsizeMode="tail"
-                        >
-                          {item.summary}
-                        </Text> */}
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  contentContainerStyle={styles.gridContainer}
-                />
-              )}
-            </View>
-            
-            {/* View All Button */}
-            <TouchableOpacity 
-              style={styles.viewAllButton}
-              onPress={() => router.push('SummaryDetails')}
+          <>
+            <RBSheet
+            ref={refRBSheet}
+            draggable={false} // Changed to false to remove the notch
+            closeOnPressMask={true}
+            closeOnPressBack={true}
+            customStyles={{
+              wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
+              container: {
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                padding: 0, // Removed padding to allow header to sit at the top
+                backgroundColor: '#F5F9FF',
+                height: '75%',
+              },
+              // Removed draggableIcon style since we're not using it anymore
+            }}
             >
-              <Text style={styles.viewAllText}>View All</Text>
-            </TouchableOpacity>
-          </View>
+            <Text style={styles.savedFlashcard}>Summary History</Text>
+            <FlatList
+              data={summaryHistory}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity>
+                  <View style={styles.notificationItem}>
+                    <Image source={cards} style={{height:24,width:24,marginRight:20}}></Image>
+                    <Text style={styles.notificationTitle}>{item.title}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              contentContainerStyle={styles.listContainer}
+            />
+          </RBSheet>
+          <TouchableOpacity style={styles.bottomsheetbutton} onPress={() => refRBSheet.current.open()}>
+            <Image source={menu} style={{ width: 24, height: 24 }} />
+            <Text style={{fontSize: 18,fontWeight: 'bold'}}>Summary History</Text>
+            <Image source={arrowup} style={{ width: 24, height: 24 }} />
+          </TouchableOpacity>
+          </>
         )}
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -727,6 +708,54 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 15, 
+  },
+  bottomsheetbutton: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    gap:10,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    width: '100%', // Keeps button width balanced
+    position: 'absolute',
+    bottom: 30, // Positioned better at the bottom
+    alignSelf: 'center',
+    borderWidth:1,
+    borderColor:'rgb(183, 203, 226)'
+  },
+  
+  
+  savedFlashcard: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingVertical:20,
+    borderBottomWidth:1,
+    borderColor:'#d1d5db'
+  },
+  listContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  notificationItem: {
+    backgroundColor: 'rgb(255, 255, 255)',
+    flexDirection: 'row',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+    // Shadow properties for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // Elevation for Android
+    elevation: 3
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight:500
   },
 });
 export default Summarise;
