@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView,Image,Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView,Image,Platform,Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
 import '../../global.css';
 import { ID, storage, client } from '../../lib/appwrite/appwrite.js';
+import * as DocumentPicker from 'expo-document-picker';
 
 const QuizHome = () => {
   const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -25,6 +26,8 @@ const QuizHome = () => {
     const [loading, setLoading] = useState(false);
     const [summary, setSummary] = useState(null);
     const [retryCount, setRetryCount] = useState(0);
+    const [quizData, setQuizData] = useState(null);
+    const [generatingQuiz, setGeneratingQuiz] = useState(false);
   
     const toast = useToast();
   useEffect(() => {
@@ -179,6 +182,79 @@ const QuizHome = () => {
       }
     };
   
+    const generateQuiz = async () => {
+      if (!fileURL) {
+        toast.show({
+          render: () => {
+            return (
+              <Toast action="error">
+                <VStack space="xs">
+                  <ToastDescription>Please upload a PDF file first</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
+        return;
+      }
+      
+      try {
+        setGeneratingQuiz(true);
+        
+        // Call your API with the PDF URL
+        console.log("Generating quiz for:", fileURL);
+        
+        // Replace with your actual API endpoint for quiz generation
+        fetch('http://192.168.68.18:5000/api/quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            pdf_url: fileURL
+          })
+        }).then((response) => response.json())
+          .then((data) => {
+            setQuizData(data);
+            console.log('API response:', data);
+            router.push({
+              pathname: './quizscreen',
+              params: { data: JSON.stringify(data.response) }
+            });
+          }).catch((error) => {
+            console.error("Error generating quiz:", error);
+            toast.show({
+              render: () => {
+                return (
+                  <Toast action="error">
+                    <VStack space="xs">
+                      <ToastDescription>Failed to generate quiz. Please try again.</ToastDescription>
+                    </VStack>
+                  </Toast>
+                );
+              },
+            });
+          }).finally(() => {
+            setGeneratingQuiz(false);
+          });
+        
+      } catch (error) {
+        console.error("Error generating quiz:", error);
+        toast.show({
+          render: () => {
+            return (
+              <Toast action="error">
+                <VStack space="xs">
+                  <ToastDescription>Failed to generate quiz. Please try again.</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
+        setGeneratingQuiz(false);
+      }
+    };
+  
   return (
     <SafeAreaView  
       style={styles.container} 
@@ -196,25 +272,36 @@ const QuizHome = () => {
             <Text>Upload PDF</Text>
           </View>
         </TouchableOpacity>
-        
-        {/* <TouchableOpacity onPress={null} disabled={null}>
-          <View style={[styles.box]}>
-            <Image source={upload} style={{ width: 50, height: 50, marginRight: 5 }} />
-            <Text>Choose from Materials</Text>
-          </View>
-        </TouchableOpacity> */}
       </View>
 
-      {/* Start Quiz Button */}
-      {selectedMaterials.length > 0 && (
-        <TouchableOpacity style={styles.startQuizButton} onPress={() => router.push('./quizscreen')}>
-          <Text style={styles.startQuizText}>Start Quiz</Text>
+      {/* Show file name if uploaded */}
+      {file && (
+        <View style={styles.fileInfo}>
+          <Text style={styles.fileName}>File: {file.name}</Text>
+        </View>
+      )}
+
+      {/* Generate Quiz Button - Show when file is uploaded */}
+      {fileURL && (
+        <TouchableOpacity 
+          style={[styles.startQuizButton, generatingQuiz && styles.disabledButton]} 
+          onPress={generateQuiz}
+          disabled={generatingQuiz}
+        >
+          {generatingQuiz ? (
+            <View style={styles.buttonContent}>
+              <Spinner size="small" color="white" />
+              <Text style={styles.startQuizText}>Generating Quiz...</Text>
+            </View>
+          ) : (
+            <Text style={styles.startQuizText}>Generate Quiz</Text>
+          )}
         </TouchableOpacity>
       )}
 
       {/* Footer Section */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Tip: Select multiple materials to customize your quiz!</Text>
+        <Text style={styles.footerText}>Tip: Upload your study materials to create a personalized quiz!</Text>
       </View>
     </SafeAreaView>
   );
@@ -242,7 +329,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 5,
   },
-  
   selectedComponent: {
     backgroundColor: '#fff',
     padding: 15,
@@ -360,6 +446,26 @@ const styles = StyleSheet.create({
     color: '#2c3e50',
     marginBottom: 10,
     marginTop: 20,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  disabledButton: {
+    backgroundColor: '#8585d0',
+  },
+  fileInfo: {
+    backgroundColor: '#e6f7ff',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  fileName: {
+    fontSize: 16,
+    color: '#0504aa',
   },
 });
 

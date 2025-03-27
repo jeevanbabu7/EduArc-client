@@ -1,20 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { useQuiz } from '../../hooks/QuizContext'; // Import the context hook
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const QuizScreen = () => {
   const router = useRouter();
+  const { data } = useLocalSearchParams(); // Get the data parameter from URL
   const { setQuizResults } = useQuiz(); // Access setQuizResults from context
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60); // 60-second timer
   const [isQuizFinished, setIsQuizFinished] = useState(false); // To track if quiz is finished
   const [fadeAnim] = useState(new Animated.Value(0)); // For fade-in effect
-  const questions = [
-    { id: 1, question: 'What is the sum of 2 + 2? Please explain how to arrive at the answer step by step.', options: ['3', '4', '5', '6'], answer: '4' },
-    { id: 2, question: 'What is the capital city of France? Name a few landmarks of this city.', options: ['Paris', 'Berlin', 'Madrid', 'Rome'], answer: 'Paris' },
-  ];
+  
+  // Parse quiz data from URL params or use fallback questions
+  const questions = React.useMemo(() => {
+    if (data) {
+      try {
+        const parsedData = JSON.parse(data);
+        if (Array.isArray(parsedData) && parsedData.length > 0) {
+          return parsedData.map((item, index) => {
+            // Parse the questions string to get the actual question object
+            const questionData = JSON.parse(item.questions.replace(/'/g, '"'));
+            return {
+              id: index + 1,
+              question: questionData.question,
+              options: questionData.options,
+              answer: questionData.correct_answer,
+              explanation: questionData.explanation
+            };
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing quiz data:', error);
+      }
+    }
+    
+    // Fallback questions if data is missing or invalid
+    return [
+      { id: 1, question: 'What is the sum of 2 + 2? Please explain how to arrive at the answer step by step.', options: ['3', '4', '5', '6'], answer: '4' },
+      { id: 2, question: 'What is the capital city of France? Name a few landmarks of this city.', options: ['Paris', 'Berlin', 'Madrid', 'Rome'], answer: 'Paris' },
+    ];
+  }, [data]);
 
   // Start timer when quiz begins
   useEffect(() => {

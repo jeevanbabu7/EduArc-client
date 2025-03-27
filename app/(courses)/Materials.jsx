@@ -101,14 +101,18 @@ function Materials() {
             onPress={() => {
               console.log("Material selected:", item);
               
-              // if (item.fileUrl) {
-              //   router.push({
-              //     pathname: '(courses)/ViewMaterial',
-              //     params: { materialId: item._id, materialUrl: item.fileUrl }
-              //   });
-              // } else {
-              //   Alert.alert('Info', 'No file available for this material yet.');
-              // }
+              if (item.fileUrls && item.fileUrls.length > 0) {
+                router.push({
+                  pathname: '/ViewMaterial',
+                  params: { 
+                    materialId: item._id, 
+                    materialUrl: item.fileUrls[0].fileUrl,
+                    title: item.title 
+                  }
+                });
+              } else {
+                Alert.alert('Info', 'No file available for this material yet.');
+              }
             }}
           />
         )}

@@ -14,6 +14,7 @@ import { Button, ButtonText, Spinner } from "@gluestack-ui/themed";
 import { useToast, Toast, VStack, ToastDescription } from '@gluestack-ui/themed'; 
 import '../../global.css';
 import { ID, storage, client } from '../../lib/appwrite/appwrite.js';
+import * as DocumentPicker from 'expo-document-picker';
 const CustomCheckbox = ({ isChecked, onToggle }) => (
   <TouchableOpacity onPress={onToggle} style={[styles.checkboxContainer, isChecked && styles.checked]}>
     {isChecked && <Ionicons name="checkmark" size={20} color="#0504aa" />}
@@ -45,7 +46,9 @@ const FlashHome = () => {
       const [loading, setLoading] = useState(false);
       const [summary, setSummary] = useState(null);
       const [retryCount, setRetryCount] = useState(0);
-    
+      const [flashcardData, setFlashcardData] = useState(null);
+      const [generatingFlashcards, setGeneratingFlashcards] = useState(false);
+
       const toast = useToast();
     useEffect(() => {
         const checkConnection = async () => {
@@ -198,6 +201,71 @@ const FlashHome = () => {
           setUploading(false);
         }
       };
+
+      const generateFlashcards = async () => {
+        if (!fileURL) {
+          toast.show({
+            render: () => {
+              return (
+                <Toast action="error">
+                  <VStack space="xs">
+                    <ToastDescription>Please upload a PDF file first</ToastDescription>
+                  </VStack>
+                </Toast>
+              );
+            },
+          });
+          return;
+        }
+        
+        try {
+          setGeneratingFlashcards(true);
+          
+          // Call your API with the PDF URL
+          console.log("Generating flashcards for:", fileURL);
+          
+          fetch('http://172.16.32.194:5000/api/quiz', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              pdf_url: fileURL
+          })}).then((response) => {
+            setFlashcardData(response.data);
+            console.log('API response:', responsex);
+            router.push({
+              pathname: './flashcardscreen',
+              params: { data: JSON.stringify(response.data) }
+            });
+          }).catch((error) => {
+            console.error("Error generating flashcards:", error);
+          });
+          
+          // console.log('API response:', response.data);
+          // setFlashcardData(response.data);
+          
+          // Navigate to flashcard screen with the data
+          
+          
+        } catch (error) {
+          console.error("Error generating flashcards:", error);
+          toast.show({
+            render: () => {
+              return (
+                <Toast action="error">
+                  <VStack space="xs">
+                    <ToastDescription>Failed to generate flashcards. Please try again.</ToastDescription>
+                  </VStack>
+                </Toast>
+              );
+            },
+          });
+        } finally {
+          setGeneratingFlashcards(false);
+        }
+      };
+
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -215,20 +283,39 @@ const FlashHome = () => {
                 </View>
               </TouchableOpacity>
             </View>
-      {/* Generate Button */}
-      {selectedTopics.length > 0 && (
-        <TouchableOpacity style={styles.startQuizButton} onPress={() => router.push('./flashcardscreen')}>
-          <Text style={styles.startQuizText}>Generate</Text>
+      
+      {/* Show file name if uploaded */}
+      {file && (
+        <View style={styles.fileInfo}>
+          <Text style={styles.fileName}>File: {file.name}</Text>
+        </View>
+      )}
+      
+      {/* Generate Button - Show when file is uploaded */}
+      {fileURL && (
+        <TouchableOpacity 
+          style={[styles.startQuizButton, generatingFlashcards && styles.disabledButton]} 
+          onPress={generateFlashcards}
+          disabled={generatingFlashcards}
+        >
+          {generatingFlashcards ? (
+            <View style={styles.buttonContent}>
+              <Spinner size="small" color="white" />
+              <Text style={styles.startQuizText}>Generating...</Text>
+            </View>
+          ) : (
+            <Text style={styles.startQuizText}>Generate Flash Cards</Text>
+          )}
         </TouchableOpacity>
       )}
       
-     
       {/* Footer Section */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>Tip: You can select multiple topics for broader learning!</Text>
       </View>
 
-      {selectedTopics.length ==0 && (
+      {/* Bottom sheet only shows when no file is uploaded */}
+      {!fileURL && (
         <>
           <TouchableOpacity style={styles.bottomsheetbutton} onPress={() => refRBSheet.current.open()}>
             <Image source={menu} style={{ width: 24, height: 24 }} />
@@ -421,13 +508,26 @@ const styles = StyleSheet.create({
   disabledBox: {
     opacity: 0.6,
   },
-  // title: {
-  //   fontSize: 24,
-  //   fontWeight: 'bold',
-  //   color: '#2c3e50',
-  //   marginBottom: 10,
-  //   marginTop: 20,
-  // },
+  fileInfo: {
+    backgroundColor: '#e6f7ff',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  fileName: {
+    fontSize: 16,
+    color: '#0504aa',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  disabledButton: {
+    backgroundColor: '#8585d0',
+  },
 });
 
 export default FlashHome;

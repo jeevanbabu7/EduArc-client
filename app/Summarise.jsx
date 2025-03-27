@@ -313,7 +313,7 @@ const Summarise = () => {
       console.log(`Sending request to: ${IP_ADDRESS}/api/summary/pdf`);
       console.log(`With payload: ${JSON.stringify({ pdf_url: fileURL })}`);
       
-      const result = await fetch(`http://192.168.1.4:5000/api/summary/pdf`, {
+      const result = await fetch(`${IP_ADDRESS}:5000/api/summary/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,17 +2,20 @@ import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated, Image } from 'react-native';
 import left from '../../assets/icons/left.png';
 import right from '../../assets/icons/right.png';
-
+import { useLocalSearchParams } from 'expo-router';
 const FlashcardScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const flipAnim = useRef(new Animated.Value(0)).current;
+  const { data } = useLocalSearchParams();
 
-  const flashcards = [
-    { question: "What is the capital of France?", answer: "Paris" },
-    { question: "What is 2 + 2?", answer: "4" },
-    { question: "What is the largest mammal?", answer: "Blue Whale" }
-  ];
+
+ const [flashcards, setFlashcards] = useState(data || [
+  { question: "What is the capital of France?", answer: "Paris" },
+  { question: "What is 2 + 2?", answer: "4" },
+  { question: "What is the largest mammal?", answer: "Blue Whale" }
+]);
+
 
   const handleFlip = () => {
     setFlipped(!flipped);
