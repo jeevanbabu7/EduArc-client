@@ -224,43 +224,38 @@ const FlashHome = () => {
           // Call your API with the PDF URL
           console.log("Generating flashcards for:", fileURL);
           
-          fetch('http://172.16.32.194:5000/api/quiz', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              pdf_url: fileURL
-          })}).then((response) => {
-            setFlashcardData(response.data);
-            console.log('API response:', responsex);
-            router.push({
-              pathname: './flashcardscreen',
-              params: { data: JSON.stringify(response.data) }
-            });
-          }).catch((error) => {
-            console.error("Error generating flashcards:", error);
-          });
-          
-          // console.log('API response:', response.data);
-          // setFlashcardData(response.data);
-          
-          // Navigate to flashcard screen with the data
-          
-          
-        } catch (error) {
-          console.error("Error generating flashcards:", error);
-          toast.show({
-            render: () => {
-              return (
-                <Toast action="error">
-                  <VStack space="xs">
-                    <ToastDescription>Failed to generate flashcards. Please try again.</ToastDescription>
-                  </VStack>
-                </Toast>
-              );
-            },
-          });
+          fetch('http://192.168.68.18:5000/api/quiz', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                pdf_url: fileURL
+              })
+            }).then((response) => response.json())
+              .then((data) => {
+                // setFlashcardData(data.response);
+                console.log('API response:', data);
+                router.push({
+                  pathname: './flashcardscreen',
+                  params: { data: JSON.stringify(data.response) }
+                });
+              }).catch((error) => {
+                console.error("Error generating quiz:", error);
+                toast.show({
+                  render: () => {
+                    return (
+                      <Toast action="error">
+                        <VStack space="xs">
+                          <ToastDescription>Failed to generate quiz. Please try again.</ToastDescription>
+                        </VStack>
+                      </Toast>
+                    );
+                  },
+                });
+              }).finally(() => {
+                setGeneratingQuiz(false);
+              });
         } finally {
           setGeneratingFlashcards(false);
         }
