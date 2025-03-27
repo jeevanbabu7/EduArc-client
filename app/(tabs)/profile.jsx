@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { useUser } from '../../context/userContext';
 
 const Profile = () => {
+  const {currentUser} = useUser();
+  console.log(currentUser);
+  
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
@@ -15,8 +19,8 @@ const Profile = () => {
           <Text style={styles.avatarText}>JD</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>John Doe</Text>
-          <Text style={styles.userRole}>Software Developer</Text>
+          <Text style={styles.userName}>{currentUser.name}</Text>
+          <Text style={styles.userRole}>Student</Text>
           <View style={styles.userLocationRow}>
             <Text style={styles.locationText}>San Francisco, CA</Text>
           </View>
@@ -28,15 +32,15 @@ const Profile = () => {
         <Text style={styles.sectionTitle}>Account Info</Text>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Email</Text>
-          <Text style={styles.infoValue}>johndoe@example.com</Text>
+          <Text style={styles.infoValue}>{currentUser.email}</Text>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Member Since</Text>
-          <Text style={styles.infoValue}>Jan 2023</Text>
+          <Text style={styles.infoValue}>{currentUser.$createdAt}</Text>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Last Login</Text>
-          <Text style={styles.infoValue}>Today</Text>
+          <Text style={styles.infoValue}>{currentUser.accessedAt}</Text>
         </View>
       </View>
       

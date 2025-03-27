@@ -35,12 +35,17 @@ const QuizScreen = () => {
         console.error('Error parsing quiz data:', error);
       }
     }
+
+    console.log(questions);
+    
     
     // Fallback questions if data is missing or invalid
-    return [
-      { id: 1, question: 'What is the sum of 2 + 2? Please explain how to arrive at the answer step by step.', options: ['3', '4', '5', '6'], answer: '4' },
-      { id: 2, question: 'What is the capital city of France? Name a few landmarks of this city.', options: ['Paris', 'Berlin', 'Madrid', 'Rome'], answer: 'Paris' },
-    ];
+    // return [
+    //   { id: 1, question: 'What is the sum of 2 + 2? Please explain how to arrive at the answer step by step.', options: ['3', '4', '5', '6'], answer: '4' },
+    //   { id: 2, question: 'What is the capital city of France? Name a few landmarks of this city.', options: ['Paris', 'Berlin', 'Madrid', 'Rome'], answer: 'Paris' },
+    // ];
+
+    return []
   }, [data]);
 
   // Start timer when quiz begins

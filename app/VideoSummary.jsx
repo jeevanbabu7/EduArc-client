@@ -4,16 +4,15 @@ import * as DocumentPicker from 'expo-document-picker';
 import { ButtonText, Input } from '@gluestack-ui/themed';
 import { InputField } from '@gluestack-ui/themed';
 import { Button } from '@gluestack-ui/themed';
-import { IP_ADDRESS,COLLEGE_IP_ADDRESS, PORT } from 'expo-constants';
 import upload from '../assets/icons/upload_new.png'
 import up from '../assets/icons/up.png'
-
+import getEnvVars from '../config';
 
 const VideoSummary = () => {
   const [file, setFile] = useState(null);
   const [videoURL, setVideoURL] = useState(null);
   const [videoSummary, setVideoSummary] = useState([]);
-
+  const {IP_ADDRESS} = getEnvVars()
   const uploadFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -40,7 +39,8 @@ const VideoSummary = () => {
         return;
       }
 
-      const response = await fetch(`http://192.168.90.18:${PORT}/api/summary/video`, {
+      
+      const response = await fetch(`http://192.168.68.18:5000/api/summary/video`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,6 +49,8 @@ const VideoSummary = () => {
       });
 
       const data = await response.json();
+      console.log(data);
+      
       setVideoSummary(() => {
         if(data.ok == true) {
           return data.response;
@@ -63,27 +65,31 @@ const VideoSummary = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
   <View style={styles.container}>
-    <Text style={styles.title}>Upload a Video</Text>
-    <View style={styles.container2}>
-        <View style={styles.box}>
-          <TouchableOpacity style={styles.box1} onPress={uploadFile}>
-            <Image source={upload} style={{ width: 50, height: 50, marginRight: 5 }} />
-            <Text>Upload video</Text>
-          </TouchableOpacity>
-          <View style={styles.inputContainer}>
-            <Input variant="outline" size="lg" isDisabled={false} isInvalid={false} isReadOnly={false} style={styles.inputField}>
-              <InputField 
-                placeholder="Video url here.." 
-                value={videoURL} 
-                onChangeText={handleChange} 
-              />
-            </Input>
-            <TouchableOpacity style={styles.submitButton} onPress={handleSend}>
-              <Image source={up} style={styles.upButton}/>
-            </TouchableOpacity>
+    {videoSummary.length == 0 && (
+      <>
+        <Text style={styles.title}>Upload a Video</Text>
+          <View style={styles.container2}>
+              <View style={styles.box}>
+                <TouchableOpacity style={styles.box1} onPress={uploadFile}>
+                  <Image source={upload} style={{ width: 50, height: 50, marginRight: 5 }} />
+                  <Text>Upload video</Text>
+                </TouchableOpacity>
+                <View style={styles.inputContainer}>
+                  <Input variant="outline" size="lg" isDisabled={false} isInvalid={false} isReadOnly={false} style={styles.inputField}>
+                    <InputField 
+                      placeholder="Video url here.." 
+                      value={videoURL} 
+                      onChangeText={handleChange} 
+                    />
+                  </Input>
+                  <TouchableOpacity style={styles.submitButton} onPress={handleSend}>
+                    <Image source={up} style={styles.upButton}/>
+                  </TouchableOpacity>
+                </View>
+              </View>
           </View>
-        </View>
-    </View>
+      </>
+    )}
 
 
     {/* <Text style={{ marginTop: 20, ...styles.subtitle }}>or</Text> */}
@@ -95,8 +101,8 @@ const VideoSummary = () => {
         <Text style={styles.summaryTitle}>Video Summary</Text>
         {videoSummary.map((item, index) => (
           <View key={index} style={styles.summaryItem}>
-            <Text style={styles.summaryHeading}>{item.heading}</Text>
-            <Text style={styles.summaryText}>{item.summary}</Text>
+            <Text style={styles.summaryHeading}>{item.title}</Text>
+            <Text style={styles.summaryText}>{item.content}</Text>
           </View>
         ))}
       </View>
