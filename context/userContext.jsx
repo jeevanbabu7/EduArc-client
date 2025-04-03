@@ -76,6 +76,8 @@ export default function UserProvider(props) {
     await account.deleteSession("current");
     setUser(null);
     toast('Logged out');
+    router.replace('(auth)/signin');
+    
   }
 
   async function register(email, password) {

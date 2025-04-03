@@ -22,8 +22,24 @@ const ViewMaterial = () => {
     router.back();
   };
 
+  // Generate appropriate source for the content type
+  const getWebViewSource = () => {
+    // Check if URL is a PDF
+    if (materialUrl?.toLowerCase().endsWith('.pdf')) {
+      // Return PDF with Google Docs viewer as fallback 
+      return { 
+        uri: `https://docs.google.com/viewer?url=${encodeURIComponent(materialUrl)}&embedded=true`,
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      };
+    }
+    // Return original URL for other file types
+    return { uri: materialUrl };
+  };
+
   // Render loading state
-  if (loading) {
+  if (loading && !materialUrl) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0504aa" />
@@ -60,7 +76,7 @@ const ViewMaterial = () => {
       
       {/* Document viewer */}
       <WebView
-        source={{ uri: materialUrl }}
+        source={getWebViewSource()}
         style={styles.webview}
         onLoadStart={() => setLoading(true)}
         onLoadEnd={() => setLoading(false)}
@@ -77,6 +93,12 @@ const ViewMaterial = () => {
             <ActivityIndicator size="large" color="#0504aa" />
           </View>
         )}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        allowFileAccess={true}
+        allowUniversalAccessFromFileURLs={true}
+        mixedContentMode="always"
+        scalesPageToFit={true}
       />
     </View>
   );

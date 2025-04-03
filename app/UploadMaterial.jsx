@@ -103,6 +103,8 @@ export default function UploadMaterial() {
       
       for (const file of files) {
         const uploadResult = await uploadFileToAppwrite(file, APPWRITE_PROJECT_ID, PDF_BUCKET_ID);
+        // console.log(uploadResult);
+        
         console.log('Upload response:', uploadResult.response);
         console.log('File URL:', uploadResult.fileUrl);
         
@@ -113,10 +115,22 @@ export default function UploadMaterial() {
           fileSize: file.size,
           fileType: file.mimeType
         });
+
+        const res = await fetch("http://192.168.12.18:5000/api/upload", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            file_link: uploadResult.fileUrl,
+            file_id: uploadResult.response.$id
+          })
+        })
       }
 
       console.log("File URLs:", fileDetails);
       
+
       
       // Save material with multiple files to database
       console.log("Saving material with files to database:", {
@@ -136,6 +150,8 @@ export default function UploadMaterial() {
           files: fileDetails
         })
       });
+
+
       
       if (materialResponse.ok) {
         Alert.alert('Success', 'Material uploaded successfully', [

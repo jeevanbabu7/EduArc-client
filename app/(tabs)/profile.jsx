@@ -1,11 +1,29 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
 import { useUser } from '../../context/userContext';
 
 const Profile = () => {
-  const {currentUser} = useUser();
+  const {currentUser, logout} = useUser();
   console.log(currentUser);
   
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout Confirmation",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { 
+          text: "Logout", 
+          onPress: () => logout(),
+          style: "destructive"
+        }
+      ]
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
@@ -36,11 +54,17 @@ const Profile = () => {
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Member Since</Text>
-          <Text style={styles.infoValue}>{currentUser.$createdAt}</Text>
+          <Text style={styles.infoValue}>
+  {new Date(currentUser.$createdAt).toISOString().split('T')[0]}
+</Text>
+
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Last Login</Text>
-          <Text style={styles.infoValue}>{currentUser.accessedAt}</Text>
+<Text style={styles.infoValue}>
+  {new Date(currentUser.accessedAt)?.toISOString()?.split('T')[0]}
+</Text>
+
         </View>
       </View>
       
@@ -66,7 +90,10 @@ const Profile = () => {
         <TouchableOpacity style={styles.actionButton}>
           <Text style={styles.actionButtonText}>Edit Profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionButton, styles.logoutButton]}>
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.logoutButton]} 
+          onPress={handleLogout}
+        > 
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>

@@ -97,7 +97,7 @@ function Materials() {
         data={materials}
         renderItem={({ item }) => (
           <MaterialCard
-            title={item.title}
+            item={item}
             onPress={() => {
               console.log("Material selected:", item);
               

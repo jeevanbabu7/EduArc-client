@@ -6,8 +6,10 @@ import edit from '../assets/icons/edit.png';
 import deleteicon from '../assets/icons/delete.png';
 import info from '../assets/icons/info.png';
 import summary from '../assets/icons/summarise.png'
-const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
+import { useRouter } from 'expo-router';
+const MaterialCard = ({ item, onPress, onEdit, onDelete }) => {
   const refRBSheet = useRef(null);
+  const router = useRouter();
 
   return (
     <View style={styles.card}>
@@ -19,7 +21,7 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
 
         {/* Course Name & Last Opened */}
         <TouchableOpacity style={styles.textContainer} onPress={onPress}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.date}>Last opened: Jan 1, 2025</Text>
         </TouchableOpacity>
 
@@ -50,10 +52,14 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
         {/* Chat with Pdf */}
         <TouchableOpacity style={styles.sheetItem} onPress={() => {
           refRBSheet.current.close();
-          Alert.alert("Delete Course", "Are you sure you want to delete this course?", [
-            { text: "Cancel", style: "cancel" },
-            { text: "Delete", onPress: () => onDelete && onDelete() }
-          ]);
+          router.push({
+            pathname: '/PDFChat',
+            params: { 
+              materialId: item._id, 
+              materialUrl: item.fileUrls[0].fileUrl,
+              title: item.title 
+            }
+          });
         }}>
           <Image source={summary} style={styles.sheetIcon} />
           <Text style={styles.sheetText}>Chat with Pdf</Text>
@@ -74,7 +80,7 @@ const MaterialCard = ({ title, onPress, onEdit, onDelete }) => {
         {/* View Details Option */}
         <TouchableOpacity style={styles.sheetItem} onPress={() => {
           refRBSheet.current.close();
-          Alert.alert("Course Details", `Details about ${title}`);
+          Alert.alert("Course Details", `Details about ${item.title}`);
         }}>
           <Image source={info} style={styles.sheetIcon} />
           <Text style={styles.sheetText}>View Details</Text>
