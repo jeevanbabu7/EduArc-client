@@ -55,11 +55,13 @@ const MaterialCard = ({ item, onPress, onEdit, onDelete }) => {
           router.push({
             pathname: '/PDFChat',
             params: { 
-              materialId: item._id, 
+              materialId: item.materialId, 
               materialUrl: item.fileUrls[0].fileUrl,
               title: item.title 
             }
           });
+          console.log(item);
+          
         }}>
           <Image source={summary} style={styles.sheetIcon} />
           <Text style={styles.sheetText}>Chat with Pdf</Text>

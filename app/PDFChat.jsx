@@ -12,6 +12,8 @@ const PDFChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { IP_ADDRESS } = getEnvVars();
   const flatListRef = useRef(null);
+  console.log("hiiiiiiiiiiiiii" + materialId);
+  
   
   useEffect(() => {
     // Add a welcome message
@@ -40,13 +42,13 @@ const PDFChat = () => {
     try {
       // This is a placeholder for actual API call to your backend
       // Replace with your actual implementation
-      const response = await fetch(`http://192.168.12.18:5000/api/query-collection` ,{
+      const response = await fetch(`${IP_ADDRESS}:5000/api/query-collection` ,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          file_id: "67ee4dce000f7e5b212e",
+          file_id: materialId,
           query: userMessage.text
         })
       });

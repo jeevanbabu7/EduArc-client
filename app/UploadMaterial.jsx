@@ -52,21 +52,19 @@ export default function UploadMaterial() {
           'application/vnd.openxmlformats-officedocument.presentationml.presentation'
         ],
         copyToCacheDirectory: true,
-        multiple: true, // Enable multiple file selection
+        multiple: false, // Disable multiple file selection
       });
       
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        // Filter out files larger than 10MB
-        const validFiles = result.assets.filter(file => {
-          if (file.size > 10 * 1024 * 1024) {
-            Alert.alert('File Too Large', `File "${file.name}" is larger than 10MB and was skipped`);
-            return false;
-          }
-          return true;
-        });
+        const file = result.assets[0];
+        // Check if file is larger than 10MB
+        if (file.size > 10 * 1024 * 1024) {
+          Alert.alert('File Too Large', `File "${file.name}" is larger than 10MB`);
+          return;
+        }
         
-        // Add the new files to existing files
-        setFiles(prevFiles => [...prevFiles, ...validFiles]);
+        // Set a single file
+        setFiles([file]);
       }
     } catch (error) {
       console.error('Error picking document:', error);
@@ -74,8 +72,8 @@ export default function UploadMaterial() {
     }
   };
 
-  const removeFile = (index) => {
-    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+  const removeFile = () => {
+    setFiles([]);
   };
   
   const uploadMaterial = async () => {
@@ -85,7 +83,7 @@ export default function UploadMaterial() {
     }
     
     if (files.length === 0) {
-      Alert.alert('Missing Files', 'Please select at least one file to upload');
+      Alert.alert('Missing File', 'Please select a file to upload');
       return;
     }
     
@@ -97,48 +95,35 @@ export default function UploadMaterial() {
     setUploading(true);
     
     try {
-      // Upload all files to Appwrite storage and collect their URLs
-      const fileUrls = [];
-      const fileDetails = [];
+      // Upload file to Appwrite storage
+      const file = files[0];
+      const uploadResult = await uploadFileToAppwrite(file, APPWRITE_PROJECT_ID, PDF_BUCKET_ID);
       
-      for (const file of files) {
-        const uploadResult = await uploadFileToAppwrite(file, APPWRITE_PROJECT_ID, PDF_BUCKET_ID);
-        // console.log(uploadResult);
-        
-        console.log('Upload response:', uploadResult.response);
-        console.log('File URL:', uploadResult.fileUrl);
-        
-        fileUrls.push(uploadResult.fileUrl);
-        fileDetails.push({
-          fileName: file.name,
-          fileUrl: uploadResult.fileUrl,
-          fileSize: file.size,
-          fileType: file.mimeType
-        });
+      console.log('Upload response:', uploadResult.response);
+      console.log('File URL:', uploadResult.fileUrl);
+      
+      const fileDetail = {
+        fileName: file.name,
+        fileUrl: uploadResult.fileUrl,
+        fileSize: file.size,
+        fileType: file.mimeType
+      };
 
-        const res = await fetch("http://192.168.12.18:5000/api/upload", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            file_link: uploadResult.fileUrl,
-            file_id: uploadResult.response.$id
-          })
+      // First upload to /api/upload endpoint
+      const res = await fetch(`${IP_ADDRESS}:5000/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file_link: uploadResult.fileUrl,
+          file_id: uploadResult.response.$id
         })
-      }
-
-      console.log("File URLs:", fileDetails);
-      
-
-      
-      // Save material with multiple files to database
-      console.log("Saving material with files to database:", {
-        courseId,
-        title: materialTitle,
-        files: fileDetails
       });
+
+      console.log("File details:", fileDetail);
       
+      // Save material with file to database - match the expected backend structure
       const materialResponse = await fetch(`${IP_ADDRESS}:3000/api/material/add-material`, {
         method: 'POST',
         headers: {
@@ -147,11 +132,16 @@ export default function UploadMaterial() {
         body: JSON.stringify({
           courseId,
           title: materialTitle,
-          files: fileDetails
+          files: [
+            {
+              fileName: file.name,
+              fileUrl: uploadResult.fileUrl,
+              fileSize: file.size
+            }
+          ],
+          file_id: uploadResult.response.$id
         })
       });
-
-
       
       if (materialResponse.ok) {
         Alert.alert('Success', 'Material uploaded successfully', [
@@ -197,45 +187,43 @@ export default function UploadMaterial() {
               placeholderTextColor="#999"
             />
             
-            <Text style={styles.label}>Document Files</Text>
-            <Text style={styles.supportedFormats}>Supported formats: PDF, Word, PowerPoint (Max 10MB per file)</Text>
+            <Text style={styles.label}>Document File</Text>
+            <Text style={styles.supportedFormats}>Supported formats: PDF, Word, PowerPoint (Max 10MB)</Text>
             
-            {files.length > 0 && (
+            {files.length > 0 ? (
               <View style={styles.selectedFilesContainer}>
-                {files.map((file, index) => (
-                  <View key={index} style={styles.selectedFileContainer}>
-                    <Ionicons name="document-text" size={24} color="#0504aa" />
-                    <View style={styles.fileDetails}>
-                      <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
-                        {file.name}
-                      </Text>
-                      <Text style={styles.fileSize}>
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </Text>
-                    </View>
-                    <TouchableOpacity 
-                      style={styles.removeButton}
-                      onPress={() => removeFile(index)}
-                      disabled={uploading}
-                    >
-                      <Ionicons name="close-circle" size={22} color="#ff4444" />
-                    </TouchableOpacity>
+                <View style={styles.selectedFileContainer}>
+                  <Ionicons name="document-text" size={24} color="#0504aa" />
+                  <View style={styles.fileDetails}>
+                    <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
+                      {files[0].name}
+                    </Text>
+                    <Text style={styles.fileSize}>
+                      {(files[0].size / 1024 / 1024).toFixed(2)} MB
+                    </Text>
                   </View>
-                ))}
+                  <TouchableOpacity 
+                    style={styles.removeButton}
+                    onPress={removeFile}
+                    disabled={uploading}
+                  >
+                    <Ionicons name="close-circle" size={22} color="#ff4444" />
+                  </TouchableOpacity>
+                </View>
               </View>
+            ) : (
+              <TouchableOpacity 
+                style={styles.filePicker}
+                onPress={pickDocument}
+                disabled={uploading}
+              >
+                <View style={styles.selectFilePrompt}>
+                  <Ionicons name="cloud-upload-outline" size={32} color="#666" />
+                  <Text style={styles.selectFileText}>Tap to select a document</Text>
+                  <Text style={styles.selectFileSubtext}>Select one file to upload</Text>
+                </View>
+              </TouchableOpacity>
             )}
-            
-            <TouchableOpacity 
-              style={styles.filePicker}
-              onPress={pickDocument}
-              disabled={uploading}
-            >
-              <View style={styles.selectFilePrompt}>
-                <Ionicons name="cloud-upload-outline" size={32} color="#666" />
-                <Text style={styles.selectFileText}>Tap to select documents</Text>
-                <Text style={styles.selectFileSubtext}>You can select multiple files</Text>
-              </View>
-            </TouchableOpacity>
             
             <TouchableOpacity
               style={[
