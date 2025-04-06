@@ -1,1 +1,1 @@
-# EduArc:AI-Powered Learning and Assessment Tool
+# EduArc : AI-Powered Learning and Assessment Tool
