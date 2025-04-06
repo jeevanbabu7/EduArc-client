@@ -10,6 +10,7 @@ import analysis from '../../assets/icons/analysis.png';
 import prediction from '../../assets/icons/prediction.png';
 import quiz from '../../assets/icons/quiz.png';
 import video from '../../assets/icons/video.png';
+import suggest from '../../assets/icons/suggest.png'; // Add this icon to your assets folder
 
 const Tools = () => {
   const params = useLocalSearchParams();
@@ -73,6 +74,14 @@ const Tools = () => {
               </View>
               <View className="flex-1">
                 <Tool title={'QP Prediction'} iconSource={prediction} onPress={() => navigateWithCourse('(qp)/QpPrediction')} />
+              </View>
+            </View>
+            <View className="flex flex-row gap-2">
+              <View className="flex-1">
+                <Tool title={'Suggest Resources'} iconSource={suggest} onPress={() => navigateWithCourse('/SuggestMaterial')} />
+              </View>
+              <View className="flex-1">
+                {/* This view is intentionally left empty for layout balance */}
               </View>
             </View>
           </View>
