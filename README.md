@@ -17,6 +17,34 @@ A comprehensive app that combines learning aids and performance assessment tools
 - **Frameworks :** Unsloth
 - **Other tools :** Appwrite, FFmpeg, LangChain, Firebase, Whisper, Google Colab
 
+## Architecture
+<div align="center">
+<table border="0">
+  <tr>
+    <td align="center">
+      <img src="assets/img_readme/system_arcitecture.png" width="500"/><br/>
+      <em>System Architecture</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/detailed_architecture.png" width="500"/><br/>
+      <em>Detailed Architecture</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/img_readme/rag_architecture.jpg" width="500"/><br/>
+      <em>RAG Architecture</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/dataflow.png" width="500"/><br/>
+      <em>Dataflow</em>
+    </td>
+  </tr>
+</table>
+</div>
+
+
+
 ## 📦 Installation & Setup
 
 ### Prerequisites
