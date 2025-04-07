@@ -18,6 +18,7 @@ A comprehensive app that combines learning aids and performance assessment tools
 - **Other tools :** Appwrite, FFmpeg, LangChain, Firebase, Whisper, Google Colab
 
 ## System Architecture
+- ![App Screenshot](assets/img_readme_rag_architecture.png)
 
 
 ## UI Design
