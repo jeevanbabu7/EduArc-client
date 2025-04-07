@@ -22,21 +22,21 @@ A comprehensive app that combines learning aids and performance assessment tools
 <table border="0">
   <tr>
     <td align="center">
-      <img src="assets/img_readme/system_arcitecture.png" width="500"/><br/>
-      <em>System Architecture</em>
+      <img src="assets/img_readme/system_arcitecture.png" width="400"/><br/>
+      <em>System Architecture</em> &nbsp;
     </td>
     <td align="center">
-      <img src="assets/img_readme/detailed_architecture.png" width="500"/><br/>
+      <img src="assets/img_readme/detailed_architecture.png" width="400"/><br/>
       <em>Detailed Architecture</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="assets/img_readme/rag_architecture.jpg" width="500"/><br/>
+      <img src="assets/img_readme/rag_architecture.jpg" width="400"/><br/>
       <em>RAG Architecture</em>
     </td>
     <td align="center">
-      <img src="assets/img_readme/dataflow.png" width="500"/><br/>
+      <img src="assets/img_readme/dataflow.png" width="400"/><br/>
       <em>Dataflow</em>
     </td>
   </tr>
@@ -140,13 +140,53 @@ Make sure the following are installed:
 
 ---
 
-
-## System Architecture
-- ![App Screenshot](assets/img_readme_rag_architecture.png)
-
-
 ## UI Design
-
+<div align="center">
+<table border="0">
+  <tr>
+    <td align="center">
+      <img src="assets/img_readme/dashboard.jpg" width="250"/><br/>
+      <em>Dashboard</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/courses.jpg" width="250"/><br/>
+      <em>Courses</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/courseMaterials.jpg" width="250"/><br/>
+      <em>Materials</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/img_readme/tools.jpg" width="250"/><br/>
+      <em>Tools</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/summary.jpg" width="250"/><br/>
+      <em>Summarization</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/chatbot.jpg" width="250"/><br/>
+      <em>Chatbot</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/img_readme/quiz.jpg" width="250"/><br/>
+      <em>Questions</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/flashcard.jpg" width="250"/><br/>
+      <em>Flashcards</em>
+    </td>
+    <td align="center">
+      <img src="assets/img_readme/quizResult.jpg" width="250"/><br/>
+      <em>Results</em>
+    </td>
+  </tr>
+</table>
+</div>
 
 ## Training Notebooks
 - Topic Weightage Analysis : [Open in Google Colab](https://colab.research.google.com/drive/1RclTiAr8_MUMUVlun5CsPiwQixlGOF45?usp=sharing)
