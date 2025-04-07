@@ -17,6 +17,102 @@ A comprehensive app that combines learning aids and performance assessment tools
 - **Frameworks :** Unsloth
 - **Other tools :** Appwrite, FFmpeg, LangChain, Firebase, Whisper, Google Colab
 
+## 📦 Installation & Setup
+
+### Prerequisites
+
+Make sure the following are installed:
+
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- npm or yarn
+- [Expo CLI](https://docs.expo.dev/get-started/installation/)
+- Git
+- Python 3.8+
+- Android Studio or Xcode (for emulators)  
+  *OR* install **Expo Go** on a physical Android/iOS device
+
+---
+
+### ✅ Frontend Setup (EduArc App)
+
+1. **Clone the frontend repository**
+   ```bash
+   git clone https://github.com/your-username/eduarc-frontend.git
+   cd eduarc-frontend
+   ```
+
+2. **Install Expo CLI globally**
+   ```bash
+   npm install -g expo-cli
+   ```
+
+3. **Install frontend dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+4. **Start the development server**
+   ```bash
+   expo start
+   ```
+
+   - Press `i` to run on iOS simulator (macOS only)
+   - Press `a` to run on Android emulator
+   - Or scan the QR code with **Expo Go** on your mobile device
+
+5. **(Optional) Setup environment variables**
+   ```bash
+   touch .env
+   ```
+
+   Add the following to `.env`:
+   ```
+   API_URL=https://your-backend-url.com/api
+   ```
+
+---
+
+### ⚙️ Backend Setup (Flask + Express)
+
+1. **Clone the backend repository**
+   ```bash
+   git clone https://github.com/your-username/eduarc-backend.git
+   cd eduarc-backend
+   ```
+
+2. **Set up Flask server**
+   ```bash
+   cd flask-server
+   python -m venv venv
+   source venv/bin/activate       # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+3. **Set up Express server**
+   ```bash
+   cd ../express-server
+   npm install
+   ```
+
+4. **Run both backend servers**
+
+   - Start Flask server:
+     ```bash
+     cd flask-server
+     flask run
+     ```
+
+   - Start Express server:
+     ```bash
+     cd ../express-server
+     npm start
+     ```
+
+---
+
+
 ## System Architecture
 - ![App Screenshot](assets/img_readme_rag_architecture.png)
 
