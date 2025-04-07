@@ -188,6 +188,35 @@ Make sure the following are installed:
 </table>
 </div>
 
+## 🤖 Model Details
+
+EduArc integrates several powerful AI models and frameworks to deliver its intelligent features:
+
+- **LLaMA 3.1 (Meta AI):**  
+  Used for contextual understanding, summarization, and generating natural-language responses in the chatbot module.
+
+- **Command-R (Reka AI):**  
+  Supports robust question generation and flashcard creation by analyzing semantic meaning from uploaded content.
+
+- **LangChain:**  
+  Acts as an orchestration layer for chaining LLM calls with document processing, especially in RAG pipelines.
+
+- **Unsloth:**  
+  Helps in fine-tuning and accelerating LLM training for lightweight deployment and responsiveness on smaller instances.
+
+- **Whisper (OpenAI):**  
+  Integrated for converting spoken lecture recordings or audio content into accurate transcriptions, enabling text-based summarization and search.
+
+- **Chroma DB:**  
+  Vector database used for storing embeddings and performing semantic search over documents and past queries.
+
+- **FFmpeg:**  
+  Used in preprocessing audio/video inputs for Whisper transcription.
+
+These models collectively power the learning assistant’s capabilities — from extracting insights and summarizing data to answering academic queries and generating quizzes tailored to a student’s course material.
+
+---
+
 ## Training Notebooks
 - Topic Weightage Analysis : [Open in Google Colab](https://colab.research.google.com/drive/1RclTiAr8_MUMUVlun5CsPiwQixlGOF45?usp=sharing)
 - Question Generation : [Open in Google Colab](https://colab.research.google.com/drive/1zZNdrRlQJtcBKQ_O30Gs4mvr24BKkSQe?usp=sharing)
