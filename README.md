@@ -17,3 +17,8 @@ A comprehensive app that combines learning aids and performance assessment tools
 - **Frameworks :** Unsloth
 - **Other tools :** Appwrite, FFmpeg, LangChain, Firebase, Whisper, Google Colab
 
+## UI Design
+
+## Training Notebooks
+- Topic Weightage Analysis : [Open in Google Colab](https://colab.research.google.com/drive/1RclTiAr8_MUMUVlun5CsPiwQixlGOF45?usp=sharing)
+- Question Generation : [Open in Google Colab](https://colab.research.google.com/drive/1zZNdrRlQJtcBKQ_O30Gs4mvr24BKkSQe?usp=sharing)
