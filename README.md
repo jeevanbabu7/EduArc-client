@@ -188,7 +188,7 @@ Make sure the following are installed:
 </table>
 </div>
 
-## 🤖 Model Details
+## 🤖 Model and Framework Details
 
 EduArc integrates several powerful AI models and frameworks to deliver its intelligent features:
 
