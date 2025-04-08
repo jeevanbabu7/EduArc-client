@@ -65,7 +65,7 @@ Make sure the following are installed:
 
 1. **Clone the frontend repository**
    ```bash
-   git clone https://github.com/your-username/eduarc-frontend.git
+   [git clone https://github.com/jeevanbabu7/EduArc-client.git]
    cd eduarc-frontend
    ```
 
@@ -106,13 +106,13 @@ Make sure the following are installed:
 
 1. **Clone the backend repository**
    ```bash
-   git clone https://github.com/your-username/eduarc-backend.git
-   cd eduarc-backend
+   https://github.com/jeevanbabu7/EduArc-server.git
+   cd server
    ```
 
 2. **Set up Flask server**
    ```bash
-   cd flask-server
+   cd RAG
    python -m venv venv
    source venv/bin/activate       # On Windows: venv\Scripts\activate
    pip install -r requirements.txt
@@ -120,7 +120,7 @@ Make sure the following are installed:
 
 3. **Set up Express server**
    ```bash
-   cd ../express-server
+   cd server
    npm install
    ```
 
@@ -128,13 +128,13 @@ Make sure the following are installed:
 
    - Start Flask server:
      ```bash
-     cd flask-server
-     flask run
+     cd server/RAG
+     python app.py
      ```
 
    - Start Express server:
      ```bash
-     cd ../express-server
+     cd server
      npm start
      ```
 
